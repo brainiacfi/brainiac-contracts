@@ -1,0 +1,385 @@
+{
+  "address": "0xe91b9D33265a628D795A84CB15c127025f32b8dd",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "implementation_",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_vrtAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_xvsAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_conversionRatio",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_conversionStartTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_conversionPeriod",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "NewAdmin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "NewImplementation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingAdmin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingImplementation",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingImplementation",
+      "type": "event"
+    },
+    {
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "_acceptAdmin",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "_acceptImplementation",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "implementation_",
+          "type": "address"
+        }
+      ],
+      "name": "_setImplementation",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingAdmin",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingImplementation",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd7d5bb9dea08dc32e06805984d731dd0ee6d6c3bd38b42d33a1da69e04da4ec0",
+  "receipt": {
+    "to": null,
+    "from": "0xfB9061B274f7E6678462C35A98cfF45E95440Cef",
+    "contractAddress": "0xe91b9D33265a628D795A84CB15c127025f32b8dd",
+    "transactionIndex": 30,
+    "gasUsed": "784793",
+    "logsBloom": "0x00000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000010000000000020000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000001000000000000000000000080000000000400000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x57ace4a97a8b8ee8e8e63cb58d6a4b775dfc9b525dc9a3f917ddabdff144c2cf",
+    "transactionHash": "0xd7d5bb9dea08dc32e06805984d731dd0ee6d6c3bd38b42d33a1da69e04da4ec0",
+    "logs": [
+      {
+        "transactionIndex": 30,
+        "blockNumber": 17689589,
+        "transactionHash": "0xd7d5bb9dea08dc32e06805984d731dd0ee6d6c3bd38b42d33a1da69e04da4ec0",
+        "address": "0xe91b9D33265a628D795A84CB15c127025f32b8dd",
+        "topics": [
+          "0xd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000027a0efe2eba5434bcb97a31d525840d45d360926",
+        "logIndex": 84,
+        "blockHash": "0x57ace4a97a8b8ee8e8e63cb58d6a4b775dfc9b525dc9a3f917ddabdff144c2cf"
+      },
+      {
+        "transactionIndex": 30,
+        "blockNumber": 17689589,
+        "transactionHash": "0xd7d5bb9dea08dc32e06805984d731dd0ee6d6c3bd38b42d33a1da69e04da4ec0",
+        "address": "0xe91b9D33265a628D795A84CB15c127025f32b8dd",
+        "topics": [
+          "0xd1a8ac984a8430f21edede61cef5f001917ac908c13ff7d1c7bfd9e0eca6e7b6"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000004bca8dbb340800000000000000000000000000000000000000000000000000000000627ab2e40000000000000000000000000000000000000000000000000000000001e1338000000000000000000000000000000000000000000000000000000000645be664",
+        "logIndex": 85,
+        "blockHash": "0x57ace4a97a8b8ee8e8e63cb58d6a4b775dfc9b525dc9a3f917ddabdff144c2cf"
+      }
+    ],
+    "blockNumber": 17689589,
+    "cumulativeGasUsed": "4517160",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x27a0Efe2Eba5434bCb97a31d525840d45d360926",
+    "0xE00564CEfB2A45F7A5b675a345Efc5AB5B855110",
+    "0x46C259Df2B005c09e9d89Bbc738cD29eCEca9773",
+    "83333333333000",
+    1652208356,
+    31536000
+  ],
+  "solcInputHash": "49f5979a6aca46111079433dcaa8c4f5",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_vrtAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_xvsAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_conversionRatio\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_conversionStartTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_conversionPeriod\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"NewAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldImplementation\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"}],\"name\":\"NewImplementation\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldPendingAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newPendingAdmin\",\"type\":\"address\"}],\"name\":\"NewPendingAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldPendingImplementation\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newPendingImplementation\",\"type\":\"address\"}],\"name\":\"NewPendingImplementation\",\"type\":\"event\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"constant\":false,\"inputs\":[],\"name\":\"_acceptAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"_acceptImplementation\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation_\",\"type\":\"address\"}],\"name\":\"_setImplementation\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newPendingAdmin\",\"type\":\"address\"}],\"name\":\"_setPendingAdmin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newPendingImplementation\",\"type\":\"address\"}],\"name\":\"_setPendingImplementation\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingAdmin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"_acceptAdmin()\":{\"details\":\"Admin function for pending admin to accept role and update admin\",\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"},\"_acceptImplementation()\":{\"details\":\"Admin function for new implementation to accept it's role as implementation\",\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"},\"_setImplementation(address)\":{\"params\":{\"implementation_\":\"The address of the new implementation for delegation\"}},\"_setPendingAdmin(address)\":{\"details\":\"Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\",\"params\":{\"newPendingAdmin\":\"New pending admin.\"},\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"}}},\"userdoc\":{\"methods\":{\"_acceptAdmin()\":{\"notice\":\"Accepts transfer of admin rights. msg.sender must be pendingAdmin\"},\"_acceptImplementation()\":{\"notice\":\"Accepts new implementation of VRTConverter. msg.sender must be pendingImplementation\"},\"_setImplementation(address)\":{\"notice\":\"Called by the admin to update the implementation of the delegator\"},\"_setPendingAdmin(address)\":{\"notice\":\"Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\"},\"_setPendingImplementation(address)\":{\"notice\":\"* Admin Functions **\"}}}},\"settings\":{\"compilationTarget\":{\"contracts/VRT/VRTConverterProxy.sol\":\"VRTConverterProxy\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/Utils/IBEP20.sol\":{\"content\":\"pragma solidity ^0.5.0;\\r\\n\\r\\n/**\\r\\n * @dev Interface of the BEP20 standard as defined in the EIP. Does not include\\r\\n * the optional functions; to access them see {BEP20Detailed}.\\r\\n */\\r\\ninterface IBEP20 {\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens in existence.\\r\\n     */\\r\\n    function totalSupply() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens owned by `account`.\\r\\n     */\\r\\n    function balanceOf(address account) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from the caller's account to `recipient`.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transfer(address recipient, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the remaining number of tokens that `spender` will be\\r\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\r\\n     * zero by default.\\r\\n     *\\r\\n     * This value changes when {approve} or {transferFrom} are called.\\r\\n     */\\r\\n    function allowance(address owner, address spender) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\r\\n     * that someone may use both the old and the new allowance by unfortunate\\r\\n     * transaction ordering. One possible solution to mitigate this race\\r\\n     * condition is to first reduce the spender's allowance to 0 and set the\\r\\n     * desired value afterwards:\\r\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\r\\n     *\\r\\n     * Emits an {Approval} event.\\r\\n     */\\r\\n    function approve(address spender, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from `sender` to `recipient` using the\\r\\n     * allowance mechanism. `amount` is then deducted from the caller's\\r\\n     * allowance.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\r\\n     * another (`to`).\\r\\n     *\\r\\n     * Note that `value` may be zero.\\r\\n     */\\r\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\r\\n     * a call to {approve}. `value` is the new allowance.\\r\\n     */\\r\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\r\\n}\\r\\n\",\"keccak256\":\"0xa3a8f9954c8785aace7fde96102415fa4de1970920315652e3496b1c2b8dd965\"},\"contracts/Utils/SafeMath.sol\":{\"content\":\"pragma solidity ^0.5.0;\\r\\n\\r\\n/**\\r\\n * @dev Wrappers over Solidity's arithmetic operations with added overflow\\r\\n * checks.\\r\\n *\\r\\n * Arithmetic operations in Solidity wrap on overflow. This can easily result\\r\\n * in bugs, because programmers usually assume that an overflow raises an\\r\\n * error, which is the standard behavior in high level programming languages.\\r\\n * `SafeMath` restores this intuition by reverting the transaction when an\\r\\n * operation overflows.\\r\\n *\\r\\n * Using this library instead of the unchecked operations eliminates an entire\\r\\n * class of bugs, so it's recommended to use it always.\\r\\n */\\r\\nlibrary SafeMath {\\r\\n    /**\\r\\n     * @dev Returns the addition of two unsigned integers, reverting on\\r\\n     * overflow.\\r\\n     *\\r\\n     * Counterpart to Solidity's `+` operator.\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - Addition cannot overflow.\\r\\n     */\\r\\n    function add(uint256 a, uint256 b) internal pure returns (uint256) {\\r\\n        uint256 c = a + b;\\r\\n        require(c >= a, \\\"SafeMath: addition overflow\\\");\\r\\n\\r\\n        return c;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the subtraction of two unsigned integers, reverting on\\r\\n     * overflow (when the result is negative).\\r\\n     *\\r\\n     * Counterpart to Solidity's `-` operator.\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - Subtraction cannot overflow.\\r\\n     */\\r\\n    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\\r\\n        return sub(a, b, \\\"SafeMath: subtraction overflow\\\");\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on\\r\\n     * overflow (when the result is negative).\\r\\n     *\\r\\n     * Counterpart to Solidity's `-` operator.\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - Subtraction cannot overflow.\\r\\n     *\\r\\n     * _Available since v2.4.0._\\r\\n     */\\r\\n    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\r\\n        require(b <= a, errorMessage);\\r\\n        uint256 c = a - b;\\r\\n\\r\\n        return c;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the multiplication of two unsigned integers, reverting on\\r\\n     * overflow.\\r\\n     *\\r\\n     * Counterpart to Solidity's `*` operator.\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - Multiplication cannot overflow.\\r\\n     */\\r\\n    function mul(uint256 a, uint256 b) internal pure returns (uint256) {\\r\\n        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\\r\\n        // benefit is lost if 'b' is also tested.\\r\\n        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522\\r\\n        if (a == 0) {\\r\\n            return 0;\\r\\n        }\\r\\n\\r\\n        uint256 c = a * b;\\r\\n        require(c / a == b, \\\"SafeMath: multiplication overflow\\\");\\r\\n\\r\\n        return c;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the integer division of two unsigned integers. Reverts on\\r\\n     * division by zero. The result is rounded towards zero.\\r\\n     *\\r\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\r\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\r\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - The divisor cannot be zero.\\r\\n     */\\r\\n    function div(uint256 a, uint256 b) internal pure returns (uint256) {\\r\\n        return div(a, b, \\\"SafeMath: division by zero\\\");\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on\\r\\n     * division by zero. The result is rounded towards zero.\\r\\n     *\\r\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\r\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\r\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - The divisor cannot be zero.\\r\\n     *\\r\\n     * _Available since v2.4.0._\\r\\n     */\\r\\n    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\r\\n        // Solidity only automatically asserts when dividing by 0\\r\\n        require(b > 0, errorMessage);\\r\\n        uint256 c = a / b;\\r\\n        // assert(a == b * c + a % b); // There is no case in which this doesn't hold\\r\\n\\r\\n        return c;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\r\\n     * Reverts when dividing by zero.\\r\\n     *\\r\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\r\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\r\\n     * invalid opcode to revert (consuming all remaining gas).\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - The divisor cannot be zero.\\r\\n     */\\r\\n    function mod(uint256 a, uint256 b) internal pure returns (uint256) {\\r\\n        return mod(a, b, \\\"SafeMath: modulo by zero\\\");\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\r\\n     * Reverts with custom message when dividing by zero.\\r\\n     *\\r\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\r\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\r\\n     * invalid opcode to revert (consuming all remaining gas).\\r\\n     *\\r\\n     * Requirements:\\r\\n     * - The divisor cannot be zero.\\r\\n     *\\r\\n     * _Available since v2.4.0._\\r\\n     */\\r\\n    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\r\\n        require(b != 0, errorMessage);\\r\\n        return a % b;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xeb295b448107f6adee6c0861eba7cd58983eeb1a2bf9cd24b3df9c75fe17db75\"},\"contracts/VRT/IXVSVesting.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\ninterface IXVSVesting {\\r\\n\\r\\n    /// @param _recipient Address of the Vesting. recipient entitled to claim the vested funds\\r\\n    /// @param _amount Total number of tokens Vested\\r\\n    function deposit(address _recipient, uint256 _amount) external;\\r\\n}\",\"keccak256\":\"0x21a9bfcfdbd8626171eab51ce22835b086e7ed47c19fdfefa00dbe690fd54df2\"},\"contracts/VRT/VRTConverterProxy.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\nimport \\\"./VRTConverterStorage.sol\\\";\\r\\n\\r\\ncontract VRTConverterProxy is VRTConverterAdminStorage {\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingImplementation is changed\\r\\n      */\\r\\n    event NewPendingImplementation(address oldPendingImplementation, address newPendingImplementation);\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingImplementation is accepted, which means VRTConverter implementation is updated\\r\\n      */\\r\\n    event NewImplementation(address oldImplementation, address newImplementation);\\r\\n\\r\\n    /**\\r\\n    * @notice Emitted when pendingAdmin is changed\\r\\n    */\\r\\n    event NewPendingAdmin(address oldPendingAdmin, address newPendingAdmin);\\r\\n\\r\\n    /**\\r\\n    * @notice Emitted when pendingAdmin is accepted, which means admin is updated\\r\\n    */\\r\\n    event NewAdmin(address oldAdmin, address newAdmin);\\r\\n\\r\\n    constructor(address implementation_,\\r\\n                address _vrtAddress,\\r\\n                address _xvsAddress,\\r\\n                uint256 _conversionRatio,\\r\\n                uint256 _conversionStartTime,\\r\\n                uint256 _conversionPeriod) nonZeroAddress(implementation_) nonZeroAddress(_vrtAddress) nonZeroAddress(_xvsAddress) public {\\r\\n        // Creator of the contract is admin during initialization\\r\\n        admin = msg.sender;\\r\\n\\r\\n        // New implementations always get set via the settor (post-initialize)\\r\\n        _setImplementation(implementation_);\\r\\n\\r\\n        // First delegate gets to initialize the delegator (i.e. storage contract)\\r\\n        delegateTo(implementation_, abi.encodeWithSignature(\\\"initialize(address,address,uint256,uint256,uint256)\\\",\\r\\n                                                            _vrtAddress,\\r\\n                                                            _xvsAddress,\\r\\n                                                            _conversionRatio,\\r\\n                                                            _conversionStartTime,\\r\\n                                                            _conversionPeriod));\\r\\n    }\\r\\n\\r\\n    modifier nonZeroAddress(address _address) {\\r\\n        require(_address != address(0), \\\"Address cannot be Zero\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n    * @notice Called by the admin to update the implementation of the delegator\\r\\n    * @param implementation_ The address of the new implementation for delegation\\r\\n    */\\r\\n    function _setImplementation(address implementation_) public {\\r\\n        require(msg.sender == admin, \\\"VRTConverterProxy::_setImplementation: admin only\\\");\\r\\n        require(implementation_ != address(0), \\\"VRTConverterProxy::_setImplementation: invalid implementation address\\\");\\r\\n\\r\\n        address oldImplementation = implementation;\\r\\n        implementation = implementation_;\\r\\n\\r\\n        emit NewImplementation(oldImplementation, implementation);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @notice Internal method to delegate execution to another contract\\r\\n      * @dev It returns to the external caller whatever the implementation returns or forwards reverts\\r\\n      * @param callee The contract to delegatecall\\r\\n      * @param data The raw data to delegatecall\\r\\n      * @return The returned bytes from the delegatecall\\r\\n     */\\r\\n    function delegateTo(address callee, bytes memory data) internal nonZeroAddress(callee) returns (bytes memory) {\\r\\n        (bool success, bytes memory returnData) = callee.delegatecall(data);\\r\\n        assembly {\\r\\n            if eq(success, 0) {\\r\\n                revert(add(returnData, 0x20), returndatasize)\\r\\n            }\\r\\n        }\\r\\n        return returnData;\\r\\n    }\\r\\n\\r\\n    /*** Admin Functions ***/\\r\\n    function _setPendingImplementation(address newPendingImplementation) nonZeroAddress(newPendingImplementation) public {\\r\\n\\r\\n        require(msg.sender == admin, \\\"Only admin can set Pending Implementation\\\");\\r\\n\\r\\n        address oldPendingImplementation = pendingImplementation;\\r\\n\\r\\n        pendingImplementation = newPendingImplementation;\\r\\n\\r\\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n    * @notice Accepts new implementation of VRTConverter. msg.sender must be pendingImplementation\\r\\n    * @dev Admin function for new implementation to accept it's role as implementation\\r\\n    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n    */\\r\\n    function _acceptImplementation() public {\\r\\n        // Check caller is pendingImplementation\\r\\n        require(msg.sender == pendingImplementation, \\\"only address marked as pendingImplementation can accept Implementation\\\");\\r\\n\\r\\n        // Save current values for inclusion in log\\r\\n        address oldImplementation = implementation;\\r\\n        address oldPendingImplementation = pendingImplementation;\\r\\n\\r\\n        implementation = pendingImplementation;\\r\\n\\r\\n        pendingImplementation = address(0);\\r\\n\\r\\n        emit NewImplementation(oldImplementation, implementation);\\r\\n        emit NewPendingImplementation(oldPendingImplementation, pendingImplementation);\\r\\n    }\\r\\n\\r\\n\\r\\n    /**\\r\\n      * @notice Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\\r\\n      * @dev Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\\r\\n      * @param newPendingAdmin New pending admin.\\r\\n      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n      */\\r\\n    function _setPendingAdmin(address newPendingAdmin) nonZeroAddress(newPendingAdmin) public {\\r\\n        // Check caller = admin\\r\\n        require(msg.sender == admin, \\\"only admin can set pending admin\\\");\\r\\n        require(newPendingAdmin != pendingAdmin , \\\"New pendingAdmin can not be same as the previous one\\\");\\r\\n\\r\\n        // Save current value, if any, for inclusion in log\\r\\n        address oldPendingAdmin = pendingAdmin;\\r\\n\\r\\n        // Store pendingAdmin with value newPendingAdmin\\r\\n        pendingAdmin = newPendingAdmin;\\r\\n\\r\\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\\r\\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @notice Accepts transfer of admin rights. msg.sender must be pendingAdmin\\r\\n      * @dev Admin function for pending admin to accept role and update admin\\r\\n      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n      */\\r\\n    function _acceptAdmin() public {\\r\\n        // Check caller is pendingAdmin\\r\\n        require(msg.sender == pendingAdmin, \\\"only address marked as pendingAdmin can accept as Admin\\\");\\r\\n        \\r\\n        // Save current values for inclusion in log\\r\\n        address oldAdmin = admin;\\r\\n        address oldPendingAdmin = pendingAdmin;\\r\\n\\r\\n        // Store admin with value pendingAdmin\\r\\n        admin = pendingAdmin;\\r\\n\\r\\n        // Clear the pending value\\r\\n        pendingAdmin = address(0);\\r\\n\\r\\n        emit NewAdmin(oldAdmin, admin);\\r\\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Delegates execution to an implementation contract.\\r\\n     * It returns to the external caller whatever the implementation returns\\r\\n     * or forwards reverts.\\r\\n     */\\r\\n    function () external payable {\\r\\n        // delegate all other functions to current implementation\\r\\n        (bool success, ) = implementation.delegatecall(msg.data);\\r\\n\\r\\n        assembly {\\r\\n              let free_mem_ptr := mload(0x40)\\r\\n              returndatacopy(free_mem_ptr, 0, returndatasize)\\r\\n\\r\\n              switch success\\r\\n              case 0 { revert(free_mem_ptr, returndatasize) }\\r\\n              default { return(free_mem_ptr, returndatasize) }\\r\\n        }\\r\\n    }\\r\\n}\",\"keccak256\":\"0x98cba33ba0d6820619c732524547bd1c018fb352c25177c55034abe61a2b4d36\"},\"contracts/VRT/VRTConverterStorage.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\nimport \\\"../Utils/SafeMath.sol\\\";\\r\\nimport \\\"../Utils/IBEP20.sol\\\";\\r\\nimport \\\"./IXVSVesting.sol\\\";\\r\\n\\r\\ncontract VRTConverterAdminStorage {\\r\\n    /**\\r\\n    * @notice Administrator for this contract\\r\\n    */\\r\\n    address public admin;\\r\\n\\r\\n    /**\\r\\n    * @notice Pending administrator for this contract\\r\\n    */\\r\\n    address public pendingAdmin;\\r\\n\\r\\n    /**\\r\\n    * @notice Active brains of VRTConverter\\r\\n    */\\r\\n    address public implementation;\\r\\n\\r\\n    /**\\r\\n    * @notice Pending brains of VRTConverter\\r\\n    */\\r\\n    address public pendingImplementation;\\r\\n}\\r\\n\\r\\ncontract VRTConverterStorage is VRTConverterAdminStorage {\\r\\n\\r\\n    /// @notice Guard variable for re-entrancy checks\\r\\n    bool public _notEntered;\\r\\n\\r\\n    /// @notice indicator to check if the contract is initialized\\r\\n    bool public initialized;\\r\\n\\r\\n    /// @notice The VRT TOKEN!\\r\\n    IBEP20 public vrt;\\r\\n\\r\\n    /// @notice The XVS TOKEN!\\r\\n    IBEP20 public xvs;\\r\\n\\r\\n    /// @notice XVSVesting Contract reference\\r\\n    IXVSVesting public xvsVesting;\\r\\n\\r\\n    /// @notice Conversion ratio from VRT to XVS with decimal 18\\r\\n    uint256 public conversionRatio;\\r\\n\\r\\n    /// @notice total VRT converted to XVS\\r\\n    uint256 public totalVrtConverted;\\r\\n\\r\\n    /// @notice Conversion Start time in EpochSeconds\\r\\n    uint256 public conversionStartTime;\\r\\n\\r\\n    /// @notice ConversionPeriod in Seconds\\r\\n    uint256 public conversionPeriod;\\r\\n\\r\\n    /// @notice Conversion End time in EpochSeconds\\r\\n    uint256 public conversionEndTime;\\r\\n}\",\"keccak256\":\"0x259beb9f117c812475489bf6ca0bace61a07aab58cd1c07e96b33634b3e5c7dd\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50604051610dcc380380610dcc833981810160405260c081101561003357600080fd5b508051602082015160408301516060840151608085015160a0909501519394929391929091856001600160a01b0381166100a2576040805162461bcd60e51b81526020600482015260166024820152600080516020610dac833981519152604482015290519081900360640190fd5b856001600160a01b0381166100ec576040805162461bcd60e51b81526020600482015260166024820152600080516020610dac833981519152604482015290519081900360640190fd5b856001600160a01b038116610136576040805162461bcd60e51b81526020600482015260166024820152600080516020610dac833981519152604482015290519081900360640190fd5b600080546001600160a01b0319163317905561015a896001600160e01b036101d516565b604080516001600160a01b03808b16602483015289166044820152606481018890526084810187905260a48082018790528251808303909101815260c49091019091526020810180516001600160e01b0390811663344fe42d60e21b179091526101c6918b916102c516565b505050505050505050506103d2565b6000546001600160a01b0316331461021e5760405162461bcd60e51b8152600401808060200182810382526031815260200180610d7b6031913960400191505060405180910390fd5b6001600160a01b0381166102635760405162461bcd60e51b8152600401808060200182810382526045815260200180610d366045913960600191505060405180910390fd5b600280546001600160a01b038381166001600160a01b0319831617928390556040805192821680845293909116602083015280517fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a9281900390910190a15050565b6060826001600160a01b038116610311576040805162461bcd60e51b81526020600482015260166024820152600080516020610dac833981519152604482015290519081900360640190fd5b60006060856001600160a01b0316856040518082805190602001908083835b6020831061034f5780518252601f199092019160209182019101610330565b6001836020036101000a038019825116818451168082178552505050505050905001915050600060405180830381855af49150503d80600081146103af576040519150601f19603f3d011682016040523d82523d6000602084013e6103b4565b606091505b509150915060008214156103c9573d60208201fd5b95945050505050565b610955806103e16000396000f3fe6080604052600436106100865760003560e01c8063bb913f4111610059578063bb913f4114610199578063c1e80334146101cc578063e992a041146101e1578063e9c714f214610214578063f851a4401461022957610086565b80632678224714610109578063396f7b231461013a5780635c60da1b1461014f578063b71d1a0c14610164575b6002546040516000916001600160a01b031690829036908083838082843760405192019450600093509091505080830381855af49150503d80600081146100e9576040519150601f19603f3d011682016040523d82523d6000602084013e6100ee565b606091505b505090506040513d6000823e818015610105573d82f35b3d82fd5b34801561011557600080fd5b5061011e61023e565b604080516001600160a01b039092168252519081900360200190f35b34801561014657600080fd5b5061011e61024d565b34801561015b57600080fd5b5061011e61025c565b34801561017057600080fd5b506101976004803603602081101561018757600080fd5b50356001600160a01b031661026b565b005b3480156101a557600080fd5b50610197600480360360208110156101bc57600080fd5b50356001600160a01b03166103d0565b3480156101d857600080fd5b506101976104c0565b3480156101ed57600080fd5b506101976004803603602081101561020457600080fd5b50356001600160a01b03166105c0565b34801561022057600080fd5b506101976106c1565b34801561023557600080fd5b5061011e6107c1565b6001546001600160a01b031681565b6003546001600160a01b031681565b6002546001600160a01b031681565b806001600160a01b0381166102c0576040805162461bcd60e51b8152602060048201526016602482015275416464726573732063616e6e6f74206265205a65726f60501b604482015290519081900360640190fd5b6000546001600160a01b0316331461031f576040805162461bcd60e51b815260206004820181905260248201527f6f6e6c792061646d696e2063616e207365742070656e64696e672061646d696e604482015290519081900360640190fd5b6001546001600160a01b038381169116141561036c5760405162461bcd60e51b81526004018080602001828103825260348152602001806108ed6034913960400191505060405180910390fd5b600180546001600160a01b038481166001600160a01b0319831681179093556040805191909216808252602082019390935281517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a9929181900390910190a1505050565b6000546001600160a01b031633146104195760405162461bcd60e51b81526004018080602001828103825260318152602001806108766031913960400191505060405180910390fd5b6001600160a01b03811661045e5760405162461bcd60e51b81526004018080602001828103825260458152602001806107d16045913960600191505060405180910390fd5b600280546001600160a01b038381166001600160a01b0319831617928390556040805192821680845293909116602083015280517fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a9281900390910190a15050565b6003546001600160a01b031633146105095760405162461bcd60e51b81526004018080602001828103825260468152602001806108a76046913960600191505060405180910390fd5b60028054600380546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a92908290030190a1600354604080516001600160a01b038085168252909216602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a15050565b806001600160a01b038116610615576040805162461bcd60e51b8152602060048201526016602482015275416464726573732063616e6e6f74206265205a65726f60501b604482015290519081900360640190fd5b6000546001600160a01b0316331461065e5760405162461bcd60e51b815260040180806020018281038252602981526020018061084d6029913960400191505060405180910390fd5b600380546001600160a01b038481166001600160a01b0319831617928390556040805192821680845293909116602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a1505050565b6001546001600160a01b0316331461070a5760405162461bcd60e51b81526004018080602001828103825260378152602001806108166037913960400191505060405180910390fd5b60008054600180546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc92908290030190a1600154604080516001600160a01b038085168252909216602083015280517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a99281900390910190a15050565b6000546001600160a01b03168156fe565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a20696e76616c696420696d706c656d656e746174696f6e20616464726573736f6e6c792061646472657373206d61726b65642061732070656e64696e6741646d696e2063616e206163636570742061732041646d696e4f6e6c792061646d696e2063616e207365742050656e64696e6720496d706c656d656e746174696f6e565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a2061646d696e206f6e6c796f6e6c792061646472657373206d61726b65642061732070656e64696e67496d706c656d656e746174696f6e2063616e2061636365707420496d706c656d656e746174696f6e4e65772070656e64696e6741646d696e2063616e206e6f742062652073616d65206173207468652070726576696f7573206f6e65a265627a7a723158200caf2276078471ca3fd9b9f20ce3cb64992175829df8855487a43d0fc13152fb64736f6c63430005100032565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a20696e76616c696420696d706c656d656e746174696f6e2061646472657373565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a2061646d696e206f6e6c79416464726573732063616e6e6f74206265205a65726f00000000000000000000",
+  "deployedBytecode": "0x6080604052600436106100865760003560e01c8063bb913f4111610059578063bb913f4114610199578063c1e80334146101cc578063e992a041146101e1578063e9c714f214610214578063f851a4401461022957610086565b80632678224714610109578063396f7b231461013a5780635c60da1b1461014f578063b71d1a0c14610164575b6002546040516000916001600160a01b031690829036908083838082843760405192019450600093509091505080830381855af49150503d80600081146100e9576040519150601f19603f3d011682016040523d82523d6000602084013e6100ee565b606091505b505090506040513d6000823e818015610105573d82f35b3d82fd5b34801561011557600080fd5b5061011e61023e565b604080516001600160a01b039092168252519081900360200190f35b34801561014657600080fd5b5061011e61024d565b34801561015b57600080fd5b5061011e61025c565b34801561017057600080fd5b506101976004803603602081101561018757600080fd5b50356001600160a01b031661026b565b005b3480156101a557600080fd5b50610197600480360360208110156101bc57600080fd5b50356001600160a01b03166103d0565b3480156101d857600080fd5b506101976104c0565b3480156101ed57600080fd5b506101976004803603602081101561020457600080fd5b50356001600160a01b03166105c0565b34801561022057600080fd5b506101976106c1565b34801561023557600080fd5b5061011e6107c1565b6001546001600160a01b031681565b6003546001600160a01b031681565b6002546001600160a01b031681565b806001600160a01b0381166102c0576040805162461bcd60e51b8152602060048201526016602482015275416464726573732063616e6e6f74206265205a65726f60501b604482015290519081900360640190fd5b6000546001600160a01b0316331461031f576040805162461bcd60e51b815260206004820181905260248201527f6f6e6c792061646d696e2063616e207365742070656e64696e672061646d696e604482015290519081900360640190fd5b6001546001600160a01b038381169116141561036c5760405162461bcd60e51b81526004018080602001828103825260348152602001806108ed6034913960400191505060405180910390fd5b600180546001600160a01b038481166001600160a01b0319831681179093556040805191909216808252602082019390935281517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a9929181900390910190a1505050565b6000546001600160a01b031633146104195760405162461bcd60e51b81526004018080602001828103825260318152602001806108766031913960400191505060405180910390fd5b6001600160a01b03811661045e5760405162461bcd60e51b81526004018080602001828103825260458152602001806107d16045913960600191505060405180910390fd5b600280546001600160a01b038381166001600160a01b0319831617928390556040805192821680845293909116602083015280517fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a9281900390910190a15050565b6003546001600160a01b031633146105095760405162461bcd60e51b81526004018080602001828103825260468152602001806108a76046913960600191505060405180910390fd5b60028054600380546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a92908290030190a1600354604080516001600160a01b038085168252909216602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a15050565b806001600160a01b038116610615576040805162461bcd60e51b8152602060048201526016602482015275416464726573732063616e6e6f74206265205a65726f60501b604482015290519081900360640190fd5b6000546001600160a01b0316331461065e5760405162461bcd60e51b815260040180806020018281038252602981526020018061084d6029913960400191505060405180910390fd5b600380546001600160a01b038481166001600160a01b0319831617928390556040805192821680845293909116602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a1505050565b6001546001600160a01b0316331461070a5760405162461bcd60e51b81526004018080602001828103825260378152602001806108166037913960400191505060405180910390fd5b60008054600180546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc92908290030190a1600154604080516001600160a01b038085168252909216602083015280517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a99281900390910190a15050565b6000546001600160a01b03168156fe565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a20696e76616c696420696d706c656d656e746174696f6e20616464726573736f6e6c792061646472657373206d61726b65642061732070656e64696e6741646d696e2063616e206163636570742061732041646d696e4f6e6c792061646d696e2063616e207365742050656e64696e6720496d706c656d656e746174696f6e565254436f6e76657274657250726f78793a3a5f736574496d706c656d656e746174696f6e3a2061646d696e206f6e6c796f6e6c792061646472657373206d61726b65642061732070656e64696e67496d706c656d656e746174696f6e2063616e2061636365707420496d706c656d656e746174696f6e4e65772070656e64696e6741646d696e2063616e206e6f742062652073616d65206173207468652070726576696f7573206f6e65a265627a7a723158200caf2276078471ca3fd9b9f20ce3cb64992175829df8855487a43d0fc13152fb64736f6c63430005100032",
+  "devdoc": {
+    "methods": {
+      "_acceptAdmin()": {
+        "details": "Admin function for pending admin to accept role and update admin",
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      },
+      "_acceptImplementation()": {
+        "details": "Admin function for new implementation to accept it's role as implementation",
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      },
+      "_setImplementation(address)": {
+        "params": {
+          "implementation_": "The address of the new implementation for delegation"
+        }
+      },
+      "_setPendingAdmin(address)": {
+        "details": "Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.",
+        "params": {
+          "newPendingAdmin": "New pending admin."
+        },
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "_acceptAdmin()": {
+        "notice": "Accepts transfer of admin rights. msg.sender must be pendingAdmin"
+      },
+      "_acceptImplementation()": {
+        "notice": "Accepts new implementation of VRTConverter. msg.sender must be pendingImplementation"
+      },
+      "_setImplementation(address)": {
+        "notice": "Called by the admin to update the implementation of the delegator"
+      },
+      "_setPendingAdmin(address)": {
+        "notice": "Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer."
+      },
+      "_setPendingImplementation(address)": {
+        "notice": "* Admin Functions **"
+      }
+    }
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 40301,
+        "contract": "contracts/VRT/VRTConverterProxy.sol:VRTConverterProxy",
+        "label": "admin",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 40303,
+        "contract": "contracts/VRT/VRTConverterProxy.sol:VRTConverterProxy",
+        "label": "pendingAdmin",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 40305,
+        "contract": "contracts/VRT/VRTConverterProxy.sol:VRTConverterProxy",
+        "label": "implementation",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      },
+      {
+        "astId": 40307,
+        "contract": "contracts/VRT/VRTConverterProxy.sol:VRTConverterProxy",
+        "label": "pendingImplementation",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      }
+    }
+  }
+}

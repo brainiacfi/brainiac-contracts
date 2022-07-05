@@ -1,0 +1,348 @@
+{
+  "address": "0x025d52539B7FdDCfb6DfC33d17F9a59bc0120F56",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "error",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "info",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "detail",
+          "type": "uint256"
+        }
+      ],
+      "name": "Failure",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "NewAdmin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "NewImplementation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingAdmin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingImplementation",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingImplementation",
+      "type": "event"
+    },
+    {
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "_acceptAdmin",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "_acceptImplementation",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingAdmin",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingImplementation",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingVAIControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vaiControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd7806e19b06128e6da090a6d9e1731f34ca49cb0471259ccdaf5c452b5eff1c9",
+  "receipt": {
+    "to": null,
+    "from": "0x9E109d68A7e245d5a1D2e2E8e6BD4230A777a70B",
+    "contractAddress": "0x025d52539B7FdDCfb6DfC33d17F9a59bc0120F56",
+    "transactionIndex": 7,
+    "gasUsed": "392828",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x27acaf58ff941e836f19e939ce26965c35807f7168b7f3e6722c043bdc329b84",
+    "transactionHash": "0xd7806e19b06128e6da090a6d9e1731f34ca49cb0471259ccdaf5c452b5eff1c9",
+    "logs": [],
+    "blockNumber": 19583568,
+    "cumulativeGasUsed": "1658636",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "solcInputHash": "9b0a38bf08aa574391e1d613a16ef48f",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"error\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"info\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"detail\",\"type\":\"uint256\"}],\"name\":\"Failure\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"NewAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldImplementation\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"}],\"name\":\"NewImplementation\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldPendingAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newPendingAdmin\",\"type\":\"address\"}],\"name\":\"NewPendingAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldPendingImplementation\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newPendingImplementation\",\"type\":\"address\"}],\"name\":\"NewPendingImplementation\",\"type\":\"event\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"constant\":false,\"inputs\":[],\"name\":\"_acceptAdmin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"_acceptImplementation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newPendingAdmin\",\"type\":\"address\"}],\"name\":\"_setPendingAdmin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"newPendingImplementation\",\"type\":\"address\"}],\"name\":\"_setPendingImplementation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingAdmin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"pendingVAIControllerImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"vaiControllerImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"_acceptAdmin()\":{\"details\":\"Admin function for pending admin to accept role and update admin\",\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"},\"_acceptImplementation()\":{\"details\":\"Admin function for new implementation to accept it's role as implementation\",\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"},\"_setPendingAdmin(address)\":{\"details\":\"Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\",\"params\":{\"newPendingAdmin\":\"New pending admin.\"},\"return\":\"uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\"}}},\"userdoc\":{\"methods\":{\"_acceptAdmin()\":{\"notice\":\"Accepts transfer of admin rights. msg.sender must be pendingAdmin\"},\"_acceptImplementation()\":{\"notice\":\"Accepts new implementation of comptroller. msg.sender must be pendingImplementation\"},\"_setPendingAdmin(address)\":{\"notice\":\"Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\"},\"_setPendingImplementation(address)\":{\"notice\":\"* Admin Functions **\"}}}},\"settings\":{\"compilationTarget\":{\"contracts/VAIUnitroller.sol\":\"VAIUnitroller\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/ComptrollerInterface.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\ncontract ComptrollerInterfaceG1 {\\r\\n    /// @notice Indicator that this is a Comptroller contract (for inspection)\\r\\n    bool public constant isComptroller = true;\\r\\n\\r\\n    /*** Assets You Are In ***/\\r\\n\\r\\n    function enterMarkets(address[] calldata vTokens) external returns (uint[] memory);\\r\\n    function exitMarket(address vToken) external returns (uint);\\r\\n\\r\\n    /*** Policy Hooks ***/\\r\\n\\r\\n    function mintAllowed(address vToken, address minter, uint mintAmount) external returns (uint);\\r\\n    function mintVerify(address vToken, address minter, uint mintAmount, uint mintTokens) external;\\r\\n\\r\\n    function redeemAllowed(address vToken, address redeemer, uint redeemTokens) external returns (uint);\\r\\n    function redeemVerify(address vToken, address redeemer, uint redeemAmount, uint redeemTokens) external;\\r\\n\\r\\n    function borrowAllowed(address vToken, address borrower, uint borrowAmount) external returns (uint);\\r\\n    function borrowVerify(address vToken, address borrower, uint borrowAmount) external;\\r\\n\\r\\n    function repayBorrowAllowed(\\r\\n        address vToken,\\r\\n        address payer,\\r\\n        address borrower,\\r\\n        uint repayAmount) external returns (uint);\\r\\n    function repayBorrowVerify(\\r\\n        address vToken,\\r\\n        address payer,\\r\\n        address borrower,\\r\\n        uint repayAmount,\\r\\n        uint borrowerIndex) external;\\r\\n\\r\\n    function liquidateBorrowAllowed(\\r\\n        address vTokenBorrowed,\\r\\n        address vTokenCollateral,\\r\\n        address liquidator,\\r\\n        address borrower,\\r\\n        uint repayAmount) external returns (uint);\\r\\n    function liquidateBorrowVerify(\\r\\n        address vTokenBorrowed,\\r\\n        address vTokenCollateral,\\r\\n        address liquidator,\\r\\n        address borrower,\\r\\n        uint repayAmount,\\r\\n        uint seizeTokens) external;\\r\\n\\r\\n    function seizeAllowed(\\r\\n        address vTokenCollateral,\\r\\n        address vTokenBorrowed,\\r\\n        address liquidator,\\r\\n        address borrower,\\r\\n        uint seizeTokens) external returns (uint);\\r\\n    function seizeVerify(\\r\\n        address vTokenCollateral,\\r\\n        address vTokenBorrowed,\\r\\n        address liquidator,\\r\\n        address borrower,\\r\\n        uint seizeTokens) external;\\r\\n\\r\\n    function transferAllowed(address vToken, address src, address dst, uint transferTokens) external returns (uint);\\r\\n    function transferVerify(address vToken, address src, address dst, uint transferTokens) external;\\r\\n\\r\\n    /*** Liquidity/Liquidation Calculations ***/\\r\\n\\r\\n    function liquidateCalculateSeizeTokens(\\r\\n        address vTokenBorrowed,\\r\\n        address vTokenCollateral,\\r\\n        uint repayAmount) external view returns (uint, uint);\\r\\n    function setMintedVAIOf(address owner, uint amount) external returns (uint);\\r\\n}\\r\\n\\r\\ncontract ComptrollerInterfaceG2 is ComptrollerInterfaceG1 {\\r\\n    function liquidateVAICalculateSeizeTokens(\\r\\n        address vTokenCollateral,\\r\\n        uint repayAmount) external view returns (uint, uint);\\r\\n}\\r\\n\\r\\ncontract ComptrollerInterface is ComptrollerInterfaceG2 {\\r\\n}\\r\\n\\r\\ninterface IVAIVault {\\r\\n    function updatePendingRewards() external;\\r\\n}\\r\\n\\r\\ninterface IComptroller {\\r\\n    function liquidationIncentiveMantissa() external view returns (uint);\\r\\n    /*** Treasury Data ***/\\r\\n    function treasuryAddress() external view returns (address);\\r\\n    function treasuryPercent() external view returns (uint);\\r\\n}\\r\\n\",\"keccak256\":\"0x3c4e3298262ce24629e9e9d4d36fe355fed3efccc28318d5c364acbdf09d2e29\"},\"contracts/ErrorReporter.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\ncontract ComptrollerErrorReporter {\\r\\n    enum Error {\\r\\n        NO_ERROR,\\r\\n        UNAUTHORIZED,\\r\\n        COMPTROLLER_MISMATCH,\\r\\n        INSUFFICIENT_SHORTFALL,\\r\\n        INSUFFICIENT_LIQUIDITY,\\r\\n        INVALID_CLOSE_FACTOR,\\r\\n        INVALID_COLLATERAL_FACTOR,\\r\\n        INVALID_LIQUIDATION_INCENTIVE,\\r\\n        MARKET_NOT_ENTERED, // no longer possible\\r\\n        MARKET_NOT_LISTED,\\r\\n        MARKET_ALREADY_LISTED,\\r\\n        MATH_ERROR,\\r\\n        NONZERO_BORROW_BALANCE,\\r\\n        PRICE_ERROR,\\r\\n        REJECTION,\\r\\n        SNAPSHOT_ERROR,\\r\\n        TOO_MANY_ASSETS,\\r\\n        TOO_MUCH_REPAY,\\r\\n        INSUFFICIENT_BALANCE_FOR_VAI\\r\\n    }\\r\\n\\r\\n    enum FailureInfo {\\r\\n        ACCEPT_ADMIN_PENDING_ADMIN_CHECK,\\r\\n        ACCEPT_PENDING_IMPLEMENTATION_ADDRESS_CHECK,\\r\\n        EXIT_MARKET_BALANCE_OWED,\\r\\n        EXIT_MARKET_REJECTION,\\r\\n        SET_CLOSE_FACTOR_OWNER_CHECK,\\r\\n        SET_CLOSE_FACTOR_VALIDATION,\\r\\n        SET_COLLATERAL_FACTOR_OWNER_CHECK,\\r\\n        SET_COLLATERAL_FACTOR_NO_EXISTS,\\r\\n        SET_COLLATERAL_FACTOR_VALIDATION,\\r\\n        SET_COLLATERAL_FACTOR_WITHOUT_PRICE,\\r\\n        SET_IMPLEMENTATION_OWNER_CHECK,\\r\\n        SET_LIQUIDATION_INCENTIVE_OWNER_CHECK,\\r\\n        SET_LIQUIDATION_INCENTIVE_VALIDATION,\\r\\n        SET_MAX_ASSETS_OWNER_CHECK,\\r\\n        SET_PENDING_ADMIN_OWNER_CHECK,\\r\\n        SET_PENDING_IMPLEMENTATION_OWNER_CHECK,\\r\\n        SET_PRICE_ORACLE_OWNER_CHECK,\\r\\n        SUPPORT_MARKET_EXISTS,\\r\\n        SUPPORT_MARKET_OWNER_CHECK,\\r\\n        SET_PAUSE_GUARDIAN_OWNER_CHECK,\\r\\n        SET_VAI_MINT_RATE_CHECK,\\r\\n        SET_VAICONTROLLER_OWNER_CHECK,\\r\\n        SET_MINTED_VAI_REJECTION,\\r\\n        SET_TREASURY_OWNER_CHECK\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary\\r\\n      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.\\r\\n      **/\\r\\n    event Failure(uint error, uint info, uint detail);\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator\\r\\n      */\\r\\n    function fail(Error err, FailureInfo info) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), 0);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting an opaque error from an upgradeable collaborator contract\\r\\n      */\\r\\n    function failOpaque(Error err, FailureInfo info, uint opaqueError) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), opaqueError);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n}\\r\\n\\r\\ncontract TokenErrorReporter {\\r\\n    enum Error {\\r\\n        NO_ERROR,\\r\\n        UNAUTHORIZED,\\r\\n        BAD_INPUT,\\r\\n        COMPTROLLER_REJECTION,\\r\\n        COMPTROLLER_CALCULATION_ERROR,\\r\\n        INTEREST_RATE_MODEL_ERROR,\\r\\n        INVALID_ACCOUNT_PAIR,\\r\\n        INVALID_CLOSE_AMOUNT_REQUESTED,\\r\\n        INVALID_COLLATERAL_FACTOR,\\r\\n        MATH_ERROR,\\r\\n        MARKET_NOT_FRESH,\\r\\n        MARKET_NOT_LISTED,\\r\\n        TOKEN_INSUFFICIENT_ALLOWANCE,\\r\\n        TOKEN_INSUFFICIENT_BALANCE,\\r\\n        TOKEN_INSUFFICIENT_CASH,\\r\\n        TOKEN_TRANSFER_IN_FAILED,\\r\\n        TOKEN_TRANSFER_OUT_FAILED,\\r\\n        TOKEN_PRICE_ERROR\\r\\n    }\\r\\n\\r\\n    /*\\r\\n     * Note: FailureInfo (but not Error) is kept in alphabetical order\\r\\n     *       This is because FailureInfo grows significantly faster, and\\r\\n     *       the order of Error has some meaning, while the order of FailureInfo\\r\\n     *       is entirely arbitrary.\\r\\n     */\\r\\n    enum FailureInfo {\\r\\n        ACCEPT_ADMIN_PENDING_ADMIN_CHECK,\\r\\n        ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,\\r\\n        ACCRUE_INTEREST_BORROW_RATE_CALCULATION_FAILED,\\r\\n        ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,\\r\\n        ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,\\r\\n        ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,\\r\\n        ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,\\r\\n        BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,\\r\\n        BORROW_ACCRUE_INTEREST_FAILED,\\r\\n        BORROW_CASH_NOT_AVAILABLE,\\r\\n        BORROW_FRESHNESS_CHECK,\\r\\n        BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\\r\\n        BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,\\r\\n        BORROW_MARKET_NOT_LISTED,\\r\\n        BORROW_COMPTROLLER_REJECTION,\\r\\n        LIQUIDATE_ACCRUE_BORROW_INTEREST_FAILED,\\r\\n        LIQUIDATE_ACCRUE_COLLATERAL_INTEREST_FAILED,\\r\\n        LIQUIDATE_COLLATERAL_FRESHNESS_CHECK,\\r\\n        LIQUIDATE_COMPTROLLER_REJECTION,\\r\\n        LIQUIDATE_COMPTROLLER_CALCULATE_AMOUNT_SEIZE_FAILED,\\r\\n        LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX,\\r\\n        LIQUIDATE_CLOSE_AMOUNT_IS_ZERO,\\r\\n        LIQUIDATE_FRESHNESS_CHECK,\\r\\n        LIQUIDATE_LIQUIDATOR_IS_BORROWER,\\r\\n        LIQUIDATE_REPAY_BORROW_FRESH_FAILED,\\r\\n        LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,\\r\\n        LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,\\r\\n        LIQUIDATE_SEIZE_COMPTROLLER_REJECTION,\\r\\n        LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER,\\r\\n        LIQUIDATE_SEIZE_TOO_MUCH,\\r\\n        MINT_ACCRUE_INTEREST_FAILED,\\r\\n        MINT_COMPTROLLER_REJECTION,\\r\\n        MINT_EXCHANGE_CALCULATION_FAILED,\\r\\n        MINT_EXCHANGE_RATE_READ_FAILED,\\r\\n        MINT_FRESHNESS_CHECK,\\r\\n        MINT_NEW_ACCOUNT_BALANCE_CALCULATION_FAILED,\\r\\n        MINT_NEW_TOTAL_SUPPLY_CALCULATION_FAILED,\\r\\n        MINT_TRANSFER_IN_FAILED,\\r\\n        MINT_TRANSFER_IN_NOT_POSSIBLE,\\r\\n        REDEEM_ACCRUE_INTEREST_FAILED,\\r\\n        REDEEM_COMPTROLLER_REJECTION,\\r\\n        REDEEM_EXCHANGE_TOKENS_CALCULATION_FAILED,\\r\\n        REDEEM_EXCHANGE_AMOUNT_CALCULATION_FAILED,\\r\\n        REDEEM_EXCHANGE_RATE_READ_FAILED,\\r\\n        REDEEM_FRESHNESS_CHECK,\\r\\n        REDEEM_NEW_ACCOUNT_BALANCE_CALCULATION_FAILED,\\r\\n        REDEEM_NEW_TOTAL_SUPPLY_CALCULATION_FAILED,\\r\\n        REDEEM_TRANSFER_OUT_NOT_POSSIBLE,\\r\\n        REDUCE_RESERVES_ACCRUE_INTEREST_FAILED,\\r\\n        REDUCE_RESERVES_ADMIN_CHECK,\\r\\n        REDUCE_RESERVES_CASH_NOT_AVAILABLE,\\r\\n        REDUCE_RESERVES_FRESH_CHECK,\\r\\n        REDUCE_RESERVES_VALIDATION,\\r\\n        REPAY_BEHALF_ACCRUE_INTEREST_FAILED,\\r\\n        REPAY_BORROW_ACCRUE_INTEREST_FAILED,\\r\\n        REPAY_BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,\\r\\n        REPAY_BORROW_COMPTROLLER_REJECTION,\\r\\n        REPAY_BORROW_FRESHNESS_CHECK,\\r\\n        REPAY_BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,\\r\\n        REPAY_BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,\\r\\n        REPAY_BORROW_TRANSFER_IN_NOT_POSSIBLE,\\r\\n        SET_COLLATERAL_FACTOR_OWNER_CHECK,\\r\\n        SET_COLLATERAL_FACTOR_VALIDATION,\\r\\n        SET_COMPTROLLER_OWNER_CHECK,\\r\\n        SET_INTEREST_RATE_MODEL_ACCRUE_INTEREST_FAILED,\\r\\n        SET_INTEREST_RATE_MODEL_FRESH_CHECK,\\r\\n        SET_INTEREST_RATE_MODEL_OWNER_CHECK,\\r\\n        SET_MAX_ASSETS_OWNER_CHECK,\\r\\n        SET_ORACLE_MARKET_NOT_LISTED,\\r\\n        SET_PENDING_ADMIN_OWNER_CHECK,\\r\\n        SET_RESERVE_FACTOR_ACCRUE_INTEREST_FAILED,\\r\\n        SET_RESERVE_FACTOR_ADMIN_CHECK,\\r\\n        SET_RESERVE_FACTOR_FRESH_CHECK,\\r\\n        SET_RESERVE_FACTOR_BOUNDS_CHECK,\\r\\n        TRANSFER_COMPTROLLER_REJECTION,\\r\\n        TRANSFER_NOT_ALLOWED,\\r\\n        TRANSFER_NOT_ENOUGH,\\r\\n        TRANSFER_TOO_MUCH,\\r\\n        ADD_RESERVES_ACCRUE_INTEREST_FAILED,\\r\\n        ADD_RESERVES_FRESH_CHECK,\\r\\n        ADD_RESERVES_TRANSFER_IN_NOT_POSSIBLE,\\r\\n        TOKEN_GET_UNDERLYING_PRICE_ERROR,\\r\\n        REPAY_VAI_COMPTROLLER_REJECTION,\\r\\n        REPAY_VAI_FRESHNESS_CHECK,\\r\\n        VAI_MINT_EXCHANGE_CALCULATION_FAILED,\\r\\n        SFT_MINT_NEW_ACCOUNT_BALANCE_CALCULATION_FAILED,\\r\\n        REDEEM_FEE_CALCULATION_FAILED\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary\\r\\n      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.\\r\\n      **/\\r\\n    event Failure(uint error, uint info, uint detail);\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator\\r\\n      */\\r\\n    function fail(Error err, FailureInfo info) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), 0);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting an opaque error from an upgradeable collaborator contract\\r\\n      */\\r\\n    function failOpaque(Error err, FailureInfo info, uint opaqueError) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), opaqueError);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n}\\r\\n\\r\\ncontract VAIControllerErrorReporter {\\r\\n    enum Error {\\r\\n        NO_ERROR,\\r\\n        UNAUTHORIZED,\\r\\n        REJECTION,\\r\\n        SNAPSHOT_ERROR,\\r\\n        PRICE_ERROR,\\r\\n        MATH_ERROR,\\r\\n        INSUFFICIENT_BALANCE_FOR_VAI\\r\\n    }\\r\\n\\r\\n    enum FailureInfo {\\r\\n        SET_PENDING_ADMIN_OWNER_CHECK,\\r\\n        SET_PENDING_IMPLEMENTATION_OWNER_CHECK,\\r\\n        SET_COMPTROLLER_OWNER_CHECK,\\r\\n        ACCEPT_ADMIN_PENDING_ADMIN_CHECK,\\r\\n        ACCEPT_PENDING_IMPLEMENTATION_ADDRESS_CHECK,\\r\\n        VAI_MINT_REJECTION,\\r\\n        VAI_BURN_REJECTION,\\r\\n        VAI_LIQUIDATE_ACCRUE_BORROW_INTEREST_FAILED,\\r\\n        VAI_LIQUIDATE_ACCRUE_COLLATERAL_INTEREST_FAILED,\\r\\n        VAI_LIQUIDATE_COLLATERAL_FRESHNESS_CHECK,\\r\\n        VAI_LIQUIDATE_COMPTROLLER_REJECTION,\\r\\n        VAI_LIQUIDATE_COMPTROLLER_CALCULATE_AMOUNT_SEIZE_FAILED,\\r\\n        VAI_LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX,\\r\\n        VAI_LIQUIDATE_CLOSE_AMOUNT_IS_ZERO,\\r\\n        VAI_LIQUIDATE_FRESHNESS_CHECK,\\r\\n        VAI_LIQUIDATE_LIQUIDATOR_IS_BORROWER,\\r\\n        VAI_LIQUIDATE_REPAY_BORROW_FRESH_FAILED,\\r\\n        VAI_LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,\\r\\n        VAI_LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,\\r\\n        VAI_LIQUIDATE_SEIZE_COMPTROLLER_REJECTION,\\r\\n        VAI_LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER,\\r\\n        VAI_LIQUIDATE_SEIZE_TOO_MUCH,\\r\\n        MINT_FEE_CALCULATION_FAILED,\\r\\n        SET_TREASURY_OWNER_CHECK\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary\\r\\n      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.\\r\\n      **/\\r\\n    event Failure(uint error, uint info, uint detail);\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator\\r\\n      */\\r\\n    function fail(Error err, FailureInfo info) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), 0);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @dev use this when reporting an opaque error from an upgradeable collaborator contract\\r\\n      */\\r\\n    function failOpaque(Error err, FailureInfo info, uint opaqueError) internal returns (uint) {\\r\\n        emit Failure(uint(err), uint(info), opaqueError);\\r\\n\\r\\n        return uint(err);\\r\\n    }\\r\\n}\",\"keccak256\":\"0x08bdc77bdcb6954ce9d0367de18184644f30afdc959f54e226788e8813ea3654\"},\"contracts/VAIControllerStorage.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\nimport \\\"./ComptrollerInterface.sol\\\";\\r\\n\\r\\ncontract VAIUnitrollerAdminStorage {\\r\\n    /**\\r\\n    * @notice Administrator for this contract\\r\\n    */\\r\\n    address public admin;\\r\\n\\r\\n    /**\\r\\n    * @notice Pending administrator for this contract\\r\\n    */\\r\\n    address public pendingAdmin;\\r\\n\\r\\n    /**\\r\\n    * @notice Active brains of Unitroller\\r\\n    */\\r\\n    address public vaiControllerImplementation;\\r\\n\\r\\n    /**\\r\\n    * @notice Pending brains of Unitroller\\r\\n    */\\r\\n    address public pendingVAIControllerImplementation;\\r\\n}\\r\\n\\r\\ncontract VAIControllerStorageG1 is VAIUnitrollerAdminStorage {\\r\\n    ComptrollerInterface public comptroller;\\r\\n\\r\\n    struct VenusVAIState {\\r\\n        /// @notice The last updated venusVAIMintIndex\\r\\n        uint224 index;\\r\\n\\r\\n        /// @notice The block number the index was last updated at\\r\\n        uint32 block;\\r\\n    }\\r\\n\\r\\n    /// @notice The Venus VAI state\\r\\n    VenusVAIState public venusVAIState;\\r\\n\\r\\n    /// @notice The Venus VAI state initialized\\r\\n    bool public isVenusVAIInitialized;\\r\\n\\r\\n    /// @notice The Venus VAI minter index as of the last time they accrued XVS\\r\\n    mapping(address => uint) public venusVAIMinterIndex;\\r\\n}\\r\\n\\r\\ncontract VAIControllerStorageG2 is VAIControllerStorageG1 {\\r\\n    /// @notice Treasury Guardian address\\r\\n    address public treasuryGuardian;\\r\\n\\r\\n    /// @notice Treasury address\\r\\n    address public treasuryAddress;\\r\\n\\r\\n    /// @notice Fee percent of accrued interest with decimal 18\\r\\n    uint256 public treasuryPercent;\\r\\n\\r\\n    /// @notice Guard variable for re-entrancy checks\\r\\n    bool internal _notEntered;\\r\\n}\\r\\n\",\"keccak256\":\"0x62ace7898f32816b679c9ccdb3f8bf9d3b4c6609a7703a3c0189aa11b043116d\"},\"contracts/VAIUnitroller.sol\":{\"content\":\"pragma solidity ^0.5.16;\\r\\n\\r\\nimport \\\"./ErrorReporter.sol\\\";\\r\\nimport \\\"./VAIControllerStorage.sol\\\";\\r\\n\\r\\ncontract VAIUnitroller is VAIUnitrollerAdminStorage, VAIControllerErrorReporter {\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingVAIControllerImplementation is changed\\r\\n      */\\r\\n    event NewPendingImplementation(address oldPendingImplementation, address newPendingImplementation);\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingVAIControllerImplementation is accepted, which means comptroller implementation is updated\\r\\n      */\\r\\n    event NewImplementation(address oldImplementation, address newImplementation);\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingAdmin is changed\\r\\n      */\\r\\n    event NewPendingAdmin(address oldPendingAdmin, address newPendingAdmin);\\r\\n\\r\\n    /**\\r\\n      * @notice Emitted when pendingAdmin is accepted, which means admin is updated\\r\\n      */\\r\\n    event NewAdmin(address oldAdmin, address newAdmin);\\r\\n\\r\\n    constructor() public {\\r\\n        // Set admin to caller\\r\\n        admin = msg.sender;\\r\\n    }\\r\\n\\r\\n    /*** Admin Functions ***/\\r\\n    function _setPendingImplementation(address newPendingImplementation) public returns (uint) {\\r\\n\\r\\n        if (msg.sender != admin) {\\r\\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_IMPLEMENTATION_OWNER_CHECK);\\r\\n        }\\r\\n\\r\\n        address oldPendingImplementation = pendingVAIControllerImplementation;\\r\\n\\r\\n        pendingVAIControllerImplementation = newPendingImplementation;\\r\\n\\r\\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\\r\\n\\r\\n        return uint(Error.NO_ERROR);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n    * @notice Accepts new implementation of comptroller. msg.sender must be pendingImplementation\\r\\n    * @dev Admin function for new implementation to accept it's role as implementation\\r\\n    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n    */\\r\\n    function _acceptImplementation() public returns (uint) {\\r\\n        // Check caller is pendingImplementation\\r\\n        if (msg.sender != pendingVAIControllerImplementation) {\\r\\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_PENDING_IMPLEMENTATION_ADDRESS_CHECK);\\r\\n        }\\r\\n\\r\\n        // Save current values for inclusion in log\\r\\n        address oldImplementation = vaiControllerImplementation;\\r\\n        address oldPendingImplementation = pendingVAIControllerImplementation;\\r\\n\\r\\n        vaiControllerImplementation = pendingVAIControllerImplementation;\\r\\n\\r\\n        pendingVAIControllerImplementation = address(0);\\r\\n\\r\\n        emit NewImplementation(oldImplementation, vaiControllerImplementation);\\r\\n        emit NewPendingImplementation(oldPendingImplementation, pendingVAIControllerImplementation);\\r\\n\\r\\n        return uint(Error.NO_ERROR);\\r\\n    }\\r\\n\\r\\n\\r\\n    /**\\r\\n      * @notice Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\\r\\n      * @dev Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.\\r\\n      * @param newPendingAdmin New pending admin.\\r\\n      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n      */\\r\\n    function _setPendingAdmin(address newPendingAdmin) public returns (uint) {\\r\\n        // Check caller = admin\\r\\n        if (msg.sender != admin) {\\r\\n            return fail(Error.UNAUTHORIZED, FailureInfo.SET_PENDING_ADMIN_OWNER_CHECK);\\r\\n        }\\r\\n\\r\\n        // Save current value, if any, for inclusion in log\\r\\n        address oldPendingAdmin = pendingAdmin;\\r\\n\\r\\n        // Store pendingAdmin with value newPendingAdmin\\r\\n        pendingAdmin = newPendingAdmin;\\r\\n\\r\\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\\r\\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\\r\\n\\r\\n        return uint(Error.NO_ERROR);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n      * @notice Accepts transfer of admin rights. msg.sender must be pendingAdmin\\r\\n      * @dev Admin function for pending admin to accept role and update admin\\r\\n      * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\\r\\n      */\\r\\n    function _acceptAdmin() public returns (uint) {\\r\\n        // Check caller is pendingAdmin\\r\\n        if (msg.sender != pendingAdmin) {\\r\\n            return fail(Error.UNAUTHORIZED, FailureInfo.ACCEPT_ADMIN_PENDING_ADMIN_CHECK);\\r\\n        }\\r\\n\\r\\n        // Save current values for inclusion in log\\r\\n        address oldAdmin = admin;\\r\\n        address oldPendingAdmin = pendingAdmin;\\r\\n\\r\\n        // Store admin with value pendingAdmin\\r\\n        admin = pendingAdmin;\\r\\n\\r\\n        // Clear the pending value\\r\\n        pendingAdmin = address(0);\\r\\n\\r\\n        emit NewAdmin(oldAdmin, admin);\\r\\n        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);\\r\\n\\r\\n        return uint(Error.NO_ERROR);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Delegates execution to an implementation contract.\\r\\n     * It returns to the external caller whatever the implementation returns\\r\\n     * or forwards reverts.\\r\\n     */\\r\\n    function () external payable {\\r\\n        // delegate all other functions to current implementation\\r\\n        (bool success, ) = vaiControllerImplementation.delegatecall(msg.data);\\r\\n\\r\\n        assembly {\\r\\n              let free_mem_ptr := mload(0x40)\\r\\n              returndatacopy(free_mem_ptr, 0, returndatasize)\\r\\n\\r\\n              switch success\\r\\n              case 0 { revert(free_mem_ptr, returndatasize) }\\r\\n              default { return(free_mem_ptr, returndatasize) }\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x2ff51a0e14efdebf581b2a9d123b4dc3cf197d2ccca2401875c5104a355ca67c\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b031916331790556105c2806100326000396000f3fe60806040526004361061007a5760003560e01c8063c1e803341161004e578063c1e803341461019d578063e992a041146101b2578063e9c714f2146101e5578063f851a440146101fa5761007a565b80623b5884146100fd578063267822471461012e578063b06bb42614610143578063b71d1a0c14610158575b6002546040516000916001600160a01b031690829036908083838082843760405192019450600093509091505080830381855af49150503d80600081146100dd576040519150601f19603f3d011682016040523d82523d6000602084013e6100e2565b606091505b505090506040513d6000823e8180156100f9573d82f35b3d82fd5b34801561010957600080fd5b5061011261020f565b604080516001600160a01b039092168252519081900360200190f35b34801561013a57600080fd5b5061011261021e565b34801561014f57600080fd5b5061011261022d565b34801561016457600080fd5b5061018b6004803603602081101561017b57600080fd5b50356001600160a01b031661023c565b60408051918252519081900360200190f35b3480156101a957600080fd5b5061018b6102cd565b3480156101be57600080fd5b5061018b600480360360208110156101d557600080fd5b50356001600160a01b03166103b3565b3480156101f157600080fd5b5061018b610436565b34801561020657600080fd5b50610112610511565b6002546001600160a01b031681565b6001546001600160a01b031681565b6003546001600160a01b031681565b600080546001600160a01b031633146102625761025b60016000610520565b90506102c8565b600180546001600160a01b038481166001600160a01b0319831681179093556040805191909216808252602082019390935281517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a9929181900390910190a160005b9150505b919050565b6003546000906001600160a01b031633146102f5576102ee60016004610520565b90506103b0565b60028054600380546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a92908290030190a1600354604080516001600160a01b038085168252909216602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a160005b925050505b90565b600080546001600160a01b031633146103d15761025b600180610520565b600380546001600160a01b038481166001600160a01b0319831617928390556040805192821680845293909116602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a160006102c4565b6001546000906001600160a01b03163314610457576102ee60016003610520565b60008054600180546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc92908290030190a1600154604080516001600160a01b038085168252909216602083015280517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a99281900390910190a160006103ab565b6000546001600160a01b031681565b60007f45b96fe442630264581b197e84bbada861235052c5a1aadfff9ea4e40a969aa083600681111561054f57fe5b83601781111561055b57fe5b604080519283526020830191909152600082820152519081900360600190a182600681111561058657fe5b939250505056fea265627a7a7231582001dda3e559fa0354a4ccba0a07dddc028d9ab321e46b10f17e5e3bddc836524864736f6c63430005100032",
+  "deployedBytecode": "0x60806040526004361061007a5760003560e01c8063c1e803341161004e578063c1e803341461019d578063e992a041146101b2578063e9c714f2146101e5578063f851a440146101fa5761007a565b80623b5884146100fd578063267822471461012e578063b06bb42614610143578063b71d1a0c14610158575b6002546040516000916001600160a01b031690829036908083838082843760405192019450600093509091505080830381855af49150503d80600081146100dd576040519150601f19603f3d011682016040523d82523d6000602084013e6100e2565b606091505b505090506040513d6000823e8180156100f9573d82f35b3d82fd5b34801561010957600080fd5b5061011261020f565b604080516001600160a01b039092168252519081900360200190f35b34801561013a57600080fd5b5061011261021e565b34801561014f57600080fd5b5061011261022d565b34801561016457600080fd5b5061018b6004803603602081101561017b57600080fd5b50356001600160a01b031661023c565b60408051918252519081900360200190f35b3480156101a957600080fd5b5061018b6102cd565b3480156101be57600080fd5b5061018b600480360360208110156101d557600080fd5b50356001600160a01b03166103b3565b3480156101f157600080fd5b5061018b610436565b34801561020657600080fd5b50610112610511565b6002546001600160a01b031681565b6001546001600160a01b031681565b6003546001600160a01b031681565b600080546001600160a01b031633146102625761025b60016000610520565b90506102c8565b600180546001600160a01b038481166001600160a01b0319831681179093556040805191909216808252602082019390935281517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a9929181900390910190a160005b9150505b919050565b6003546000906001600160a01b031633146102f5576102ee60016004610520565b90506103b0565b60028054600380546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927fd604de94d45953f9138079ec1b82d533cb2160c906d1076d1f7ed54befbca97a92908290030190a1600354604080516001600160a01b038085168252909216602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a160005b925050505b90565b600080546001600160a01b031633146103d15761025b600180610520565b600380546001600160a01b038481166001600160a01b0319831617928390556040805192821680845293909116602083015280517fe945ccee5d701fc83f9b8aa8ca94ea4219ec1fcbd4f4cab4f0ea57c5c3e1d8159281900390910190a160006102c4565b6001546000906001600160a01b03163314610457576102ee60016003610520565b60008054600180546001600160a01b038082166001600160a01b031980861682179687905590921690925560408051938316808552949092166020840152815190927ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc92908290030190a1600154604080516001600160a01b038085168252909216602083015280517fca4f2f25d0898edd99413412fb94012f9e54ec8142f9b093e7720646a95b16a99281900390910190a160006103ab565b6000546001600160a01b031681565b60007f45b96fe442630264581b197e84bbada861235052c5a1aadfff9ea4e40a969aa083600681111561054f57fe5b83601781111561055b57fe5b604080519283526020830191909152600082820152519081900360600190a182600681111561058657fe5b939250505056fea265627a7a7231582001dda3e559fa0354a4ccba0a07dddc028d9ab321e46b10f17e5e3bddc836524864736f6c63430005100032",
+  "devdoc": {
+    "methods": {
+      "_acceptAdmin()": {
+        "details": "Admin function for pending admin to accept role and update admin",
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      },
+      "_acceptImplementation()": {
+        "details": "Admin function for new implementation to accept it's role as implementation",
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      },
+      "_setPendingAdmin(address)": {
+        "details": "Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.",
+        "params": {
+          "newPendingAdmin": "New pending admin."
+        },
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "_acceptAdmin()": {
+        "notice": "Accepts transfer of admin rights. msg.sender must be pendingAdmin"
+      },
+      "_acceptImplementation()": {
+        "notice": "Accepts new implementation of comptroller. msg.sender must be pendingImplementation"
+      },
+      "_setPendingAdmin(address)": {
+        "notice": "Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer."
+      },
+      "_setPendingImplementation(address)": {
+        "notice": "* Admin Functions **"
+      }
+    }
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 36936,
+        "contract": "contracts/VAIUnitroller.sol:VAIUnitroller",
+        "label": "admin",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 36938,
+        "contract": "contracts/VAIUnitroller.sol:VAIUnitroller",
+        "label": "pendingAdmin",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 36940,
+        "contract": "contracts/VAIUnitroller.sol:VAIUnitroller",
+        "label": "vaiControllerImplementation",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      },
+      {
+        "astId": 36942,
+        "contract": "contracts/VAIUnitroller.sol:VAIUnitroller",
+        "label": "pendingVAIControllerImplementation",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      }
+    }
+  }
+}
