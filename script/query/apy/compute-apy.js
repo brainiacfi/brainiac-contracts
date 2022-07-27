@@ -7,21 +7,21 @@ const blocksPerDay = 28800;
 (async () => {  
 
   const unitrollerAddress = contractConfigData.Contracts.Unitroller;
-  const comptrollerContract = await saddle.getContractAt('Comptroller', unitrollerAddress);
+  const comptrollerContractInstance = await saddle.getContractAt('Comptroller', unitrollerAddress);
   const vtokenAddress = contractConfigData.Contracts.vTRX;
   const vtokenContract = await saddle.getContractAt('VBep20Delegate',vtokenAddress);
 
-  const venusSpeeds = await comptrollerContract.methods.venusSpeeds(vtokenAddress).call();
+  const venusSpeeds = await comptrollerContractInstance.methods.venusSpeeds(vtokenAddress).call();
   const borrowerDailyVenus = new BigNumber(venusSpeeds).multipliedBy(blocksPerDay).toString(10);
   const supplierDailyVenus = borrowerDailyVenus;
 
-  const venusBorrowState = await comptrollerContract.methods.venusBorrowState(vtokenAddress).call();
+  const venusBorrowState = await comptrollerContractInstance.methods.venusBorrowState(vtokenAddress).call();
   const venusBorrowIndex = venusBorrowState.index;
 
-  const venusSupplyState = await comptrollerContract.methods.venusSupplyState(vtokenAddress).call();
+  const venusSupplyState = await comptrollerContractInstance.methods.venusSupplyState(vtokenAddress).call();
   const venusSupplyIndex = venusSupplyState.index;
 
-  const collateralFactorMantissa = await comptrollerContract.methods.markets(vtokenAddress).call();
+  const collateralFactorMantissa = await comptrollerContractInstance.methods.markets(vtokenAddress).call();
   const collateralFactor = collateralFactorMantissa[1];
 
   const vtokenName = await vtokenContract.methods.name().call();

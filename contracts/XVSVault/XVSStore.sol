@@ -81,7 +81,6 @@ contract XVSStore {
     }
 
     function setRewardToken(address _tokenAddress, bool status) external {
-        // this is causing error 
         require(msg.sender == admin || msg.sender == owner, "only admin or owner can");
         rewardTokens[_tokenAddress] = status;
     }

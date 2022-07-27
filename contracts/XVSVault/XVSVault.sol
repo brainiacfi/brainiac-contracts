@@ -132,7 +132,6 @@ contract XVSVault is XVSVaultStorage, ECDSA {
             })
         );
 
-        // this is calling setRewardToken method of xvsStore which is admin only method 
         IXVSStore(xvsStore).setRewardToken(_rewardToken, true);
 
         emit PoolAdded(

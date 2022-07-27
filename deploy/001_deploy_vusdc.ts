@@ -12,17 +12,17 @@ function bnbMantissa(num: number, scale = 1e18) {
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, get, save } = deployments;
-return;
+
   const { deployer, admin } = await getNamedAccounts();
-  
-  const usdcAddress = '0x30D4B957139785B979aF5312d71505809dc563ed';
+  return;
+  const usdcAddress = '0x630AcC0A29E325ce022563Df69ba7E25Eeb1e184';
   const comptrollerImplementation = (await get("Comptroller"))
     .address;
   const whitePaperInterestRateModel = (await get("WhitePaperInterestRateModel"))
     .address;                             
-  const initialExchangeRate = bnbMantissa(200000000.000000000000000000);
-  const name = "Brainiac : vUSDC";
-  const symbol = "vUSDC";
+  const initialExchangeRate = "200000000000000";
+  const name = "Brainiac : bUSDC";
+  const symbol = "bUSDC";
   const decimal = 8;
   const Implementation = (await get("VBep20Delegate")).address;
 

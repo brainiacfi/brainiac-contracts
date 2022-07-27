@@ -23,7 +23,7 @@ describe('Maximillion', () => {
 
   describe("constructor", () => {
     it("sets address of vBnb", async () => {
-      expect(await call(maximillion, "vBnb")).toEqual(vBnb._address);``
+      expect(await call(maximillion, "vBnb")).toEqual(vBnb._address);
     });
   });
 

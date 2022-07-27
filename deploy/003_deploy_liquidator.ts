@@ -4,7 +4,7 @@ import {DeployFunction} from 'hardhat-deploy/types';
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
   const {deploy, get, save} = deployments;
-
+  return;
   const {deployer} = await getNamedAccounts();
   const treasuryPercentMantisa = "50000000000000000";
   const treasury = (await get('VTreasury')).address;

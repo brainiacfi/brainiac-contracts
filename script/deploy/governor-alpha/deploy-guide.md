@@ -5,7 +5,7 @@
  - deploy GovernorAlpha2 Contract to bsc-testnet
 
 ```sh
-npx saddle script script/deploy/governor-alpha-2/deploy-governor-alpha-2.js -n testnet
+npx saddle script script/deploy/governor-alpha/deploy-governor-alpha-2.js -n testnet
 ```
 
 Copy GovernorAlpha2 address from command console to JSON object in testnet.json

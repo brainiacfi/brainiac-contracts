@@ -18,9 +18,6 @@ contract Liquidator is WithAdmin, ReentrancyGuard {
     /// @notice Address of Venus Unitroller contract.
     IComptroller comptroller;
 
-    /// @notice Boolean for handeling nonERC 20 or nonBEP20 tokens 
-     bool public isNativeTokenNonERC20 = false;
-
     /// @notice Address of VAIUnitroller contract.
     VAIControllerInterface vaiController;
 
@@ -53,6 +50,7 @@ contract Liquidator is WithAdmin, ReentrancyGuard {
         ReentrancyGuard()
     {
         ensureNonzeroAddress(admin_);
+        ensureNonzeroAddress(vBnb_);
         ensureNonzeroAddress(comptroller_);
         ensureNonzeroAddress(vaiController_);
         ensureNonzeroAddress(treasury_);
@@ -84,7 +82,7 @@ contract Liquidator is WithAdmin, ReentrancyGuard {
     {
         ensureNonzeroAddress(borrower);
         uint256 ourBalanceBefore = vTokenCollateral.balanceOf(address(this));
-        if (vToken == address(vBnb) && isNativeTokenNonERC20) {
+        if (vToken == address(vBnb)) {
             require(repayAmount == msg.value, "wrong amount");
             vBnb.liquidateBorrow.value(msg.value)(borrower, vTokenCollateral);
         } else {

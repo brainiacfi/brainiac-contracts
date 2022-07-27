@@ -420,7 +420,7 @@ contract VAIController is VAIControllerStorageG2, VAIControllerErrorReporter, Ex
      * @return The address of VAI
      */
     function getVAIAddress() public view returns (address) {
-        return 0x01eF3861D78a645d15cd160514F5AF2ceC53BBf9;
+        return 0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7;
     }
 
     function initialize() onlyAdmin public {

@@ -1466,7 +1466,7 @@ contract ComptrollerG1 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      * @return The address of XVS
      */
     function getXVSAddress() public view returns (address) {
-        return 0x23543a003Ad301dd2ECfBDE4af6833da146d7793;
+        return 0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63;
     }
 
     /*** VAI functions ***/

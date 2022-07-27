@@ -12,7 +12,7 @@ function bnbMantissa(num: number, scale = 1e18) {
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, get, save } = deployments;
-
+ return;
   const { deployer, admin } = await getNamedAccounts();
 
   const ethAddress = '0x7e54f7324902B72334827F40f613116F06a88845';
