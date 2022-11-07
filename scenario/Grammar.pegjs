@@ -237,7 +237,7 @@ expr
         tail:(ws continuation? value:expr { return value })*
         { return [head].concat(tail.flat(1)); }
     )
-    / begin_venus inner:expr end_venus { return [inner]; }
+    / begin_brainiac inner:expr end_brainiac { return [inner]; }
     / begin_list inner:list_inner? end_list { return [["List"].concat((inner || []).flat())] };
 
 comment
@@ -265,8 +265,8 @@ list_inner
         { return [head].concat(tail.flat()); }
     )
 
-begin_venus    = ws "(" ws
-end_venus    = ws ")" ws
+begin_brainiac    = ws "(" ws
+end_brainiac    = ws ")" ws
 
 begin_list    = ws "[" ws
 end_list    = ws "]" ws

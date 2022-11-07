@@ -1,0 +1,95 @@
+-- Tests for the grants and math patch
+
+Macro FlywheelComptroller price=1.0 borrowRate=0.000005 brainiacInitAmount=5000000e18
+    Unitroller Deploy
+    PriceOracle Deploy Fixed price
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
+    ----g1
+    ComptrollerImpl Deploy ScenarioG1 ComptrollerScenG1
+    Unitroller SetPendingImpl ComptrollerScenG1
+    ComptrollerImpl ComptrollerScenG1 BecomeG1
+    --list some tokens
+    Comptroller SetPriceOracle (PriceOracleProxy Address)
+    Comptroller SetMaxAssets 20
+    Comptroller SetCloseFactor 0.5
+    Comptroller LiquidationIncentive 1.1
+    Comptroller SetBrainiacRate 1e18
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
+    Support vZRX collateralFactor:0.5
+    Support vBAT collateralFactor:0.5
+    Comptroller AddBrainiacMarkets (vZRX vBAT)
+    Erc20 Deploy Standard BRN "BRN Token" 18
+    Give (Address Comptroller) brainiacInitAmount BRN
+    Comptroller Send "setBRNAddress(address)" (Address BRN)
+    Erc20 Deploy Standard BAI "BAI Token" 18
+    Give (Address Comptroller) brainiacInitAmount BAI
+    Comptroller Send "setBAIAddress(address)" (Address BAI)
+
+Macro GrantsComptroller
+    FlywheelComptroller
+    -- g2
+    ComptrollerImpl Deploy ScenarioG2 ComptrollerScen
+    Unitroller SetPendingImpl ComptrollerScen
+    ComptrollerImpl ComptrollerScen BecomeG2
+    -- current
+    ComptrollerImpl Deploy Scenario ComptrollerScen
+    Unitroller SetPendingImpl ComptrollerScen
+    ComptrollerImpl ComptrollerScen Become
+    ComptrollerLens Deploy
+    Comptroller SetComptrollerLens (Address ComptrollerLens)
+
+Macro InitSpeeds
+    Prep Geoff 100e18 ZRX vZRX
+    Mint Geoff 50e18 vZRX--tokenbalance = 50e18 / 2e9 = 2.5e10
+    Prep Coburn Some BAT vBAT
+    Mint Coburn 6e18 vBAT--tokenbalance = 6e18 / 2e9 = 3e9
+    EnterMarkets Coburn vBAT
+    Borrow Coburn 1e18 vZRX
+    Comptroller SetBrainiacSpeed vZRX 1
+    Comptroller SetBrainiacSpeed vBAT 1
+    Comptroller RefreshBrainiacSpeeds
+    Comptroller Send "setBRNAddress(address)" (Address BRN)
+
+Test "BRN speed can be set per market"
+    GrantsComptroller
+    InitSpeeds
+    -- Baseline brn amounts
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 0
+    -- Brainiac speed can be set
+    Comptroller SetBrainiacSpeed vZRX 2
+    FastForward 1000 Blocks
+    Comptroller ClaimBrainiac Geoff
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 2000
+    -- Brainiac speed can be changed
+    Comptroller SetBrainiacSpeed vZRX 4
+    FastForward 1000 Blocks
+    Comptroller ClaimBrainiac Geoff
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 6000
+    -- Brainiac speed can be removed
+    Comptroller SetBrainiacSpeed vZRX 0
+    FastForward 1000 Blocks
+    Comptroller ClaimBrainiac Geoff
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 6000
+
+Test "Set brn rate is removed"
+    GrantsComptroller
+    InitSpeeds
+    AllowFailures
+    Comptroller SetBrainiacRate 5
+
+Test "BRN is not claimed automatically"
+    GrantsComptroller
+    InitSpeeds
+    Comptroller SetBrainiacSpeed vZRX 2
+    FastForward 100000 Blocks
+    -- Check brn is not claimed automatically
+    Mint Geoff 50e18 vZRX
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 0
+    -- Confirm there was brn to claim
+    Comptroller ClaimBrainiac Geoff
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 200000

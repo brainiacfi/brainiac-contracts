@@ -1,0 +1,2 @@
+find . ! -path *node_modules* ! -path *.git* | rename 's/VToken/BRToken/g'
+find . ! -path *node_modules* ! -path *.git* | rename 's/VToken/BRToken/g'

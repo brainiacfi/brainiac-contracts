@@ -1,58 +1,58 @@
 import {Event} from '../Event';
 import {addAction, World} from '../World';
-import {VAIUnitroller} from '../Contract/VAIUnitroller';
+import {BAIUnitroller} from '../Contract/BAIUnitroller';
 import {Invokation} from '../Invokation';
 import {Arg, Fetcher, getFetcherValue} from '../Command';
 import {storeAndSaveContract} from '../Networks';
 import {getContract} from '../Contract';
 
-const VAIUnitrollerContract = getContract("VAIUnitroller");
+const BAIUnitrollerContract = getContract("BAIUnitroller");
 
-export interface VAIUnitrollerData {
-  invokation: Invokation<VAIUnitroller>,
+export interface BAIUnitrollerData {
+  invokation: Invokation<BAIUnitroller>,
   description: string,
   address?: string
 }
 
-export async function buildVAIUnitroller(world: World, from: string, event: Event): Promise<{world: World, vaiunitroller: VAIUnitroller, vaiunitrollerData: VAIUnitrollerData}> {
+export async function buildBAIUnitroller(world: World, from: string, event: Event): Promise<{world: World, baiunitroller: BAIUnitroller, baiunitrollerData: BAIUnitrollerData}> {
   const fetchers = [
-    new Fetcher<{}, VAIUnitrollerData>(`
-        #### VAIUnitroller
+    new Fetcher<{}, BAIUnitrollerData>(`
+        #### BAIUnitroller
 
         * "" - The Upgradable Comptroller
-          * E.g. "VAIUnitroller Deploy"
+          * E.g. "BAIUnitroller Deploy"
       `,
-      "VAIUnitroller",
+      "BAIUnitroller",
       [],
       async (world, {}) => {
         return {
-          invokation: await VAIUnitrollerContract.deploy<VAIUnitroller>(world, from, []),
-          description: "VAIUnitroller"
+          invokation: await BAIUnitrollerContract.deploy<BAIUnitroller>(world, from, []),
+          description: "BAIUnitroller"
         };
       },
       {catchall: true}
     )
   ];
 
-  let vaiunitrollerData = await getFetcherValue<any, VAIUnitrollerData>("DeployVAIUnitroller", fetchers, world, event);
-  let invokation = vaiunitrollerData.invokation;
-  delete vaiunitrollerData.invokation;
+  let baiunitrollerData = await getFetcherValue<any, BAIUnitrollerData>("DeployBAIUnitroller", fetchers, world, event);
+  let invokation = baiunitrollerData.invokation;
+  delete baiunitrollerData.invokation;
 
   if (invokation.error) {
     throw invokation.error;
   }
-  const vaiunitroller = invokation.value!;
-  vaiunitrollerData.address = vaiunitroller._address;
+  const baiunitroller = invokation.value!;
+  baiunitrollerData.address = baiunitroller._address;
 
   world = await storeAndSaveContract(
     world,
-    vaiunitroller,
-    'VAIUnitroller',
+    baiunitroller,
+    'BAIUnitroller',
     invokation,
     [
-      { index: ['VAIUnitroller'], data: vaiunitrollerData }
+      { index: ['BAIUnitroller'], data: baiunitrollerData }
     ]
   );
 
-  return {world, vaiunitroller, vaiunitrollerData};
+  return {world, baiunitroller, baiunitrollerData};
 }

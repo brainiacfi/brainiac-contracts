@@ -1,11 +1,11 @@
 const BigNum = require('bignumber.js');
 const {Ganache} = require('eth-saddle/dist/config');
-const {bnbUnsigned} = require('../Utils/BSC');
+const {ckbUnsigned} = require('../Utils/BSC');
 const {
   makeInterestRateModel,
   getBorrowRate,
   getSupplyRate
-} = require('../Utils/Venus');
+} = require('../Utils/Brainiac');
 
 const blocksPerYear = 2102400;
 const secondsPerYear = 60 * 60 * 24 * 365;
@@ -77,15 +77,15 @@ describe('DAIInterestRateModelV2', () => {
 
       // TODO: Get contract craz
       let {contract: model} = await saddle.deployFull('DAIInterestRateModelV2', [
-        bnbUnsigned(0.8e18),
-        bnbUnsigned(0.9e18),
+        ckbUnsigned(0.8e18),
+        ckbUnsigned(0.9e18),
         "0xea190dbdc7adf265260ec4da6e9675fd4f5a78bb",
         "0xcbb7718c9f39d05aeede1c472ca8bf804b2f1ead"
       ], {gas: 20000000, gasPrice: 20000, from: root}, kovan);
 
-      let args = [0.5e18, 0.45e18, 500].map(bnbUnsigned);
+      let args = [0.5e18, 0.45e18, 500].map(ckbUnsigned);
       // let mult = await call(model, 'multiplierPerBlock');
-      let sr = await call(model, 'getSupplyRate', [...args, bnbUnsigned(0.1e18)]);
+      let sr = await call(model, 'getSupplyRate', [...args, ckbUnsigned(0.1e18)]);
       // TODO: This doesn't check the return valie?
     });
   });
@@ -145,15 +145,15 @@ describe('DAIInterestRateModelV2', () => {
           const onePlusPerSecondDuty = 1e27 + (duty / secondsPerYear);
           const perSecondBase = base / secondsPerYear;
 
-          const pot = await deploy('MockPot', [ bnbUnsigned(onePlusPerSecondDsr) ]);
+          const pot = await deploy('MockPot', [ ckbUnsigned(onePlusPerSecondDsr) ]);
           const jug = await deploy('MockJug', [
-            bnbUnsigned(onePlusPerSecondDuty),
-            bnbUnsigned(perSecondBase)
+            ckbUnsigned(onePlusPerSecondDuty),
+            ckbUnsigned(perSecondBase)
           ]);
 
           const daiIRM = await deploy('DAIInterestRateModelV2', [
-            bnbUnsigned(jump),
-            bnbUnsigned(kink),
+            ckbUnsigned(jump),
+            ckbUnsigned(kink),
             pot._address,
             jug._address
           ]);
@@ -221,15 +221,15 @@ describe('DAIInterestRateModelV2', () => {
           const onePlusPerSecondDuty = 1e27 + (duty / secondsPerYear);
           const perSecondBase = base / secondsPerYear;
 
-          const pot = await deploy('MockPot', [ bnbUnsigned(onePlusPerSecondDsr) ]);
+          const pot = await deploy('MockPot', [ ckbUnsigned(onePlusPerSecondDsr) ]);
           const jug = await deploy('MockJug', [
-            bnbUnsigned(onePlusPerSecondDuty),
-            bnbUnsigned(perSecondBase)
+            ckbUnsigned(onePlusPerSecondDuty),
+            ckbUnsigned(perSecondBase)
           ]);
 
           const daiIRM = await deploy('DAIInterestRateModelV2', [
-            bnbUnsigned(jump),
-            bnbUnsigned(kink),
+            ckbUnsigned(jump),
+            ckbUnsigned(kink),
             pot._address,
             jug._address
           ]);

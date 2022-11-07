@@ -18,15 +18,15 @@ function encodeParameters(types, values) {
   return abi.encode(types, valuesPatched);
 }
 
-async function bnbBalance(addr) {
+async function ckbBalance(addr) {
   return new BigNum(await web3.eth.getBalance(addr));
 }
 
-async function vaiBalance(vai, addr) {
+async function baiBalance(bai, addr) {
   return new BigNum(await web3.eth.getBalance(addr));
 }
 
-async function bnbGasCost(receipt) {
+async function ckbGasCost(receipt) {
   const tx = await web3.eth.getTransaction(receipt.transactionHash);
   const gasUsed = new BigNum(receipt.gasUsed);
   const gasPrice = new BigNum(tx.gasPrice);
@@ -37,15 +37,15 @@ function getBigNumber(value) {
   return new BigNum(value);
 }
 
-function bnbExp(num) { return bnbMantissa(num, 1e18) }
-function bnbDouble(num) { return bnbMantissa(num, 1e36) }
-function bnbMantissa(num, scale = 1e18) {
+function ckbExp(num) { return ckbMantissa(num, 1e18) }
+function ckbDouble(num) { return ckbMantissa(num, 1e36) }
+function ckbMantissa(num, scale = 1e18) {
   if (num < 0)
     return new BigNum(2).pow(256).plus(num);
   return new BigNum(num).times(scale);
 }
 
-function bnbUnsigned(num) {
+function ckbUnsigned(num) {
   return new BigNum(num);
 }
 
@@ -141,12 +141,12 @@ async function sendFallback(contract, opts = {}) {
 module.exports = {
   address,
   encodeParameters,
-  bnbBalance,
-  bnbGasCost,
-  bnbExp,
-  bnbDouble,
-  bnbMantissa,
-  bnbUnsigned,
+  ckbBalance,
+  ckbGasCost,
+  ckbExp,
+  ckbDouble,
+  ckbMantissa,
+  ckbUnsigned,
   mergeInterface,
   keccak256,
   unlockedAccounts,

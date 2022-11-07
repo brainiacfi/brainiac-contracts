@@ -30,7 +30,7 @@ export async function buildGovernor(
       {
         name: StringV,
         timelock: AddressV,
-        xvsVault: AddressV,
+        brnVault: AddressV,
         admin: AddressV,
         implementation: AddressV,
         votingPeriod: NumberV,
@@ -42,14 +42,14 @@ export async function buildGovernor(
     >(
       `
       #### GovernorBravoDelegator
-      * "GovernorBravo Deploy BravoDelegator name:<String> timelock:<Address> xvsVault:<Address> admin:<Address> implementation:<Address> votingPeriod:<Number> votingDelay:<Number> guardian:<Address>" - Deploys Venus Governor Bravo with a given parameters
-        * E.g. "GovernorBravo Deploy BravoDelegator GovernorBravo (Address Timelock) (Address XVSVault) Admin (Address impl) 86400 1 Guardian"
+      * "GovernorBravo Deploy BravoDelegator name:<String> timelock:<Address> brnVault:<Address> admin:<Address> implementation:<Address> votingPeriod:<Number> votingDelay:<Number> guardian:<Address>" - Deploys Brainiac Governor Bravo with a given parameters
+        * E.g. "GovernorBravo Deploy BravoDelegator GovernorBravo (Address Timelock) (Address BRNVault) Admin (Address impl) 86400 1 Guardian"
     `,
       "BravoDelegator",
       [
         new Arg("name", getStringV),
         new Arg("timelock", getAddressV),
-        new Arg("xvsVault", getAddressV),
+        new Arg("brnVault", getAddressV),
         new Arg("admin", getAddressV),
         new Arg("implementation", getAddressV),
         new Arg("votingPeriod", getNumberV),
@@ -57,13 +57,13 @@ export async function buildGovernor(
         new Arg("proposalThreshold", getNumberV),
         new Arg("guardian", getAddressV)
       ],
-      async (world, {name, timelock, xvsVault, admin, implementation, votingPeriod, votingDelay, proposalThreshold, guardian }) => {
+      async (world, {name, timelock, brnVault, admin, implementation, votingPeriod, votingDelay, proposalThreshold, guardian }) => {
         return {
           invokation: await GovernorBravoDelegator.deploy<GovernorBravo>(
             world,
             from,
             [
-              timelock.val, xvsVault.val, admin.val, implementation.val, votingPeriod.encode(),
+              timelock.val, brnVault.val, admin.val, implementation.val, votingPeriod.encode(),
               votingDelay.encode(), proposalThreshold.encode(), guardian.val
             ]
           ),
@@ -76,7 +76,7 @@ export async function buildGovernor(
       {
         name: StringV,
         timelock: AddressV,
-        xvsVault: AddressV,
+        brnVault: AddressV,
         admin: AddressV,
         votingPeriod: NumberV,
         votingDelay: NumberV,
@@ -87,27 +87,27 @@ export async function buildGovernor(
     >(
       `
       #### GovernorBravoImmutable
-      * "GovernorBravoImmut Deploy BravoImmutable name:<String> timelock:<Address> xvsVault:<Address> admin:<Address> votingPeriod:<Number> votingDelay:<Number> guardian:<Address>" - Deploys Venus Governor Bravo Immutable with a given parameters
-        * E.g. "GovernorBravo Deploy BravoImmutable GovernorBravo (Address Timelock) (Address XVSVault) Admin 86400 1 Guardian"
+      * "GovernorBravoImmut Deploy BravoImmutable name:<String> timelock:<Address> brnVault:<Address> admin:<Address> votingPeriod:<Number> votingDelay:<Number> guardian:<Address>" - Deploys Brainiac Governor Bravo Immutable with a given parameters
+        * E.g. "GovernorBravo Deploy BravoImmutable GovernorBravo (Address Timelock) (Address BRNVault) Admin 86400 1 Guardian"
     `,
       "BravoImmutable",
       [
         new Arg("name", getStringV),
         new Arg("timelock", getAddressV),
-        new Arg("xvsVault", getAddressV),
+        new Arg("brnVault", getAddressV),
         new Arg("admin", getAddressV),
         new Arg("votingPeriod", getNumberV),
         new Arg("votingDelay", getNumberV),
         new Arg("proposalThreshold", getNumberV),
         new Arg("guardian", getAddressV)
       ],
-      async (world, { name, timelock, xvsVault, admin, votingPeriod, votingDelay, proposalThreshold, guardian }) => {
+      async (world, { name, timelock, brnVault, admin, votingPeriod, votingDelay, proposalThreshold, guardian }) => {
         return {
           invokation: await GovernorBravoImmutable.deploy<GovernorBravo>(
             world,
             from,
             [
-              timelock.val, xvsVault.val, admin.val, votingPeriod.encode(),
+              timelock.val, brnVault.val, admin.val, votingPeriod.encode(),
               votingDelay.encode(), proposalThreshold.encode(), guardian.val
             ]
           ),
@@ -122,7 +122,7 @@ export async function buildGovernor(
     >(
       `
       #### GovernorBravoDelegate
-      * "Governor Deploy BravoDelegate name:<String>" - Deploys Venus Governor Bravo Delegate
+      * "Governor Deploy BravoDelegate name:<String>" - Deploys Brainiac Governor Bravo Delegate
         * E.g. "Governor Deploy BravoDelegate GovernorBravoDelegate"
     `,
       "BravoDelegate",
@@ -147,7 +147,7 @@ export async function buildGovernor(
     >(
       `
       #### GovernorBravoDelegateHarness
-      * "Governor Deploy BravoDelegateHarness name:<String>" - Deploys Venus Governor Bravo Delegate Harness
+      * "Governor Deploy BravoDelegateHarness name:<String>" - Deploys Brainiac Governor Bravo Delegate Harness
         * E.g. "Governor Deploy BravoDelegateHarness GovernorBravoDelegateHarness"
     `,
       "BravoDelegateHarness",

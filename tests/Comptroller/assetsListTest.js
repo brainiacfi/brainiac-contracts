@@ -1,8 +1,8 @@
 const {both} = require('../Utils/BSC');
 const {
   makeComptroller,
-  makeVToken
-} = require('../Utils/Venus');
+  makeBRToken
+} = require('../Utils/Brainiac');
 
 describe('assetListTest', () => {
   let root, customer, accounts;
@@ -14,7 +14,7 @@ describe('assetListTest', () => {
     comptroller = await makeComptroller({maxAssets: 10});
     allTokens = [OMG, ZRX, BAT, REP, DAI, SKT] = await Promise.all(
       ['OMG', 'ZRX', 'BAT', 'REP', 'DAI', 'sketch']
-        .map(async (name) => makeVToken({comptroller, name, symbol: name, supportMarket: name != 'sketch', underlyingPrice: 0.5}))
+        .map(async (name) => makeBRToken({comptroller, name, symbol: name, supportMarket: name != 'sketch', underlyingPrice: 0.5}))
     );
   });
 
@@ -57,7 +57,7 @@ describe('assetListTest', () => {
       const result1 = await enterAndCheckMarkets([OMG], [OMG]);
       const result2 = await enterAndCheckMarkets([OMG], [OMG]);
       expect(result1).toHaveLog('MarketEntered', {
-          vToken: OMG._address,
+          brToken: OMG._address,
           account: customer
         });
       expect(result2.events).toEqual({});
@@ -140,7 +140,7 @@ describe('assetListTest', () => {
   });
 
   describe('entering from borrowAllowed', () => {
-    it("enters when called by a vtoken", async () => {
+    it("enters when called by a brtoken", async () => {
       await send(BAT, 'harnessCallBorrowAllowed', [1], {from: customer});
 
       const assetsIn = await call(comptroller, 'getAssetsIn', [customer]);
@@ -150,10 +150,10 @@ describe('assetListTest', () => {
       await checkMarkets([BAT]);
     });
 
-    it("reverts when called by not a vtoken", async () => {
+    it("reverts when called by not a brtoken", async () => {
       await expect(
         send(comptroller, 'borrowAllowed', [BAT._address, customer, 1], {from: customer})
-      ).rejects.toRevert('revert sender must be vToken');
+      ).rejects.toRevert('revert sender must be brToken');
 
       const assetsIn = await call(comptroller, 'getAssetsIn', [customer]);
 

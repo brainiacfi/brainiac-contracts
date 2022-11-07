@@ -1,7 +1,7 @@
 -- Tests for the grants and math patch
 
--- NewComptroller, but with markets listed so that we can make them venus markets in constructor
-Macro FlywheelComptroller price=1.0 borrowRate=0.000005 venusInitAmount=5000000e18
+-- NewComptroller, but with markets listed so that we can make them brainiac markets in constructor
+Macro FlywheelComptroller price=1.0 borrowRate=0.000005 brainiacInitAmount=5000000e18
     Unitroller Deploy
     PriceOracle Deploy Fixed price
     PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
@@ -14,18 +14,18 @@ Macro FlywheelComptroller price=1.0 borrowRate=0.000005 venusInitAmount=5000000e
     Comptroller SetMaxAssets 20
     Comptroller SetCloseFactor 0.5
     Comptroller LiquidationIncentive 1.1
-    Comptroller SetVenusRate 1e18
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
+    Comptroller SetBrainiacRate 1e18
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
     Support vZRX collateralFactor:0.5
     Support vBAT collateralFactor:0.5
-    Comptroller AddVenusMarkets (vZRX vBAT)
-    Bep20 Deploy Standard XVS "XVS Token" 18
-    Give (Address Comptroller) venusInitAmount XVS
-    Comptroller Send "setXVSAddress(address)" (Address XVS)
-    Bep20 Deploy Standard VAI "VAI Token" 18
-    Give (Address Comptroller) venusInitAmount VAI
-    Comptroller Send "setVAIAddress(address)" (Address VAI)
+    Comptroller AddBrainiacMarkets (vZRX vBAT)
+    Erc20 Deploy Standard BRN "BRN Token" 18
+    Give (Address Comptroller) brainiacInitAmount BRN
+    Comptroller Send "setBRNAddress(address)" (Address BRN)
+    Erc20 Deploy Standard BAI "BAI Token" 18
+    Give (Address Comptroller) brainiacInitAmount BAI
+    Comptroller Send "setBAIAddress(address)" (Address BAI)
 
 Macro GrantsComptroller
     FlywheelComptroller
@@ -55,33 +55,33 @@ Macro InitSpeeds
     Mint Coburn 6e18 vBAT--tokenbalance = 6e18 / 2e9 = 3e9
     EnterMarkets Coburn vBAT
     Borrow Coburn 1e18 vZRX
-    Comptroller SetVenusSpeed vZRX 1
-    Comptroller SetVenusSpeed vBAT 1
-    Comptroller RefreshVenusSpeeds
-    Comptroller Send "setXVSAddress(address)" (Address XVS)
+    Comptroller SetBrainiacSpeed vZRX 1
+    Comptroller SetBrainiacSpeed vBAT 1
+    Comptroller RefreshBrainiacSpeeds
+    Comptroller Send "setBRNAddress(address)" (Address BRN)
 
-Test "XVS can be granted in combination with liquidity rewards"
+Test "BRN can be granted in combination with liquidity rewards"
     GrantsComptroller
     InitSpeeds
-    Assert Equal (Comptroller VenusAccrued Geoff) 0
-    Assert Equal (Bep20 XVS TokenBalance Geoff) 0
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 0
     FastForward 1000 Blocks
-    Comptroller ClaimVenus Geoff
-    Comptroller Send "_grantXVS(address,uint256)" (Address Geoff) 1000
-    Assert Equal (Comptroller VenusAccrued Geoff) 0
-    Assert Equal (Bep20 XVS TokenBalance Geoff) 1000000000000000001000
+    Comptroller ClaimBrainiac Geoff
+    Comptroller Send "_grantBRN(address,uint256)" (Address Geoff) 1000
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 1000000000000000001000
 
-Test "XVS can be granted"
+Test "BRN can be granted"
     -- Can be granted once
     GrantsComptroller
     InitSpeeds
-    Assert Equal (Comptroller VenusAccrued Geoff) 0
-    Assert Equal (Bep20 XVS TokenBalance Geoff) 0
-    Comptroller Send "_grantXVS(address,uint256)" (Address Geoff) 1000
-    Assert Equal (Comptroller VenusAccrued Geoff) 0
-    Assert Equal (Bep20 XVS TokenBalance Geoff) 1000
-    -- Assert Log VenusGranted (recipient (Address Geoff)) (amount "1000")
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 0
+    Comptroller Send "_grantBRN(address,uint256)" (Address Geoff) 1000
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 1000
+    -- Assert Log BrainiacGranted (recipient (Address Geoff)) (amount "1000")
     -- Can be granted multiple times
-    Comptroller Send "_grantXVS(address,uint256)" (Address Geoff) 2000
-    Assert Equal (Comptroller VenusAccrued Geoff) 0
-    Assert Equal (Bep20 XVS TokenBalance Geoff) 3000
+    Comptroller Send "_grantBRN(address,uint256)" (Address Geoff) 2000
+    Assert Equal (Comptroller BrainiacAccrued Geoff) 0
+    Assert Equal (Erc20 BRN TokenBalance Geoff) 3000

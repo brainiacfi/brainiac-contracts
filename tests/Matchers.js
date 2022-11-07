@@ -1,7 +1,7 @@
 const { last } = require('./Utils/JS');
-const { address, bnbUnsigned } = require('./Utils/BSC');
+const { address, ckbUnsigned } = require('./Utils/BSC');
 const diff = require('jest-diff').default;
-const { ComptrollerErr, VAIControllerErr, TokenErr, IRErr, MathErr } = require('./Errors');
+const { ComptrollerErr, BAIControllerErr, TokenErr, IRErr, MathErr } = require('./Errors');
 
 function opts(comment) {
   return {
@@ -306,8 +306,8 @@ expect.extend({
     return hasError.call(this, actual, expectedErrorName, ComptrollerErr);
   },
 
-  toHaveVAITrollError(actual, expectedErrorName) {
-    return hasError.call(this, actual, expectedErrorName, VAIControllerErr);
+  toHaveBAITrollError(actual, expectedErrorName) {
+    return hasError.call(this, actual, expectedErrorName, BAIControllerErr);
   },
 
   toHaveTokenError(actual, expectedErrorName) {
@@ -322,16 +322,16 @@ expect.extend({
     return hasFailure.call(this, result, err, info, detail, ComptrollerErr, 'toHaveTrollFailure');
   },
 
-  toHaveVAITrollFailure(result, err, info, detail=undefined) {
-    return hasFailure.call(this, result, err, info, detail, VAIControllerErr, 'toHaveVAITrollFailure');
+  toHaveBAITrollFailure(result, err, info, detail=undefined) {
+    return hasFailure.call(this, result, err, info, detail, BAIControllerErr, 'toHaveBAITrollFailure');
   },
 
   toHaveTokenFailure(result, err, info, detail=undefined) {
     return hasFailure.call(this, result, err, info, detail, TokenErr, 'toHaveTokenFailure');
   },
 
-  toHaveVAITrollMathFailure(result, info, detail) {
-    return hasFailure.call(this, result, 'MATH_ERROR', info, detail && (MathErr.Error[detail] || -1), VAIControllerErr, 'toHaveVAITrollMathFailure');
+  toHaveBAITrollMathFailure(result, info, detail) {
+    return hasFailure.call(this, result, 'MATH_ERROR', info, detail && (MathErr.Error[detail] || -1), BAIControllerErr, 'toHaveBAITrollMathFailure');
   },
 
   toHaveTokenMathFailure(result, info, detail) {
@@ -346,16 +346,16 @@ expect.extend({
     return hasErrorTuple.call(this, result, tuple, ComptrollerErr, cmp);
   },
 
-  toHaveVAITrollReject(result, info, detail) {
-    return hasFailure.call(this, result, 'REJECTION', info, detail && ComptrollerErr.Error[detail], VAIControllerErr, 'toHaveVAITrollReject');
+  toHaveBAITrollReject(result, info, detail) {
+    return hasFailure.call(this, result, 'REJECTION', info, detail && ComptrollerErr.Error[detail], BAIControllerErr, 'toHaveBAITrollReject');
   },
 
-  toHaveVAITrollErrorTuple(result, tuple, cmp=undefined) {
-    return hasErrorTuple.call(this, result, tuple, VAIControllerErr, cmp);
+  toHaveBAITrollErrorTuple(result, tuple, cmp=undefined) {
+    return hasErrorTuple.call(this, result, tuple, BAIControllerErr, cmp);
   },
 
   toEqualNumber(actual, expected) {
-    return match.call(this, actual, expected, bnbUnsigned(actual).eq(bnbUnsigned(expected)), opts('toEqualNumber'));
+    return match.call(this, actual, expected, ckbUnsigned(actual).eq(ckbUnsigned(expected)), opts('toEqualNumber'));
   },
 
   toPartEqual(actual, expected) {

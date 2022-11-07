@@ -1,23 +1,23 @@
 import { Event } from '../Event';
 import { addAction, World } from '../World';
-import { XVSVault, XVSVaultImpl, XVSVaultProxy } from '../Contract/XVSVault';
-import { buildXVSVaultImpl } from '../Builder/XVSVaultImplBuilder';
+import { BRNVault, BRNVaultImpl, BRNVaultProxy } from '../Contract/BRNVault';
+import { buildBRNVaultImpl } from '../Builder/BRNVaultImplBuilder';
 import { invoke } from '../Invokation';
 import { getEventV } from '../CoreValue';
 import { EventV } from '../Value';
 import { Arg, Command, processCommandEvent, View } from '../Command';
-import { getXVSVaultImpl, getXVSVaultProxy } from '../ContractLookup';
+import { getBRNVaultImpl, getBRNVaultProxy } from '../ContractLookup';
 import { NoErrorReporter } from '../ErrorReporter';
 import { mergeContractABI } from '../Networks';
 
-async function genXVSVault(world: World, from: string, params: Event): Promise<World> {
-  let { world: nextWorld, xvsVaultImpl, xvsVaultData } = await buildXVSVaultImpl(world, from, params);
+async function genBRNVault(world: World, from: string, params: Event): Promise<World> {
+  let { world: nextWorld, brnVaultImpl, brnVaultData } = await buildBRNVaultImpl(world, from, params);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Deployed XVS Vault implementation (${xvsVaultImpl.name}) to address ${xvsVaultImpl._address}`,
-    xvsVaultData.invokation
+    `Deployed BRN Vault implementation (${brnVaultImpl.name}) to address ${brnVaultImpl._address}`,
+    brnVaultData.invokation
   );
 
   return world;
@@ -26,8 +26,8 @@ async function genXVSVault(world: World, from: string, params: Event): Promise<W
 async function become(
     world: World,
     from: string,
-    impl: XVSVaultImpl,
-    proxy: XVSVaultProxy
+    impl: BRNVaultImpl,
+    proxy: BRNVaultProxy
   ): Promise<World> {
   let invokation = await invoke(
     world,
@@ -43,41 +43,41 @@ async function become(
     // what exactly the "number of reasons" means here. So let me just hate people who write
     // these kinds of comments.
 
-    world = await mergeContractABI(world, 'XVSVault', proxy, proxy.name, impl.name);
+    world = await mergeContractABI(world, 'BRNVault', proxy, proxy.name, impl.name);
   }
 
-  world = addAction(world, `Become ${proxy._address}'s XVS Vault Implementation`, invokation);
+  world = addAction(world, `Become ${proxy._address}'s BRN Vault Implementation`, invokation);
 
   return world;
 }
 
-export function xvsVaultImplCommands() {
+export function brnVaultImplCommands() {
   return [
     new Command<{ params: EventV }>(
       `
         #### Deploy
 
-        * "Deploy ...params" - Generates a new XVS Vault implementation contract
-        * E.g. "XVSVaultImpl Deploy MyVaultImpl"
+        * "Deploy ...params" - Generates a new BRN Vault implementation contract
+        * E.g. "BRNVaultImpl Deploy MyVaultImpl"
       `,
       "Deploy",
       [
         new Arg("params", getEventV, { variadic: true })
       ],
-      (world, from, { params }) => genXVSVault(world, from, params.val)
+      (world, from, { params }) => genBRNVault(world, from, params.val)
     ),
 
-    new Command<{ proxy: XVSVault, impl: XVSVaultImpl }>(
+    new Command<{ proxy: BRNVault, impl: BRNVaultImpl }>(
       `
         #### Become
 
-        * "XVSVaultImpl <Impl> Become" - Become the new XVS Vault implementation
-        * E.g. "XVSVaultImpl MyVoteImpl Become"
+        * "BRNVaultImpl <Impl> Become" - Become the new BRN Vault implementation
+        * E.g. "BRNVaultImpl MyVoteImpl Become"
       `,
       "Become",
       [
-        new Arg("proxy", getXVSVaultProxy, { implicit: true }),
-        new Arg("impl", getXVSVaultImpl),
+        new Arg("proxy", getBRNVaultProxy, { implicit: true }),
+        new Arg("impl", getBRNVaultImpl),
       ],
       (world, from, { proxy, impl }) => become(world, from, impl, proxy),
       { namePos: 1 }
@@ -85,6 +85,6 @@ export function xvsVaultImplCommands() {
   ];
 }
 
-export async function processXVSVaultImplEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("XVSVaultImpl", xvsVaultImplCommands(), world, event, from);
+export async function processBRNVaultImplEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("BRNVaultImpl", brnVaultImplCommands(), world, event, from);
 }

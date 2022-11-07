@@ -2,32 +2,32 @@
 // const hre = require("hardhat");
 // const ethers = hre.ethers;
 
-// const acceptVAIControllerImplementation = async () => {
+// const acceptBAIControllerImplementation = async () => {
 //   const { deployments, getNamedAccounts, network } = hre;
 //   const { get } = deployments;
 
 //   const { deployer } = await getNamedAccounts();
-//   //   const VAIControllerContract = await ethers.getContractFactory(
-//   //     "VAIController"
+//   //   const BAIControllerContract = await ethers.getContractFactory(
+//   //     "BAIController"
 //   //   );
 
-//   const VAIUnitroller = (await get("VAIUnitroller")).address;
-//   const VAIController = (await get("VAIController")).address;
-//   const VAIUnitrollerContract = await ethers.getContractFactory("VAIUnitroller")
-//   const VAIUnitrollerContractInstance = await VAIUnitrollerContract.attach(
-//     VAIUnitroller
+//   const BAIUnitroller = (await get("BAIUnitroller")).address;
+//   const BAIController = (await get("BAIController")).address;
+//   const BAIUnitrollerContract = await ethers.getContractFactory("BAIUnitroller")
+//   const BAIUnitrollerContractInstance = await BAIUnitrollerContract.attach(
+//     BAIUnitroller
 //   );
-//   const VAIControllerContract = await ethers.getContractFactory("VAIController")
-//   const VAIControllerContractInstance = await VAIControllerContract.attach(
-//     VAIController
+//   const BAIControllerContract = await ethers.getContractFactory("BAIController")
+//   const BAIControllerContractInstance = await BAIControllerContract.attach(
+//     BAIController
 //   );
 
-//   const tx = await VAIUnitrollerContractInstance._setPendingImplementation(VAIController)
+//   const tx = await BAIUnitrollerContractInstance._setPendingImplementation(BAIController)
 //   console.log(tx);
-//   const pendingImplementation = await VAIUnitrollerContractInstance.pendingImplementation();
-//   const becomeImplemenatationTx = await VAIControllerContractInstance._become(VAIUnitroller)
+//   const pendingImplementation = await BAIUnitrollerContractInstance.pendingImplementation();
+//   const becomeImplemenatationTx = await BAIControllerContractInstance._become(BAIUnitroller)
 //   console.log(becomeImplemenatationTx)
-//   console.log(`Transaction successfull VAIController with address "${pendingImplementation}" become Implementation for proxy`)
+//   console.log(`Transaction successfull BAIController with address "${pendingImplementation}" become Implementation for proxy`)
 // };
 
-// export default acceptVAIControllerImplementation;
+// export default acceptBAIControllerImplementation;

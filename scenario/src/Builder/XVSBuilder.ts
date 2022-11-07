@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World, addAction } from '../World';
-import { XVS, XVSScenario } from '../Contract/XVS';
+import { BRN, BRNScenario } from '../Contract/BRN';
 import { Invokation } from '../Invokation';
 import { getAddressV } from '../CoreValue';
 import { StringV, AddressV } from '../Value';
@@ -8,11 +8,11 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract } from '../Contract';
 
-const XVSContract = getContract('XVS');
-const XVSScenarioContract = getContract('XVSScenario');
+const BRNContract = getContract('BRN');
+const BRNScenarioContract = getContract('BRNScenario');
 
 export interface TokenData {
-  invokation: Invokation<XVS>;
+  invokation: Invokation<BRN>;
   contract: string;
   address?: string;
   symbol: string;
@@ -20,18 +20,18 @@ export interface TokenData {
   decimals?: number;
 }
 
-export async function buildXVS(
+export async function buildBRN(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; xvs: XVS; tokenData: TokenData }> {
+): Promise<{ world: World; brn: BRN; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<{ account: AddressV }, TokenData>(
       `
       #### Scenario
 
-      * "XVS Deploy Scenario account:<Address>" - Deploys Scenario XVS Token
-        * E.g. "XVS Deploy Scenario Geoff"
+      * "BRN Deploy Scenario account:<Address>" - Deploys Scenario BRN Token
+        * E.g. "BRN Deploy Scenario Geoff"
     `,
       'Scenario',
       [
@@ -39,10 +39,10 @@ export async function buildXVS(
       ],
       async (world, { account }) => {
         return {
-          invokation: await XVSScenarioContract.deploy<XVSScenario>(world, from, [account.val]),
-          contract: 'XVSScenario',
-          symbol: 'XVS',
-          name: 'Venus Governance Token',
+          invokation: await BRNScenarioContract.deploy<BRNScenario>(world, from, [account.val]),
+          contract: 'BRNScenario',
+          symbol: 'BRN',
+          name: 'Brainiac Governance Token',
           decimals: 18
         };
       }
@@ -50,30 +50,30 @@ export async function buildXVS(
 
     new Fetcher<{ account: AddressV }, TokenData>(
       `
-      #### XVS
+      #### BRN
 
-      * "XVS Deploy account:<Address>" - Deploys XVS Token
-        * E.g. "XVS Deploy Geoff"
+      * "BRN Deploy account:<Address>" - Deploys BRN Token
+        * E.g. "BRN Deploy Geoff"
     `,
-      'XVS',
+      'BRN',
       [
         new Arg("account", getAddressV),
       ],
       async (world, { account }) => {
         if (world.isLocalNetwork()) {
           return {
-            invokation: await XVSScenarioContract.deploy<XVSScenario>(world, from, [account.val]),
-            contract: 'XVSScenario',
-            symbol: 'XVS',
-            name: 'Venus Governance Token',
+            invokation: await BRNScenarioContract.deploy<BRNScenario>(world, from, [account.val]),
+            contract: 'BRNScenario',
+            symbol: 'BRN',
+            name: 'Brainiac Governance Token',
             decimals: 18
           };
         } else {
           return {
-            invokation: await XVSContract.deploy<XVS>(world, from, [account.val]),
-            contract: 'XVS',
-            symbol: 'XVS',
-            name: 'Venus Governance Token',
+            invokation: await BRNContract.deploy<BRN>(world, from, [account.val]),
+            contract: 'BRN',
+            symbol: 'BRN',
+            name: 'Brainiac Governance Token',
             decimals: 18
           };
         }
@@ -82,7 +82,7 @@ export async function buildXVS(
     )
   ];
 
-  let tokenData = await getFetcherValue<any, TokenData>("DeployXVS", fetchers, world, params);
+  let tokenData = await getFetcherValue<any, TokenData>("DeployBRN", fetchers, world, params);
   let invokation = tokenData.invokation;
   delete tokenData.invokation;
 
@@ -90,21 +90,21 @@ export async function buildXVS(
     throw invokation.error;
   }
 
-  const xvs = invokation.value!;
-  tokenData.address = xvs._address;
+  const brn = invokation.value!;
+  tokenData.address = brn._address;
 
   world = await storeAndSaveContract(
     world,
-    xvs,
-    'XVS',
+    brn,
+    'BRN',
     invokation,
     [
-      { index: ['XVS'], data: tokenData },
+      { index: ['BRN'], data: tokenData },
       { index: ['Tokens', tokenData.symbol], data: tokenData }
     ]
   );
 
   tokenData.invokation = invokation;
 
-  return { world, xvs, tokenData };
+  return { world, brn, tokenData };
 }

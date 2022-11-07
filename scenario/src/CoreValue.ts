@@ -20,21 +20,21 @@ import { Arg, Fetcher, getFetcherValue } from './Command';
 import { getUserValue, userFetchers } from './Value/UserValue';
 import { comptrollerFetchers, getComptrollerValue } from './Value/ComptrollerValue';
 import { comptrollerImplFetchers, getComptrollerImplValue } from './Value/ComptrollerImplValue';
-import { vaicontrollerFetchers, getVAIControllerValue } from './Value/VAIControllerValue';
-import { vaicontrollerImplFetchers, getVAIControllerImplValue } from './Value/VAIControllerImplValue';
+import { baicontrollerFetchers, getBAIControllerValue } from './Value/BAIControllerValue';
+import { baicontrollerImplFetchers, getBAIControllerImplValue } from './Value/BAIControllerImplValue';
 import { getUnitrollerValue, unitrollerFetchers } from './Value/UnitrollerValue';
-import { vTokenFetchers, getVTokenValue } from './Value/VTokenValue';
-import { vTokenDelegateFetchers, getVTokenDelegateValue } from './Value/VTokenDelegateValue';
-import { bep20Fetchers, getBep20Value } from './Value/Bep20Value';
+import { brTokenFetchers, getBRTokenValue } from './Value/BRTokenValue';
+import { brTokenDelegateFetchers, getBRTokenDelegateValue } from './Value/BRTokenDelegateValue';
+import { erc20Fetchers, getErc20Value } from './Value/Erc20Value';
 import { mcdFetchers, getMCDValue } from './Value/MCDValue';
 import { getInterestRateModelValue, interestRateModelFetchers } from './Value/InterestRateModelValue';
 import { getPriceOracleValue, priceOracleFetchers } from './Value/PriceOracleValue';
 import { getPriceOracleProxyValue, priceOracleProxyFetchers } from './Value/PriceOracleProxyValue';
 import { getTimelockValue, timelockFetchers, getTimelockAddress } from './Value/TimelockValue';
 import { getMaximillionValue, maximillionFetchers } from './Value/MaximillionValue';
-import { getXVSValue, xvsFetchers } from './Value/XVSValue';
+import { getBRNValue, brnFetchers } from './Value/BRNValue';
 import { getSXPValue, sxpFetchers } from './Value/SXPValue';
-import { getVAIValue, vaiFetchers } from './Value/VAIValue';
+import { getBAIValue, baiFetchers } from './Value/BAIValue';
 import { getGovernorValue, governorFetchers } from './Value/GovernorValue';
 import { getGovernorBravoValue, governorBravoFetchers } from './Value/GovernorBravoValue';
 import { getAddress } from './ContractLookup';
@@ -213,7 +213,7 @@ export async function getStringV(world: World, event: Event): Promise<StringV> {
   return mapValue<StringV>(world, event, str => new StringV(str), getCoreValue, StringV);
 }
 
-async function getBNBBalance(world: World, address: string): Promise<NumberV> {
+async function getCKBBalance(world: World, address: string): Promise<NumberV> {
   let balance = await world.web3.eth.getBalance(address);
 
   return new NumberV(balance);
@@ -477,13 +477,13 @@ const fetchers = [
           let userInMarket = await world.web3.eth.getStorageAt(addr.val, newKeyTwo);
 
           let isCompKey = '0x' + toBN(newKey).add(toBN(3)).toString(16);
-          let isVenusStr = await world.web3.eth.getStorageAt(addr.val, isCompKey);
+          let isBrainiacStr = await world.web3.eth.getStorageAt(addr.val, isCompKey);
 
           return new ListV([
             new BoolV(isListed),
             new ExpNumberV(collateralFactor.toString(), 1e18),
             new BoolV(areEqual(userInMarket, 1)),
-            new BoolV(areEqual(isVenusStr, 1))
+            new BoolV(areEqual(isBrainiacStr, 1))
           ]);
         default:
           return new NothingV();
@@ -768,13 +768,13 @@ const fetchers = [
   ),
   new Fetcher<{ address: AddressV }, Value>(
     `
-      #### BNBBalance
+      #### CKBBalance
 
-      * "BNBBalance <Address>" - Returns given address' bnb balance.
+      * "CKBBalance <Address>" - Returns given address' ckb balance.
     `,
-    'BNBBalance',
+    'CKBBalance',
     [new Arg('address', getAddressV)],
-    (world, { address }) => getBNBBalance(world, address.val)
+    (world, { address }) => getCKBBalance(world, address.val)
   ),
   new Fetcher<{ given: Value; expected: Value }, BoolV>(
     `
@@ -782,8 +782,8 @@ const fetchers = [
 
       * "Equal given:<Value> expected:<Value>" - Returns true if given values are equal
         * E.g. "Equal (Exactly 0) Zero"
-        * E.g. "Equal (VToken vZRX TotalSupply) (Exactly 55)"
-        * E.g. "Equal (VToken vZRX Comptroller) (Comptroller Address)"
+        * E.g. "Equal (BRToken vZRX TotalSupply) (Exactly 55)"
+        * E.g. "Equal (BRToken vZRX Comptroller) (Comptroller Address)"
     `,
     'Equal',
     [new Arg('given', getCoreValue), new Arg('expected', getCoreValue)],
@@ -852,58 +852,58 @@ const fetchers = [
 
   new Fetcher<{ res: Value }, Value>(
     `
-      #### VAIController
+      #### BAIController
 
-      * "VAIController ...vaicontrollerArgs" - Returns vaicontroller value
+      * "BAIController ...baicontrollerArgs" - Returns baicontroller value
     `,
-    'VAIController',
-    [new Arg('res', getVAIControllerValue, { variadic: true })],
+    'BAIController',
+    [new Arg('res', getBAIControllerValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: vaicontrollerFetchers() }
+    { subExpressions: baicontrollerFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### VAIControllerImpl
+      #### BAIControllerImpl
 
-      * "VAIControllerImpl ...vaicontrollerImplArgs" - Returns vaicontroller implementation value
+      * "BAIControllerImpl ...baicontrollerImplArgs" - Returns baicontroller implementation value
     `,
-    'VAIControllerImpl',
-    [new Arg('res', getVAIControllerImplValue, { variadic: true })],
+    'BAIControllerImpl',
+    [new Arg('res', getBAIControllerImplValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: vaicontrollerImplFetchers() }
+    { subExpressions: baicontrollerImplFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### VToken
+      #### BRToken
 
-      * "VToken ...vTokenArgs" - Returns vToken value
+      * "BRToken ...brTokenArgs" - Returns brToken value
     `,
-    'VToken',
-    [new Arg('res', getVTokenValue, { variadic: true })],
+    'BRToken',
+    [new Arg('res', getBRTokenValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: vTokenFetchers() }
+    { subExpressions: brTokenFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### VTokenDelegate
+      #### BRTokenDelegate
 
-      * "VTokenDelegate ...vTokenDelegateArgs" - Returns vToken delegate value
+      * "BRTokenDelegate ...brTokenDelegateArgs" - Returns brToken delegate value
     `,
-    'VTokenDelegate',
-    [new Arg('res', getVTokenDelegateValue, { variadic: true })],
+    'BRTokenDelegate',
+    [new Arg('res', getBRTokenDelegateValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: vTokenDelegateFetchers() }
+    { subExpressions: brTokenDelegateFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### Bep20
+      #### Erc20
 
-      * "Bep20 ...bep20Args" - Returns Bep20 value
+      * "Erc20 ...erc20Args" - Returns Erc20 value
     `,
-    'Bep20',
-    [new Arg('res', getBep20Value, { variadic: true })],
+    'Erc20',
+    [new Arg('res', getErc20Value, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: bep20Fetchers() }
+    { subExpressions: erc20Fetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
@@ -973,20 +973,20 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### XVS
+      #### BRN
 
-      * "XVS ...venusArgs" - Returns XVS value
+      * "BRN ...brainiacArgs" - Returns BRN value
     `,
-    'XVS',
-    [new Arg('res', getXVSValue, { variadic: true })],
+    'BRN',
+    [new Arg('res', getBRNValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: xvsFetchers() }
+    { subExpressions: brnFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
       #### SXP
 
-      * "SXP ...venusArgs" - Returns SXP value
+      * "SXP ...brainiacArgs" - Returns SXP value
     `,
     'SXP',
     [new Arg('res', getSXPValue, { variadic: true })],
@@ -995,14 +995,14 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### VAI
+      #### BAI
 
-      * "VAI ...venusArgs" - Returns VAI value
+      * "BAI ...brainiacArgs" - Returns BAI value
     `,
-    'VAI',
-    [new Arg('res', getVAIValue, { variadic: true })],
+    'BAI',
+    [new Arg('res', getBAIValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: vaiFetchers() }
+    { subExpressions: baiFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
@@ -1029,7 +1029,7 @@ const fetchers = [
 
 let contractFetchers = [
   { contract: "Counter", implicit: false },
-  { contract: "VenusLens", implicit: false },
+  { contract: "BrainiacLens", implicit: false },
   { contract: "Reservoir", implicit: true }
 ];
 

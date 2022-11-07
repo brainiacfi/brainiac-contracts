@@ -1,6 +1,6 @@
 import {Event} from '../Event';
 import {World} from '../World';
-import {VAIControllerImpl} from '../Contract/VAIControllerImpl';
+import {BAIControllerImpl} from '../Contract/BAIControllerImpl';
 import {
   getAddressV
 } from '../CoreValue';
@@ -9,27 +9,27 @@ import {
   Value
 } from '../Value';
 import {Arg, Fetcher, getFetcherValue} from '../Command';
-import {getVAIControllerImpl} from '../ContractLookup';
+import {getBAIControllerImpl} from '../ContractLookup';
 
-export async function getVAIControllerImplAddress(world: World, vaicontrollerImpl: VAIControllerImpl): Promise<AddressV> {
-  return new AddressV(vaicontrollerImpl._address);
+export async function getBAIControllerImplAddress(world: World, baicontrollerImpl: BAIControllerImpl): Promise<AddressV> {
+  return new AddressV(baicontrollerImpl._address);
 }
 
-export function vaicontrollerImplFetchers() {
+export function baicontrollerImplFetchers() {
   return [
-    new Fetcher<{vaicontrollerImpl: VAIControllerImpl}, AddressV>(`
+    new Fetcher<{baicontrollerImpl: BAIControllerImpl}, AddressV>(`
         #### Address
 
-        * "VAIControllerImpl Address" - Returns address of vaicontroller implementation
+        * "BAIControllerImpl Address" - Returns address of baicontroller implementation
       `,
       "Address",
-      [new Arg("vaicontrollerImpl", getVAIControllerImpl)],
-      (world, {vaicontrollerImpl}) => getVAIControllerImplAddress(world, vaicontrollerImpl),
+      [new Arg("baicontrollerImpl", getBAIControllerImpl)],
+      (world, {baicontrollerImpl}) => getBAIControllerImplAddress(world, baicontrollerImpl),
       {namePos: 1}
     )
   ];
 }
 
-export async function getVAIControllerImplValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("VAIControllerImpl", vaicontrollerImplFetchers(), world, event);
+export async function getBAIControllerImplValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("BAIControllerImpl", baicontrollerImplFetchers(), world, event);
 }

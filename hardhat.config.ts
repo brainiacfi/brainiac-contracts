@@ -21,7 +21,7 @@ require("dotenv").config();
 const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || "scanapikey";
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || " ";
 
-// npx hardhat node --fork https://speedy-nodes-nyc.moralis.io/0cda38a96256e0e2b1d3e72b/bsc/mainnet/archive --fork-block-number 18891277
+// npx hardhat node --fork https://v1.mainnet.godwoken.io/rpc --fork-block-number 18891277
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   solidity: {
@@ -45,14 +45,21 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://bsc-dataseed.binance.org/",
+        url: "https://v1.mainnet.godwoken.io/rpc",
       }
     },
     godwokentestnet: {
       url: `https://godwoken-testnet-v1.ckbapp.dev`,
       chainId: 71401,
-      gas: 5600000,
+      gas: 56000000,
       accounts: [`0x${DEPLOYER_PRIVATE_KEY}`]
+    },
+    godwokenmainnet: {
+      url: `https://v1.mainnet.godwoken.io/rpc`,
+      chainId: 71402,
+      // gas: 560000,
+      accounts: [`0x${DEPLOYER_PRIVATE_KEY}`],
+      gasMultiplier: 1.2
     },
     bsctestnet: {
       url:

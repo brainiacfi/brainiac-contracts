@@ -1,7 +1,7 @@
 pragma solidity ^0.5.16;
 
-import "./VBep20.sol";
-import "./VToken.sol";
+import "./BRErc20.sol";
+import "./BRToken.sol";
 import "./PriceOracle.sol";
 
 interface V1PriceOracleInterface {
@@ -18,8 +18,8 @@ contract PriceOracleProxy is PriceOracle {
     /// @notice Address of the guardian, which may set the SAI price once
     address public guardian;
 
-    /// @notice Address of the vBnb contract, which has a constant price
-    address public vBnbAddress;
+    /// @notice Address of the brCkb contract, which has a constant price
+    address public brCkbAddress;
 
     /// @notice Address of the vUSDC contract, which we hand pick a key for
     address public vUsdcAddress;
@@ -45,7 +45,7 @@ contract PriceOracleProxy is PriceOracle {
     /**
      * @param guardian_ The address of the guardian, which may set the SAI price once
      * @param v1PriceOracle_ The address of the v1 price oracle, which will continue to operate and hold prices for collateral assets
-     * @param vBnbAddress_ The address of vBNB, which will return a constant 1e18, since all prices relative to bnb
+     * @param brCkbAddress_ The address of brCKB, which will return a constant 1e18, since all prices relative to ckb
      * @param vUsdcAddress_ The address of vUSDC, which will be read from a special oracle key
      * @param vSaiAddress_ The address of vSAI, which may be read directly from storage
      * @param vDaiAddress_ The address of vDAI, which will be read from a special oracle key
@@ -53,7 +53,7 @@ contract PriceOracleProxy is PriceOracle {
      */
     constructor(address guardian_,
                 address v1PriceOracle_,
-                address vBnbAddress_,
+                address brCkbAddress_,
                 address vUsdcAddress_,
                 address vSaiAddress_,
                 address vDaiAddress_,
@@ -61,7 +61,7 @@ contract PriceOracleProxy is PriceOracle {
         guardian = guardian_;
         v1PriceOracle = V1PriceOracleInterface(v1PriceOracle_);
 
-        vBnbAddress = vBnbAddress_;
+        brCkbAddress = brCkbAddress_;
         vUsdcAddress = vUsdcAddress_;
         vSaiAddress = vSaiAddress_;
         vDaiAddress = vDaiAddress_;
@@ -69,33 +69,33 @@ contract PriceOracleProxy is PriceOracle {
     }
 
     /**
-     * @notice Get the underlying price of a listed vToken asset
-     * @param vToken The vToken to get the underlying price of
+     * @notice Get the underlying price of a listed brToken asset
+     * @param brToken The brToken to get the underlying price of
      * @return The underlying asset price mantissa (scaled by 1e18)
      */
-    function getUnderlyingPrice(VToken vToken) public view returns (uint) {
-        address vTokenAddress = address(vToken);
+    function getUnderlyingPrice(BRToken brToken) public view returns (uint) {
+        address brTokenAddress = address(brToken);
 
-        if (vTokenAddress == vBnbAddress) {
-            // bnb always worth 1
+        if (brTokenAddress == brCkbAddress) {
+            // ckb always worth 1
             return 1e18;
         }
 
-        if (vTokenAddress == vUsdcAddress || vTokenAddress == vUsdtAddress) {
+        if (brTokenAddress == vUsdcAddress || brTokenAddress == vUsdtAddress) {
             return v1PriceOracle.assetPrices(usdcOracleKey);
         }
 
-        if (vTokenAddress == vDaiAddress) {
+        if (brTokenAddress == vDaiAddress) {
             return v1PriceOracle.assetPrices(daiOracleKey);
         }
 
-        if (vTokenAddress == vSaiAddress) {
+        if (brTokenAddress == vSaiAddress) {
             // use the frozen SAI price if set, otherwise use the DAI price
             return saiPrice > 0 ? saiPrice : v1PriceOracle.assetPrices(daiOracleKey);
         }
 
         // otherwise just read from v1 oracle
-        address underlying = VBep20(vTokenAddress).underlying();
+        address underlying = BRErc20(brTokenAddress).underlying();
         return v1PriceOracle.assetPrices(underlying);
     }
 
@@ -106,7 +106,7 @@ contract PriceOracleProxy is PriceOracle {
     function setSaiPrice(uint price) public {
         require(msg.sender == guardian, "only guardian may set the SAI price");
         require(saiPrice == 0, "SAI price may only be set once");
-        require(price < 0.1e18, "SAI price must be < 0.1 BNB");
+        require(price < 0.1e18, "SAI price must be < 0.1 CKB");
         saiPrice = price;
     }
 }

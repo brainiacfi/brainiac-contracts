@@ -1,50 +1,50 @@
 
 Test "Fail to seize calling directly"
     NewComptroller
-    ListedVToken ZRX vZRX initialExchangeRate:1e9
-    ListedVToken BAT vBAT initialExchangeRate:1e9
+    ListedBRToken ZRX vZRX initialExchangeRate:1e9
+    ListedBRToken BAT vBAT initialExchangeRate:1e9
     Prep Geoff Some ZRX vZRX
     Mint Geoff 50e18 vZRX
-    Invariant Remains (Bep20 vZRX TokenBalance Geoff) 50e9
+    Invariant Remains (Erc20 vZRX TokenBalance Geoff) 50e9
     AllowFailures
     Seize 1e9 vZRX caller:Geoff liquidator:Geoff borrower:Torrey
-    -- The caller must be from another vToken market, thus this fails
+    -- The caller must be from another brToken market, thus this fails
     Assert Failure COMPTROLLER_REJECTION LIQUIDATE_SEIZE_COMPTROLLER_REJECTION MARKET_NOT_LISTED
 
-Test "Seize tokens with a paused WBTC vToken-- like normal"
+Test "Seize tokens with a paused WBTC brToken-- like normal"
     NewComptroller
-    ListedVToken ZRX vZRX initialExchangeRate:1e9
-    ListedVToken WBTC vWBTC initialExchangeRate:0.1 tokenType:WBTC
+    ListedBRToken ZRX vZRX initialExchangeRate:1e9
+    ListedBRToken WBTC vWBTC initialExchangeRate:0.1 tokenType:WBTC
     Prep Geoff Some ZRX vZRX
     Mint Geoff 50e18 vZRX
-    Bep20 WBTC Pause
-    Invariant Remains (Bep20 vZRX TokenBalance Geoff) 50e9
+    Erc20 WBTC Pause
+    Invariant Remains (Erc20 vZRX TokenBalance Geoff) 50e9
     AllowFailures
     Seize 1e9 vWBTC caller:Geoff liquidator:Geoff borrower:Torrey
-    -- The caller must be from another vToken market, thus this fails
+    -- The caller must be from another brToken market, thus this fails
     Assert Failure COMPTROLLER_REJECTION LIQUIDATE_SEIZE_COMPTROLLER_REJECTION MARKET_NOT_LISTED
 
-Test "Not able to seize tokens with a malicious unlisted vToken"
+Test "Not able to seize tokens with a malicious unlisted brToken"
     NewComptroller
-    ListedVToken ZRX vZRX initialExchangeRate:1e9
-    NewVTokenImmutable EVL vEVL initialExchangeRate:1e9 vTokenType:VEvil
+    ListedBRToken ZRX vZRX initialExchangeRate:1e9
+    NewBRTokenImmutable EVL vEVL initialExchangeRate:1e9 brTokenType:VEvil
     Prep Geoff Some ZRX vZRX
     Mint Geoff 50e18 vZRX
-    Invariant Remains (Bep20 vZRX TokenBalance Geoff) 50e9
-    Invariant Static (Bep20 vZRX TokenBalance Geoff)
-    Invariant Static (Bep20 vZRX TokenBalance Torrey)
+    Invariant Remains (Erc20 vZRX TokenBalance Geoff) 50e9
+    Invariant Static (Erc20 vZRX TokenBalance Geoff)
+    Invariant Static (Erc20 vZRX TokenBalance Torrey)
     AllowFailures
     EvilSeize vEVL 1e9 vZRX seizer:Geoff seizee:Torrey
-    -- The caller must be from another vToken market, thus this fails
+    -- The caller must be from another brToken market, thus this fails
     Assert Failure COMPTROLLER_REJECTION LIQUIDATE_SEIZE_COMPTROLLER_REJECTION MARKET_NOT_LISTED
 
-Test "Able to seize tokens with a malicious listed vToken"
+Test "Able to seize tokens with a malicious listed brToken"
     NewComptroller
-    ListedVToken ZRX vZRX initialExchangeRate:1e9
-    ListedVTokenImmutable EVL vEVL initialExchangeRate:1e9 vTokenType:VEvil
+    ListedBRToken ZRX vZRX initialExchangeRate:1e9
+    ListedBRTokenImmutable EVL vEVL initialExchangeRate:1e9 brTokenType:VEvil
     Prep Geoff Some ZRX vZRX
     Mint Geoff 50e18 vZRX
-    Assert Equal (Bep20 vZRX TokenBalance Geoff) 50e9
-    Expect Changes (Bep20 vZRX TokenBalance Geoff) -1e9
-    Expect Changes (Bep20 vZRX TokenBalance Torrey) +1e9
+    Assert Equal (Erc20 vZRX TokenBalance Geoff) 50e9
+    Expect Changes (Erc20 vZRX TokenBalance Geoff) -1e9
+    Expect Changes (Erc20 vZRX TokenBalance Torrey) +1e9
     EvilSeize vEVL 1e9 vZRX seizer:Torrey seizee:Geoff

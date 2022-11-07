@@ -1,123 +1,123 @@
 const {
-  bnbGasCost,
-  bnbMantissa,
-  bnbUnsigned,
+  ckbGasCost,
+  ckbMantissa,
+  ckbUnsigned,
   sendFallback
 } = require('../Utils/BSC');
 
 const {
-  makeVToken,
+  makeBRToken,
   balanceOf,
   fastForward,
   setBalance,
-  setBNBBalance,
+  setCKBBalance,
   getBalances,
   adjustBalances,
-} = require('../Utils/Venus');
+} = require('../Utils/Brainiac');
 
 const exchangeRate = 5;
-const mintAmount = bnbUnsigned(1e5);
+const mintAmount = ckbUnsigned(1e5);
 const mintTokens = mintAmount.div(exchangeRate);
-const redeemTokens = bnbUnsigned(10e3);
+const redeemTokens = ckbUnsigned(10e3);
 const redeemAmount = redeemTokens.mul(exchangeRate);
 
-async function preMint(vToken, minter, mintAmount, mintTokens, exchangeRate) {
-  await send(vToken.comptroller, 'setMintAllowed', [true]);
-  await send(vToken.comptroller, 'setMintVerify', [true]);
-  await send(vToken.interestRateModel, 'setFailBorrowRate', [false]);
-  await send(vToken, 'harnessSetExchangeRate', [bnbMantissa(exchangeRate)]);
+async function preMint(brToken, minter, mintAmount, mintTokens, exchangeRate) {
+  await send(brToken.comptroller, 'setMintAllowed', [true]);
+  await send(brToken.comptroller, 'setMintVerify', [true]);
+  await send(brToken.interestRateModel, 'setFailBorrowRate', [false]);
+  await send(brToken, 'harnessSetExchangeRate', [ckbMantissa(exchangeRate)]);
 }
 
-async function mintExplicit(vToken, minter, mintAmount) {
-  return send(vToken, 'mint', [], {from: minter, value: mintAmount});
+async function mintExplicit(brToken, minter, mintAmount) {
+  return send(brToken, 'mint', [], {from: minter, value: mintAmount});
 }
 
-async function mintFallback(vToken, minter, mintAmount) {
-  return sendFallback(vToken, {from: minter, value: mintAmount});
+async function mintFallback(brToken, minter, mintAmount) {
+  return sendFallback(brToken, {from: minter, value: mintAmount});
 }
 
-async function preRedeem(vToken, redeemer, redeemTokens, redeemAmount, exchangeRate) {
-  await send(vToken.comptroller, 'setRedeemAllowed', [true]);
-  await send(vToken.comptroller, 'setRedeemVerify', [true]);
-  await send(vToken.interestRateModel, 'setFailBorrowRate', [false]);
-  await send(vToken, 'harnessSetExchangeRate', [bnbMantissa(exchangeRate)]);
-  await setBNBBalance(vToken, redeemAmount);
-  await send(vToken, 'harnessSetTotalSupply', [redeemTokens]);
-  await setBalance(vToken, redeemer, redeemTokens);
+async function preRedeem(brToken, redeemer, redeemTokens, redeemAmount, exchangeRate) {
+  await send(brToken.comptroller, 'setRedeemAllowed', [true]);
+  await send(brToken.comptroller, 'setRedeemVerify', [true]);
+  await send(brToken.interestRateModel, 'setFailBorrowRate', [false]);
+  await send(brToken, 'harnessSetExchangeRate', [ckbMantissa(exchangeRate)]);
+  await setCKBBalance(brToken, redeemAmount);
+  await send(brToken, 'harnessSetTotalSupply', [redeemTokens]);
+  await setBalance(brToken, redeemer, redeemTokens);
 }
 
-async function redeemVTokens(vToken, redeemer, redeemTokens, redeemAmount) {
-  return send(vToken, 'redeem', [redeemTokens], {from: redeemer});
+async function redeemBRTokens(brToken, redeemer, redeemTokens, redeemAmount) {
+  return send(brToken, 'redeem', [redeemTokens], {from: redeemer});
 }
 
-async function redeemUnderlying(vToken, redeemer, redeemTokens, redeemAmount) {
-  return send(vToken, 'redeemUnderlying', [redeemAmount], {from: redeemer});
+async function redeemUnderlying(brToken, redeemer, redeemTokens, redeemAmount) {
+  return send(brToken, 'redeemUnderlying', [redeemAmount], {from: redeemer});
 }
 
-describe('VBNB', () => {
+describe('BRCKB', () => {
   let root, minter, redeemer, accounts;
-  let vToken;
+  let brToken;
 
   beforeEach(async () => {
     [root, minter, redeemer, ...accounts] = saddle.accounts;
-    vToken = await makeVToken({kind: 'vbnb', comptrollerOpts: {kind: 'bool'}});
-    await fastForward(vToken, 1);
+    brToken = await makeBRToken({kind: 'brckb', comptrollerOpts: {kind: 'bool'}});
+    await fastForward(brToken, 1);
   });
 
   [mintExplicit, mintFallback].forEach((mint) => {
     describe(mint.name, () => {
       beforeEach(async () => {
-        await preMint(vToken, minter, mintAmount, mintTokens, exchangeRate);
+        await preMint(brToken, minter, mintAmount, mintTokens, exchangeRate);
       });
 
       it("reverts if interest accrual fails", async () => {
-        await send(vToken.interestRateModel, 'setFailBorrowRate', [true]);
-        await expect(mint(vToken, minter, mintAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
+        await send(brToken.interestRateModel, 'setFailBorrowRate', [true]);
+        await expect(mint(brToken, minter, mintAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
       });
 
       it("returns success from mintFresh and mints the correct number of tokens", async () => {
-        const beforeBalances = await getBalances([vToken], [minter]);
-        const receipt = await mint(vToken, minter, mintAmount);
-        const afterBalances = await getBalances([vToken], [minter]);
+        const beforeBalances = await getBalances([brToken], [minter]);
+        const receipt = await mint(brToken, minter, mintAmount);
+        const afterBalances = await getBalances([brToken], [minter]);
         expect(receipt).toSucceed();
         expect(mintTokens).not.toEqualNumber(0);
         expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-          [vToken, 'bnb', mintAmount],
-          [vToken, 'tokens', mintTokens],
-          [vToken, minter, 'bnb', -mintAmount.add(await bnbGasCost(receipt))],
-          [vToken, minter, 'tokens', mintTokens]
+          [brToken, 'ckb', mintAmount],
+          [brToken, 'tokens', mintTokens],
+          [brToken, minter, 'ckb', -mintAmount.add(await ckbGasCost(receipt))],
+          [brToken, minter, 'tokens', mintTokens]
         ]));
       });
     });
   });
 
-  [redeemVTokens, redeemUnderlying].forEach((redeem) => {
+  [redeemBRTokens, redeemUnderlying].forEach((redeem) => {
     describe(redeem.name, () => {
       beforeEach(async () => {
-        await preRedeem(vToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
+        await preRedeem(brToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
       });
 
       it("emits a redeem failure if interest accrual fails", async () => {
-        await send(vToken.interestRateModel, 'setFailBorrowRate', [true]);
-        await expect(redeem(vToken, redeemer, redeemTokens, redeemAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
+        await send(brToken.interestRateModel, 'setFailBorrowRate', [true]);
+        await expect(redeem(brToken, redeemer, redeemTokens, redeemAmount)).rejects.toRevert("revert INTEREST_RATE_MODEL_ERROR");
       });
 
       it("returns error from redeemFresh without emitting any extra logs", async () => {
-        expect(await redeem(vToken, redeemer, redeemTokens.mul(5), redeemAmount.mul(5))).toHaveTokenFailure('MATH_ERROR', 'REDEEM_NEW_TOTAL_SUPPLY_CALCULATION_FAILED');
+        expect(await redeem(brToken, redeemer, redeemTokens.mul(5), redeemAmount.mul(5))).toHaveTokenFailure('MATH_ERROR', 'REDEEM_NEW_TOTAL_SUPPLY_CALCULATION_FAILED');
       });
 
       it("returns success from redeemFresh and redeems the correct amount", async () => {
-        await fastForward(vToken);
-        const beforeBalances = await getBalances([vToken], [redeemer]);
-        const receipt = await redeem(vToken, redeemer, redeemTokens, redeemAmount);
+        await fastForward(brToken);
+        const beforeBalances = await getBalances([brToken], [redeemer]);
+        const receipt = await redeem(brToken, redeemer, redeemTokens, redeemAmount);
         expect(receipt).toTokenSucceed();
-        const afterBalances = await getBalances([vToken], [redeemer]);
+        const afterBalances = await getBalances([brToken], [redeemer]);
         expect(redeemTokens).not.toEqualNumber(0);
         expect(afterBalances).toEqual(await adjustBalances(beforeBalances, [
-          [vToken, 'bnb', -redeemAmount],
-          [vToken, 'tokens', -redeemTokens],
-          [vToken, redeemer, 'bnb', redeemAmount.sub(await bnbGasCost(receipt))],
-          [vToken, redeemer, 'tokens', -redeemTokens]
+          [brToken, 'ckb', -redeemAmount],
+          [brToken, 'tokens', -redeemTokens],
+          [brToken, redeemer, 'ckb', redeemAmount.sub(await ckbGasCost(receipt))],
+          [brToken, redeemer, 'tokens', -redeemTokens]
         ]));
       });
     });

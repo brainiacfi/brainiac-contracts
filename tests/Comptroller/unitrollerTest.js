@@ -1,11 +1,11 @@
 const {
   address,
-  bnbMantissa
+  ckbMantissa
 } = require('../Utils/BSC');
 
 const {
   makePriceOracle
-} = require('../Utils/Venus');
+} = require('../Utils/Brainiac');
 
 describe('Unitroller', () => {
   let root, accounts;

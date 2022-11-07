@@ -6,7 +6,7 @@ interface ComptrollerMethods {
   getAccountLiquidity(string): Callable<{0: number, 1: number, 2: number}>
   getHypotheticalAccountLiquidity(account: string, asset: string, redeemTokens: encodedNumber, borrowAmount: encodedNumber): Callable<{0: number, 1: number, 2: number}>
   membershipLength(string): Callable<string>
-  checkMembership(user: string, vToken: string): Callable<string>
+  checkMembership(user: string, brToken: string): Callable<string>
   getAssetsIn(string): Callable<string[]>
   admin(): Callable<string>
   oracle(): Callable<string>
@@ -23,8 +23,8 @@ interface ComptrollerMethods {
   _setPriceOracle(string): Sendable<number>
   _setCollateralFactor(string, encodedNumber): Sendable<number>
   _setCloseFactor(encodedNumber): Sendable<number>
-  _setVAIMintRate(encodedNumber): Sendable<number>
-  _setVAIController(string): Sendable<number>
+  _setBAIMintRate(encodedNumber): Sendable<number>
+  _setBAIController(string): Sendable<number>
   enterMarkets(markets: string[]): Sendable<number>
   exitMarket(market: string): Sendable<number>
   fastForward(encodedNumber): Sendable<number>
@@ -38,23 +38,23 @@ interface ComptrollerMethods {
   _acceptAdmin(): Sendable<number>
   _setProtocolPaused(bool): Sendable<number>
   protocolPaused(): Callable<boolean>
-  _addVenusMarkets(markets: string[]): Sendable<void>
-  _dropVenusMarket(market: string): Sendable<void>
-  getVenusMarkets(): Callable<string[]>
-  refreshVenusSpeeds(): Sendable<void>
-  venusRate(): Callable<number>
-  venusSupplyState(string): Callable<string>
-  venusBorrowState(string): Callable<string>
-  venusAccrued(string): Callable<string>
-  venusSupplierIndex(market: string, account: string): Callable<string>
-  venusBorrowerIndex(market: string, account: string): Callable<string>
-  venusSpeeds(string): Callable<string>
-  claimVenus(string): Sendable<void>
-  _grantXVS(account: string, encodedNumber): Sendable<void>
-  _setVenusRate(encodedNumber): Sendable<void>
-  _setVenusSpeed(vToken: string, encodedNumber): Sendable<void>
-  mintedVAIs(string): Callable<number>
-  _setMarketBorrowCaps(vTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
+  _addBrainiacMarkets(markets: string[]): Sendable<void>
+  _dropBrainiacMarket(market: string): Sendable<void>
+  getBrainiacMarkets(): Callable<string[]>
+  refreshBrainiacSpeeds(): Sendable<void>
+  brainiacRate(): Callable<number>
+  brainiacSupplyState(string): Callable<string>
+  brainiacBorrowState(string): Callable<string>
+  brainiacAccrued(string): Callable<string>
+  brainiacSupplierIndex(market: string, account: string): Callable<string>
+  brainiacBorrowerIndex(market: string, account: string): Callable<string>
+  brainiacSpeeds(string): Callable<string>
+  claimBrainiac(string): Sendable<void>
+  _grantBRN(account: string, encodedNumber): Sendable<void>
+  _setBrainiacRate(encodedNumber): Sendable<void>
+  _setBrainiacSpeed(brToken: string, encodedNumber): Sendable<void>
+  mintedBAIs(string): Callable<number>
+  _setMarketBorrowCaps(brTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
   _setBorrowCapGuardian(string): Sendable<void>
   borrowCapGuardian(): Callable<string>
   borrowCaps(string): Callable<string>

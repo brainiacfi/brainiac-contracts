@@ -1,16 +1,16 @@
-const {bnbUnsigned} = require('../Utils/BSC');
+const {ckbUnsigned} = require('../Utils/BSC');
 const {
   makeComptroller,
-  makeVToken,
+  makeBRToken,
   setOraclePrice
-} = require('../Utils/Venus');
+} = require('../Utils/Brainiac');
 
 const borrowedPrice = 2e10;
 const collateralPrice = 1e18;
-const repayAmount = bnbUnsigned(1e18);
+const repayAmount = ckbUnsigned(1e18);
 
-async function calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, repayAmount) {
-  return call(comptroller, 'liquidateCalculateSeizeTokens', [vTokenBorrowed._address, vTokenCollateral._address, repayAmount]);
+async function calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, repayAmount) {
+  return call(comptroller, 'liquidateCalculateSeizeTokens', [brTokenBorrowed._address, brTokenCollateral._address, repayAmount]);
 }
 
 function rando(min, max) {
@@ -19,51 +19,51 @@ function rando(min, max) {
 
 describe('Comptroller', () => {
   let root, accounts;
-  let comptroller, vTokenBorrowed, vTokenCollateral;
+  let comptroller, brTokenBorrowed, brTokenCollateral;
 
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
     comptroller = await makeComptroller();
-    vTokenBorrowed = await makeVToken({comptroller: comptroller, underlyingPrice: 0});
-    vTokenCollateral = await makeVToken({comptroller: comptroller, underlyingPrice: 0});
+    brTokenBorrowed = await makeBRToken({comptroller: comptroller, underlyingPrice: 0});
+    brTokenCollateral = await makeBRToken({comptroller: comptroller, underlyingPrice: 0});
   });
 
   beforeEach(async () => {
-    await setOraclePrice(vTokenBorrowed, borrowedPrice);
-    await setOraclePrice(vTokenCollateral, collateralPrice);
-    await send(vTokenCollateral, 'harnessExchangeRateDetails', [8e10, 4e10, 0]);
+    await setOraclePrice(brTokenBorrowed, borrowedPrice);
+    await setOraclePrice(brTokenCollateral, collateralPrice);
+    await send(brTokenCollateral, 'harnessExchangeRateDetails', [8e10, 4e10, 0]);
   });
 
   describe('liquidateCalculateAmountSeize', () => {
     it("fails if either asset price is 0", async () => {
-      await setOraclePrice(vTokenBorrowed, 0);
+      await setOraclePrice(brTokenBorrowed, 0);
       expect(
-        await calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, repayAmount)
+        await calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, repayAmount)
       ).toHaveTrollErrorTuple(['PRICE_ERROR', 0]);
 
-      await setOraclePrice(vTokenCollateral, 0);
+      await setOraclePrice(brTokenCollateral, 0);
       expect(
-        await calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, repayAmount)
+        await calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, repayAmount)
       ).toHaveTrollErrorTuple(['PRICE_ERROR', 0]);
     });
 
     it("fails if the repayAmount causes overflow ", async () => {
       await expect(
-        calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF')
+        calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF')
       ).rejects.toRevert("revert multiplication overflow");
     });
 
     it("fails if the borrowed asset price causes overflow ", async () => {
-      await setOraclePrice(vTokenBorrowed, -1);
+      await setOraclePrice(brTokenBorrowed, -1);
       await expect(
-        calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, repayAmount)
+        calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, repayAmount)
       ).rejects.toRevert("revert multiplication overflow");
     });
 
     it("reverts if it fails to calculate the exchange rate", async () => {
-      await send(vTokenCollateral, 'harnessExchangeRateDetails', [1, 0, 10]); // (1 - 10) -> underflow
+      await send(brTokenCollateral, 'harnessExchangeRateDetails', [1, 0, 10]); // (1 - 10) -> underflow
       await expect(
-        send(comptroller, 'liquidateCalculateSeizeTokens', [vTokenBorrowed._address, vTokenCollateral._address, repayAmount])
+        send(comptroller, 'liquidateCalculateSeizeTokens', [brTokenBorrowed._address, brTokenCollateral._address, repayAmount])
       ).rejects.toRevert("revert exchangeRateStored: exchangeRateStoredInternal failed");
     });
 
@@ -76,18 +76,18 @@ describe('Comptroller', () => {
       [rando(0, 1e25), rando(0, 1e25), rando(1, 1e25), rando(1e18, 1.5e18), rando(0, 1e25)]
     ].forEach((testCase) => {
       it(`returns the correct value for ${testCase}`, async () => {
-        const [exchangeRate, borrowedPrice, collateralPrice, liquidationIncentive, repayAmount] = testCase.map(bnbUnsigned);
+        const [exchangeRate, borrowedPrice, collateralPrice, liquidationIncentive, repayAmount] = testCase.map(ckbUnsigned);
         
-        await setOraclePrice(vTokenCollateral, collateralPrice);
-        await setOraclePrice(vTokenBorrowed, borrowedPrice);
+        await setOraclePrice(brTokenCollateral, collateralPrice);
+        await setOraclePrice(brTokenBorrowed, borrowedPrice);
         await send(comptroller, '_setLiquidationIncentive', [liquidationIncentive]);
-        await send(vTokenCollateral, 'harnessSetExchangeRate', [exchangeRate]);
+        await send(brTokenCollateral, 'harnessSetExchangeRate', [exchangeRate]);
 
         const seizeAmount = repayAmount.mul(liquidationIncentive).mul(borrowedPrice).div(collateralPrice);
         const seizeTokens = seizeAmount.div(exchangeRate);
 
         expect(
-          await calculateSeizeTokens(comptroller, vTokenBorrowed, vTokenCollateral, repayAmount)
+          await calculateSeizeTokens(comptroller, brTokenBorrowed, brTokenCollateral, repayAmount)
         ).toHaveTrollErrorTuple(
           ['NO_ERROR', Number(seizeTokens)],
           (x, y) => Math.abs(x - y) < 1e7

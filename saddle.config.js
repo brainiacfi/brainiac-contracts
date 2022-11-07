@@ -25,7 +25,7 @@ module.exports = {
         {ganache: {
           gasLimit: 20000000,
           gasPrice: 20000,
-          defaultBalanceBNB: 1000000000,
+          defaultBalanceCKB: 1000000000,
           allowUnlimitedContractSize: true,
           hardfork: 'istanbul'
         }}
@@ -55,7 +55,7 @@ module.exports = {
           ganache: {
             gasLimit: 200000000,
             gasPrice: 20000,
-            defaultBalanceBNB: 1000000000,
+            defaultBalanceCKB: 1000000000,
             allowUnlimitedContractSize: true,
             hardfork: 'istanbul'
           }

@@ -1,39 +1,39 @@
 -- Supply Tests
 
-Test "Geoff supplies BNB and we check 2 future balances and then supply again"
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Geoff BNB "10.0e18"
-	Faucet Geoff BNB "10.0e18"
-	Supply Geoff BNB "3e18"
+Test "Geoff supplies CKB and we check 2 future balances and then supply again"
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Geoff CKB "10.0e18"
+	Faucet Geoff CKB "10.0e18"
+	Supply Geoff CKB "3e18"
 	Assert Success
 	FastForward 2 Blocks
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "6.0e18") -- 3 * ( 1 + 2 * .5 )
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "6.0e18") -- 3 * ( 1 + 2 * .5 )
 	FastForward 2 Blocks
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "9.0e18") -- 3 * ( 1 + 4 * .5 )
-	Supply Geoff BNB "1e18"
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "10.0e18") -- 3 * ( 1 + 4 * .5 ) + 1
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "9.0e18") -- 3 * ( 1 + 4 * .5 )
+	Supply Geoff CKB "1e18"
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "10.0e18") -- 3 * ( 1 + 4 * .5 ) + 1
 	FastForward 2 Blocks
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "20.0e18") -- 10 * ( 1 + 2 * .5 )
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "20.0e18") -- 10 * ( 1 + 2 * .5 )
 
-Test "Geoff supplies BNB, Torrey supplies BNB and then Geoff supplies more BNB"
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Geoff BNB "10.0e18"
-	Faucet Geoff BNB "10.0e18"
-	Approve Torrey BNB "5.0e18"
-	Faucet Torrey BNB "5.0e18"
-	Supply Geoff BNB "1e18"
+Test "Geoff supplies CKB, Torrey supplies CKB and then Geoff supplies more CKB"
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Geoff CKB "10.0e18"
+	Faucet Geoff CKB "10.0e18"
+	Approve Torrey CKB "5.0e18"
+	Faucet Torrey CKB "5.0e18"
+	Supply Geoff CKB "1e18"
 	Assert Success
 	FastForward 2 Blocks
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "2.0e18")
-	Supply Torrey BNB "3e18"
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "2.0e18")
+	Supply Torrey CKB "3e18"
 	Assert Success
 	FastForward 2 Blocks
-	Assert Equal (SupplyBalance Torrey BNB) (Exactly "6.0e18")
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "4.0e18")
-	Supply Geoff BNB "1e18"
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "5.0e18")
+	Assert Equal (SupplyBalance Torrey CKB) (Exactly "6.0e18")
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "4.0e18")
+	Supply Geoff CKB "1e18"
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "5.0e18")
 
 Test "Can't supply an 'initial' asset"
 	AddToken Dragon
@@ -43,17 +43,17 @@ Test "Can't supply an 'initial' asset"
 	Assert Failure MARKET_NOT_LISTED SUPPLY_MARKET_NOT_LISTED
 
 Test "Can't supply when contract is paused"
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Geoff BNB 1.0e18
-	Faucet Geoff BNB 0.4e18
-	PolicyHook BNB (SetProtocolPaused True)
-	Supply Geoff BNB 0.3e18
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Geoff CKB 1.0e18
+	Faucet Geoff CKB 0.4e18
+	PolicyHook CKB (SetProtocolPaused True)
+	Supply Geoff CKB 0.3e18
 	Assert Failure COMPTROLLER_REJECTION SUPPLY_COMPTROLLER_REJECTION 1
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "0e18")
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "0e18")
 
 Test "With always paused policy hook, can't supply when contract is paused"
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) AlwaysPausedPolicyHook
-	Supply Geoff BNB 0.3e18
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) AlwaysPausedPolicyHook
+	Supply Geoff CKB 0.3e18
 	Assert Failure COMPTROLLER_REJECTION SUPPLY_COMPTROLLER_REJECTION 99

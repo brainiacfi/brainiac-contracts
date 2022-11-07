@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 import "../Utils/SafeMath.sol";
-import "../Utils/IBEP20.sol";
+import "../Utils/IERC20.sol";
 
 contract VRTVaultAdminStorage {
     /**
@@ -19,7 +19,7 @@ contract VRTVaultAdminStorage {
     address public implementation;
 
     /**
-    * @notice Pending brains of VAI Vault
+    * @notice Pending brains of BAI Vault
     */
     address public pendingImplementation;
 }
@@ -33,7 +33,7 @@ contract VRTVaultStorage is VRTVaultAdminStorage {
     bool public vaultPaused;
 
     /// @notice The VRT TOKEN!
-    IBEP20 public vrt;
+    IERC20 public vrt;
 
     /// @notice interestRate for accrual - per Block
     uint256 public interestRatePerBlock;

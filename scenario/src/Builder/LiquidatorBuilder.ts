@@ -13,7 +13,7 @@ const LiquidatorContract = getContract("Liquidator");
 export interface LiquidatorData {
   invokation: Invokation<Liquidator>,
   description: string,
-  vBnbAddress: string,
+  brCkbAddress: string,
   address?: string
 }
 
@@ -21,33 +21,33 @@ export async function buildLiquidator(world: World, from: string, event: Event):
   const fetchers = [
     new Fetcher<{
         admin: AddressV,
-        vBnb: AddressV,
+        brCkb: AddressV,
         comptroller: AddressV,
-        vaiController: AddressV,
+        baiController: AddressV,
         treasury: AddressV,
         treasuryPercentMantissa: NumberV
     }, LiquidatorData>(`
         #### Liquidator
 
-        * "Liquidator Deploy admin:<Address> vBnb:<Address> comptroller:<Address> vaiController:<Address> treasury:<Address> treasuryPercentMantissa:<Number>"
+        * "Liquidator Deploy admin:<Address> brCkb:<Address> comptroller:<Address> baiController:<Address> treasury:<Address> treasuryPercentMantissa:<Number>"
       `,
       "Liquidator",
       [
         new Arg("admin", getAddressV),
-        new Arg("vBnb", getAddressV),
+        new Arg("brCkb", getAddressV),
         new Arg("comptroller", getAddressV),
-        new Arg("vaiController", getAddressV),
+        new Arg("baiController", getAddressV),
         new Arg("treasury", getAddressV),
         new Arg("treasuryPercentMantissa", getNumberV),
       ],
-      async (world, {admin, vBnb, comptroller, vaiController, treasury, treasuryPercentMantissa}) => {
+      async (world, {admin, brCkb, comptroller, baiController, treasury, treasuryPercentMantissa}) => {
         return {
           invokation: await LiquidatorContract.deploy<Liquidator>(
             world, from,
-            [admin.val, vBnb.val, comptroller.val, vaiController.val, treasury.val, treasuryPercentMantissa.encode()]
+            [admin.val, brCkb.val, comptroller.val, baiController.val, treasury.val, treasuryPercentMantissa.encode()]
           ),
           description: "Liquidator",
-          vBnbAddress: vBnb.val
+          brCkbAddress: brCkb.val
         };
       },
       {catchall: true}

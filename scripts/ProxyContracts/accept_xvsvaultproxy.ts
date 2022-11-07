@@ -2,34 +2,34 @@ require("dotenv").config();
 const hre = require("hardhat");
 const ethers = hre.ethers;
 
-const acceptXVSVaultImplementation = async () => {
+const acceptBRNVaultImplementation = async () => {
   const { deployments, getNamedAccounts, network } = hre;
   const { get } = deployments;
 
   const { deployer } = await getNamedAccounts();
-  //   const xvsVaultContract = await ethers.getContractFactory(
-  //     "XVSVault"
+  //   const brnVaultContract = await ethers.getContractFactory(
+  //     "BRNVault"
   //   );
 
-  const xvsVaultProxy = (await get("XVSVaultProxy")).address;
-  const xvsVault = (await get("XVSVault")).address;
-  const xvsVaultProxyContract = await ethers.getContractFactory("XVSVaultProxy")
-  const xvsVaultProxyContractInstance = await xvsVaultProxyContract.attach(
-    xvsVaultProxy
+  const brnVaultProxy = (await get("BRNVaultProxy")).address;
+  const brnVault = (await get("BRNVault")).address;
+  const brnVaultProxyContract = await ethers.getContractFactory("BRNVaultProxy")
+  const brnVaultProxyContractInstance = await brnVaultProxyContract.attach(
+    brnVaultProxy
   );
-  const xvsVaultContract = await ethers.getContractFactory("XVSVault")
-  const xvsVaultContractInstance = await xvsVaultContract.attach(
-    xvsVault
+  const brnVaultContract = await ethers.getContractFactory("BRNVault")
+  const brnVaultContractInstance = await brnVaultContract.attach(
+    brnVault
   );
 
-  const tx = await xvsVaultProxyContractInstance._setPendingImplementation(xvsVault)
+  const tx = await brnVaultProxyContractInstance._setPendingImplementation(brnVault)
   await tx.wait()
   console.log(tx);
-  const pendingImplementation = await xvsVaultProxyContractInstance.pendingXVSVaultImplementation();
-  const becomeImplemenatationTx = await xvsVaultContractInstance._become(xvsVaultProxy)
+  const pendingImplementation = await brnVaultProxyContractInstance.pendingBRNVaultImplementation();
+  const becomeImplemenatationTx = await brnVaultContractInstance._become(brnVaultProxy)
   await becomeImplemenatationTx.wait()
   console.log(becomeImplemenatationTx)
-  console.log(`Transaction successfull xvsVault with address "${pendingImplementation}" become Implementation for proxy`)
+  console.log(`Transaction successfull brnVault with address "${pendingImplementation}" become Implementation for proxy`)
 };
 
-export default acceptXVSVaultImplementation;
+export default acceptBRNVaultImplementation;

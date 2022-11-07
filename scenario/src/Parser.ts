@@ -1647,11 +1647,11 @@ function peg$parse(input: string, options?: IParseOptions) {
     }
     if (s0 === peg$FAILED) {
       s0 = peg$currPos;
-      s1 = peg$parsebegin_venus();
+      s1 = peg$parsebegin_brainiac();
       if (s1 !== peg$FAILED) {
         s2 = peg$parseexpr();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseend_venus();
+          s3 = peg$parseend_brainiac();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
             s1 = peg$c38(s2);
@@ -2250,7 +2250,7 @@ function peg$parse(input: string, options?: IParseOptions) {
     return s0;
   }
 
-  function peg$parsebegin_venus(): any {
+  function peg$parsebegin_brainiac(): any {
     let s0, s1, s2, s3;
 
     const key = peg$currPos * 38 + 22;
@@ -2295,7 +2295,7 @@ function peg$parse(input: string, options?: IParseOptions) {
     return s0;
   }
 
-  function peg$parseend_venus(): any {
+  function peg$parseend_brainiac(): any {
     let s0, s1, s2, s3;
 
     const key = peg$currPos * 38 + 23;

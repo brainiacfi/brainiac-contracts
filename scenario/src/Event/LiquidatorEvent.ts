@@ -39,16 +39,16 @@ async function liquidateBorrow(
     world: World,
     from: string,
     liquidator: Liquidator,
-    vToken: string,
+    brToken: string,
     borrower: string,
     repayAmount: encodedNumber,
-    vTokenCollateral: string
+    brTokenCollateral: string
 ): Promise<World> {
-  let invokation = await invoke(world, liquidator.methods.liquidateBorrow(vToken, borrower, repayAmount, vTokenCollateral), from);
+  let invokation = await invoke(world, liquidator.methods.liquidateBorrow(brToken, borrower, repayAmount, brTokenCollateral), from);
 
   world = addAction(
     world,
-    `Liquidator: liquidate borrow (vToken=${vToken}, borrower=${borrower}, repayAmount=${repayAmount}, vTokenCollateral=${vTokenCollateral}`,
+    `Liquidator: liquidate borrow (brToken=${brToken}, borrower=${borrower}, repayAmount=${repayAmount}, brTokenCollateral=${brTokenCollateral}`,
     invokation
   );
 
@@ -68,10 +68,10 @@ export function liquidatorCommands() {
     ),
     new Command<{
         liquidator: Liquidator,
-        vToken: AddressV,
+        brToken: AddressV,
         borrower: AddressV,
         repayAmount: NumberV,
-        vTokenCollateral: AddressV
+        brTokenCollateral: AddressV
     }>(`
         #### LiquidateBorrow
 
@@ -81,13 +81,13 @@ export function liquidatorCommands() {
       "LiquidateBorrow",
       [
         new Arg("liquidator", getLiquidator, {implicit: true}),
-        new Arg("vToken", getAddressV),
+        new Arg("brToken", getAddressV),
         new Arg("borrower", getAddressV),
         new Arg("repayAmount", getNumberV),
-        new Arg("vTokenCollateral", getAddressV)
+        new Arg("brTokenCollateral", getAddressV)
       ],
-      (world, from, {liquidator, vToken, borrower, repayAmount, vTokenCollateral}) =>
-          liquidateBorrow(world, from, liquidator, vToken.val, borrower.val, repayAmount.encode(), vTokenCollateral.val)
+      (world, from, {liquidator, brToken, borrower, repayAmount, brTokenCollateral}) =>
+          liquidateBorrow(world, from, liquidator, brToken.val, borrower.val, repayAmount.encode(), brTokenCollateral.val)
     )
   ];
 }

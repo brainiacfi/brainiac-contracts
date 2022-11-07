@@ -1,16 +1,16 @@
 const {
-  bnbBalance,
-  bnbGasCost,
+  ckbBalance,
+  ckbGasCost,
   getContract
 } = require('./Utils/BSC');
 
 const {
   makeComptroller,
-  makeVToken,
+  makeBRToken,
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot
-} = require('./Utils/Venus');
+} = require('./Utils/Brainiac');
 
 describe('Const', () => {
   it("does the right thing and not too expensive", async () => {

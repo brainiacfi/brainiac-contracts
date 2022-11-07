@@ -4,9 +4,9 @@ import "./JumpRateModel.sol";
 import "./SafeMath.sol";
 
 /**
-  * @title Venus's DAIInterestRateModel Contract (version 2)
-  * @author Venus (modified by Dharma Labs)
-  * @notice The parameterized model described in section 2.4 of the original Venus Protocol whitepaper.
+  * @title Brainiac's DAIInterestRateModel Contract (version 2)
+  * @author Brainiac (modified by Dharma Labs)
+  * @notice The parameterized model described in section 2.4 of the original Brainiac Protocol whitepaper.
   * Version 2 modifies the original interest rate model by increasing the "gap" or slope of the model prior
   * to the "kink" from 0.05% to 2% with the goal of "smoothing out" interest rate changes as the utilization
   * rate increases.
@@ -76,7 +76,7 @@ contract DAIInterestRateModelV2 is JumpRateModel {
      * @notice Resets the baseRate and multiplier per block based on the stability fee and Dai savings rate
      */
     function poke() public {
-        (uint duty, ) = jug.ilks("BNB-A");
+        (uint duty, ) = jug.ilks("CKB-A");
         uint stabilityFeePerBlock = duty.add(jug.base()).sub(1e27).mul(1e18).div(1e27).mul(3);
 
         // We ensure the minimum borrow rate >= DSR / (1 - reserve factor)

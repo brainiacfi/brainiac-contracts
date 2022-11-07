@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World, addAction } from '../World';
-import { VAI, VAIScenario } from '../Contract/VAI';
+import { BAI, BAIScenario } from '../Contract/BAI';
 import { Invokation } from '../Invokation';
 import { getAddressV } from '../CoreValue';
 import { StringV, AddressV } from '../Value';
@@ -8,11 +8,11 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract } from '../Contract';
 
-const VAIContract = getContract('VAI');
-const VAIScenarioContract = getContract('VAIScenario');
+const BAIContract = getContract('BAI');
+const BAIScenarioContract = getContract('BAIScenario');
 
 export interface TokenData {
-  invokation: Invokation<VAI>;
+  invokation: Invokation<BAI>;
   contract: string;
   address?: string;
   symbol: string;
@@ -20,18 +20,18 @@ export interface TokenData {
   decimals?: number;
 }
 
-export async function buildVAI(
+export async function buildBAI(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; vai: VAI; tokenData: TokenData }> {
+): Promise<{ world: World; bai: BAI; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<{ account: AddressV }, TokenData>(
       `
       #### Scenario
 
-      * "VAI Deploy Scenario account:<Address>" - Deploys Scenario VAI Token
-        * E.g. "VAI Deploy Scenario Geoff"
+      * "BAI Deploy Scenario account:<Address>" - Deploys Scenario BAI Token
+        * E.g. "BAI Deploy Scenario Geoff"
     `,
       'Scenario',
       [
@@ -39,10 +39,10 @@ export async function buildVAI(
       ],
       async (world, { account }) => {
         return {
-          invokation: await VAIScenarioContract.deploy<VAIScenario>(world, from, [account.val]),
-          contract: 'VAIScenario',
-          symbol: 'VAI',
-          name: 'VAI Stablecoin',
+          invokation: await BAIScenarioContract.deploy<BAIScenario>(world, from, [account.val]),
+          contract: 'BAIScenario',
+          symbol: 'BAI',
+          name: 'BAI Stablecoin',
           decimals: 18
         };
       }
@@ -50,30 +50,30 @@ export async function buildVAI(
 
     new Fetcher<{ account: AddressV }, TokenData>(
       `
-      #### VAI
+      #### BAI
 
-      * "VAI Deploy account:<Address>" - Deploys VAI Token
-        * E.g. "VAI Deploy Geoff"
+      * "BAI Deploy account:<Address>" - Deploys BAI Token
+        * E.g. "BAI Deploy Geoff"
     `,
-      'VAI',
+      'BAI',
       [
         new Arg("account", getAddressV),
       ],
       async (world, { account }) => {
         if (world.isLocalNetwork()) {
           return {
-            invokation: await VAIScenarioContract.deploy<VAIScenario>(world, from, [account.val]),
-            contract: 'VAIScenario',
-            symbol: 'VAI',
-            name: 'VAI Stablecoin',
+            invokation: await BAIScenarioContract.deploy<BAIScenario>(world, from, [account.val]),
+            contract: 'BAIScenario',
+            symbol: 'BAI',
+            name: 'BAI Stablecoin',
             decimals: 18
           };
         } else {
           return {
-            invokation: await VAIContract.deploy<VAI>(world, from, [account.val]),
-            contract: 'VAI',
-            symbol: 'VAI',
-            name: 'VAI Stablecoin',
+            invokation: await BAIContract.deploy<BAI>(world, from, [account.val]),
+            contract: 'BAI',
+            symbol: 'BAI',
+            name: 'BAI Stablecoin',
             decimals: 18
           };
         }
@@ -82,7 +82,7 @@ export async function buildVAI(
     )
   ];
 
-  let tokenData = await getFetcherValue<any, TokenData>("DeployVAI", fetchers, world, params);
+  let tokenData = await getFetcherValue<any, TokenData>("DeployBAI", fetchers, world, params);
   let invokation = tokenData.invokation;
   delete tokenData.invokation;
 
@@ -90,21 +90,21 @@ export async function buildVAI(
     throw invokation.error;
   }
 
-  const vai = invokation.value!;
-  tokenData.address = vai._address;
+  const bai = invokation.value!;
+  tokenData.address = bai._address;
 
   world = await storeAndSaveContract(
     world,
-    vai,
-    'VAI',
+    bai,
+    'BAI',
     invokation,
     [
-      { index: ['VAI'], data: tokenData },
+      { index: ['BAI'], data: tokenData },
       { index: ['Tokens', tokenData.symbol], data: tokenData }
     ]
   );
 
   tokenData.invokation = invokation;
 
-  return { world, vai, tokenData };
+  return { world, bai, tokenData };
 }

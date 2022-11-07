@@ -474,7 +474,7 @@ export function governorBravoCommands() {
     new Command<{ governor: GovernorBravo; newProposalThreshold: NumberV }>(
       `
         #### SetProposalThreshold
-        * "GovernorBravo <Governor> SetProposalThreshold <Xvs>" - Sets the proposal threshold of the GovernorBravo
+        * "GovernorBravo <Governor> SetProposalThreshold <Brn>" - Sets the proposal threshold of the GovernorBravo
         * E.g. "GovernorBravo GovernorBravoScenario SetProposalThreshold 500e18"
     `,
       "SetProposalThreshold",

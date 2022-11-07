@@ -7,35 +7,35 @@ interface Checkpoint {
   votes: number;
 }
 
-export interface XVSStoreMethods {
+export interface BRNStoreMethods {
   admin(): Callable<string>;
   setRewardToken(tokenAddress: string, status: boolean): Sendable<void>;
 }
 
-export interface XVSStore extends Contract {
-  methods: XVSStoreMethods;
+export interface BRNStore extends Contract {
+  methods: BRNStoreMethods;
   name: string;
 }
 
-export interface XVSVaultProxyMethods {
+export interface BRNVaultProxyMethods {
   admin(): Callable<string>;
   pendingAdmin(): Callable<string>;
-  xvsVaultImplementation(): Callable<string>;
-  pendingXVSVaultImplementation(): Callable<string>;
+  brnVaultImplementation(): Callable<string>;
+  pendingBRNVaultImplementation(): Callable<string>;
   _setPendingImplementation(newPendingImplementation: string): Sendable<number>;
   _acceptImplementation(): Sendable<number>;
   _setPendingAdmin(newPendingAdmin: string): Sendable<number>;
   _acceptAdmin(): Sendable<number>;
 }
 
-export interface XVSVaultProxy extends Contract {
-  methods: XVSVaultProxyMethods;
+export interface BRNVaultProxy extends Contract {
+  methods: BRNVaultProxyMethods;
   name: string;
 }
 
-export interface XVSVaultImplMethods {
-  _become(xvsVaultProxy: string): Sendable<void>;
-  setXvsStore(xvs: string, xvsStore: string): Sendable<void>;
+export interface BRNVaultImplMethods {
+  _become(brnVaultProxy: string): Sendable<void>;
+  setBrnStore(brn: string, brnStore: string): Sendable<void>;
   add(
     rewardToken: string, allocPoint: encodedNumber, token: string,
     rewardPerBlock: encodedNumber, lockPeriod: encodedNumber
@@ -51,23 +51,23 @@ export interface XVSVaultImplMethods {
   getPriorVotes(account: string, blockNumber: encodedNumber): Callable<number>;
 }
 
-export interface XVSVaultImpl extends Contract {
-  methods: XVSVaultImplMethods;
+export interface BRNVaultImpl extends Contract {
+  methods: BRNVaultImplMethods;
   name: string;
 }
 
-export interface XVSVaultMethods extends XVSVaultProxyMethods, XVSVaultImplMethods { }
+export interface BRNVaultMethods extends BRNVaultProxyMethods, BRNVaultImplMethods { }
 
-export interface XVSVault extends Contract {
-  methods: XVSVaultMethods;
+export interface BRNVault extends Contract {
+  methods: BRNVaultMethods;
   name: string;
 }
 
-interface XVSVaultHarnessMethods extends XVSVaultMethods {
+interface BRNVaultHarnessMethods extends BRNVaultMethods {
   getPriorVotesHarness(account: string, blockNumber: encodedNumber, votePower: encodedNumber): Callable<number>;
 }
 
-export interface XVSVaultHarness extends Contract {
-  methods: XVSVaultHarnessMethods;
+export interface BRNVaultHarness extends Contract {
+  methods: BRNVaultHarnessMethods;
   name: string;
 }

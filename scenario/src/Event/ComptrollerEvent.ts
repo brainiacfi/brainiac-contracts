@@ -3,7 +3,7 @@ import {addAction, describeUser, World} from '../World';
 import {decodeCall, getPastEvents} from '../Contract';
 import {Comptroller} from '../Contract/Comptroller';
 import {ComptrollerImpl} from '../Contract/ComptrollerImpl';
-import {VToken} from '../Contract/VToken';
+import {BRToken} from '../Contract/BRToken';
 import {invoke} from '../Invokation';
 import {
   getAddressV,
@@ -27,7 +27,7 @@ import {buildComptrollerImpl} from '../Builder/ComptrollerImplBuilder';
 import {ComptrollerErrorReporter} from '../ErrorReporter';
 import {getComptroller, getComptrollerImpl} from '../ContractLookup';
 import {getLiquidity} from '../Value/ComptrollerValue';
-import {getVTokenV} from '../Value/VTokenValue';
+import {getBRTokenV} from '../Value/BRTokenValue';
 import {encodedNumber} from '../Encoding';
 import {encodeABI, rawValues} from "../Utils";
 
@@ -92,30 +92,30 @@ async function setLiquidatorContract(world: World, from: string, comptroller: Co
   return world;
 }
 
-async function supportMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
+async function supportMarket(world: World, from: string, comptroller: Comptroller, brToken: BRToken): Promise<World> {
   if (world.dryRun) {
     // Skip this specifically on dry runs since it's likely to crash due to a number of reasons
-    world.printer.printLine(`Dry run: Supporting market  \`${vToken._address}\``);
+    world.printer.printLine(`Dry run: Supporting market  \`${brToken._address}\``);
     return world;
   }
 
-  let invokation = await invoke(world, comptroller.methods._supportMarket(vToken._address), from, ComptrollerErrorReporter);
+  let invokation = await invoke(world, comptroller.methods._supportMarket(brToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Supported market ${vToken.name}`,
+    `Supported market ${brToken.name}`,
     invokation
   );
 
   return world;
 }
 
-async function unlistMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods.unlist(vToken._address), from, ComptrollerErrorReporter);
+async function unlistMarket(world: World, from: string, comptroller: Comptroller, brToken: BRToken): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods.unlist(brToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Unlisted market ${vToken.name}`,
+    `Unlisted market ${brToken.name}`,
     invokation
   );
 
@@ -158,12 +158,12 @@ async function setPriceOracle(world: World, from: string, comptroller: Comptroll
   return world;
 }
 
-async function setCollateralFactor(world: World, from: string, comptroller: Comptroller, vToken: VToken, collateralFactor: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setCollateralFactor(vToken._address, collateralFactor.encode()), from, ComptrollerErrorReporter);
+async function setCollateralFactor(world: World, from: string, comptroller: Comptroller, brToken: BRToken, collateralFactor: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setCollateralFactor(brToken._address, collateralFactor.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Set collateral factor for ${vToken.name} to ${collateralFactor.show()}`,
+    `Set collateral factor for ${brToken.name} to ${collateralFactor.show()}`,
     invokation
   );
 
@@ -182,24 +182,24 @@ async function setCloseFactor(world: World, from: string, comptroller: Comptroll
   return world;
 }
 
-async function setVAIMintRate(world: World, from: string, comptroller: Comptroller, vaiMintRate: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setVAIMintRate(vaiMintRate.encode()), from, ComptrollerErrorReporter);
+async function setBAIMintRate(world: World, from: string, comptroller: Comptroller, baiMintRate: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setBAIMintRate(baiMintRate.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Set vai mint rate to ${vaiMintRate.show()}`,
+    `Set bai mint rate to ${baiMintRate.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function setVAIController(world: World, from: string, comptroller: Comptroller, vaicontroller: string): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setVAIController(vaicontroller), from, ComptrollerErrorReporter);
+async function setBAIController(world: World, from: string, comptroller: Comptroller, baicontroller: string): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setBAIController(baicontroller), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Set VAIController to ${vaicontroller} as ${describeUser(world, from)}`,
+    `Set BAIController to ${baicontroller} as ${describeUser(world, from)}`,
     invokation
   );
 
@@ -228,84 +228,84 @@ async function sendAny(world: World, from:string, comptroller: Comptroller, sign
   return world;
 }
 
-async function addVenusMarkets(world: World, from: string, comptroller: Comptroller, vTokens: VToken[]): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._addVenusMarkets(vTokens.map(c => c._address)), from, ComptrollerErrorReporter);
+async function addBrainiacMarkets(world: World, from: string, comptroller: Comptroller, brTokens: BRToken[]): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._addBrainiacMarkets(brTokens.map(c => c._address)), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Added Venus markets ${vTokens.map(c => c.name)}`,
+    `Added Brainiac markets ${brTokens.map(c => c.name)}`,
     invokation
   );
 
   return world;
 }
 
-async function dropVenusMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._dropVenusMarket(vToken._address), from, ComptrollerErrorReporter);
+async function dropBrainiacMarket(world: World, from: string, comptroller: Comptroller, brToken: BRToken): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._dropBrainiacMarket(brToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Drop Venus market ${vToken.name}`,
+    `Drop Brainiac market ${brToken.name}`,
     invokation
   );
 
   return world;
 }
 
-async function refreshVenusSpeeds(world: World, from: string, comptroller: Comptroller): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods.refreshVenusSpeeds(), from, ComptrollerErrorReporter);
+async function refreshBrainiacSpeeds(world: World, from: string, comptroller: Comptroller): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods.refreshBrainiacSpeeds(), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Refreshed Venus speeds`,
+    `Refreshed Brainiac speeds`,
     invokation
   );
 
   return world;
 }
 
-async function claimVenus(world: World, from: string, comptroller: Comptroller, holder: string): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods.claimVenus(holder), from, ComptrollerErrorReporter);
+async function claimBrainiac(world: World, from: string, comptroller: Comptroller, holder: string): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods.claimBrainiac(holder), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `XVS claimed by ${holder}`,
+    `BRN claimed by ${holder}`,
     invokation
   );
 
   return world;
 }
 
-async function grantXVS(world: World, from: string, comptroller: Comptroller, recipient: string, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._grantXVS(recipient, amount.encode()), from, ComptrollerErrorReporter);
+async function grantBRN(world: World, from: string, comptroller: Comptroller, recipient: string, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._grantBRN(recipient, amount.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `${amount.show()} xvs granted to ${recipient}`,
+    `${amount.show()} brn granted to ${recipient}`,
     invokation
   );
 
   return world;
 }
 
-async function setVenusRate(world: World, from: string, comptroller: Comptroller, rate: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setVenusRate(rate.encode()), from, ComptrollerErrorReporter);
+async function setBrainiacRate(world: World, from: string, comptroller: Comptroller, rate: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setBrainiacRate(rate.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `XVS rate set to ${rate.show()}`,
+    `BRN rate set to ${rate.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function setVenusSpeed(world: World, from: string, comptroller: Comptroller, vToken: VToken, speed: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setVenusSpeed(vToken._address, speed.encode()), from, ComptrollerErrorReporter);
+async function setBrainiacSpeed(world: World, from: string, comptroller: Comptroller, brToken: BRToken, speed: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setBrainiacSpeed(brToken._address, speed.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Venus speed for market ${vToken._address} set to ${speed.show()}`,
+    `Brainiac speed for market ${brToken._address} set to ${speed.show()}`,
     invokation
   );
 
@@ -356,12 +356,12 @@ async function acceptAdmin(world: World, from: string, comptroller: Comptroller)
   return world;
 }
 
-async function setMarketBorrowCaps(world: World, from: string, comptroller: Comptroller, vTokens: VToken[], borrowCaps: NumberV[]): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setMarketBorrowCaps(vTokens.map(c => c._address), borrowCaps.map(c => c.encode())), from, ComptrollerErrorReporter);
+async function setMarketBorrowCaps(world: World, from: string, comptroller: Comptroller, brTokens: BRToken[], borrowCaps: NumberV[]): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setMarketBorrowCaps(brTokens.map(c => c._address), borrowCaps.map(c => c.encode())), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Borrow caps on ${vTokens} set to ${borrowCaps}`,
+    `Borrow caps on ${brTokens} set to ${borrowCaps}`,
     invokation
   );
 
@@ -436,57 +436,57 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, isPaused}) => setProtocolPaused(world, from, comptroller, isPaused.val)
     ),
-    new Command<{comptroller: Comptroller, vToken: VToken}>(`
+    new Command<{comptroller: Comptroller, brToken: BRToken}>(`
         #### SupportMarket
 
-        * "Comptroller SupportMarket <VToken>" - Adds support in the Comptroller for the given vToken
+        * "Comptroller SupportMarket <BRToken>" - Adds support in the Comptroller for the given brToken
           * E.g. "Comptroller SupportMarket vZRX"
       `,
       "SupportMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, {comptroller, vToken}) => supportMarket(world, from, comptroller, vToken)
+      (world, from, {comptroller, brToken}) => supportMarket(world, from, comptroller, brToken)
     ),
-    new Command<{comptroller: Comptroller, vToken: VToken}>(`
+    new Command<{comptroller: Comptroller, brToken: BRToken}>(`
         #### UnList
 
-        * "Comptroller UnList <VToken>" - Mock unlists a given market in tests
+        * "Comptroller UnList <BRToken>" - Mock unlists a given market in tests
           * E.g. "Comptroller UnList vZRX"
       `,
       "UnList",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, {comptroller, vToken}) => unlistMarket(world, from, comptroller, vToken)
+      (world, from, {comptroller, brToken}) => unlistMarket(world, from, comptroller, brToken)
     ),
-    new Command<{comptroller: Comptroller, vTokens: VToken[]}>(`
+    new Command<{comptroller: Comptroller, brTokens: BRToken[]}>(`
         #### EnterMarkets
 
-        * "Comptroller EnterMarkets (<VToken> ...)" - User enters the given markets
-          * E.g. "Comptroller EnterMarkets (vZRX vBNB)"
+        * "Comptroller EnterMarkets (<BRToken> ...)" - User enters the given markets
+          * E.g. "Comptroller EnterMarkets (vZRX brCKB)"
       `,
       "EnterMarkets",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vTokens", getVTokenV, {mapped: true})
+        new Arg("brTokens", getBRTokenV, {mapped: true})
       ],
-      (world, from, {comptroller, vTokens}) => enterMarkets(world, from, comptroller, vTokens.map((c) => c._address))
+      (world, from, {comptroller, brTokens}) => enterMarkets(world, from, comptroller, brTokens.map((c) => c._address))
     ),
-    new Command<{comptroller: Comptroller, vToken: VToken}>(`
+    new Command<{comptroller: Comptroller, brToken: BRToken}>(`
         #### ExitMarket
 
-        * "Comptroller ExitMarket <VToken>" - User exits the given markets
+        * "Comptroller ExitMarket <BRToken>" - User exits the given markets
           * E.g. "Comptroller ExitMarket vZRX"
       `,
       "ExitMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, {comptroller, vToken}) => exitMarket(world, from, comptroller, vToken._address)
+      (world, from, {comptroller, brToken}) => exitMarket(world, from, comptroller, brToken._address)
     ),
     new Command<{comptroller: Comptroller, maxAssets: NumberV}>(`
         #### SetMaxAssets
@@ -555,19 +555,19 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, priceOracle}) => setPriceOracle(world, from, comptroller, priceOracle.val)
     ),
-    new Command<{comptroller: Comptroller, vToken: VToken, collateralFactor: NumberV}>(`
+    new Command<{comptroller: Comptroller, brToken: BRToken, collateralFactor: NumberV}>(`
         #### SetCollateralFactor
 
-        * "Comptroller SetCollateralFactor <VToken> <Number>" - Sets the collateral factor for given vToken to number
+        * "Comptroller SetCollateralFactor <BRToken> <Number>" - Sets the collateral factor for given brToken to number
           * E.g. "Comptroller SetCollateralFactor vZRX 0.1"
       `,
       "SetCollateralFactor",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("collateralFactor", getExpNumberV)
       ],
-      (world, from, {comptroller, vToken, collateralFactor}) => setCollateralFactor(world, from, comptroller, vToken, collateralFactor)
+      (world, from, {comptroller, brToken, collateralFactor}) => setCollateralFactor(world, from, comptroller, brToken, collateralFactor)
     ),
     new Command<{comptroller: Comptroller, closeFactor: NumberV}>(`
         #### SetCloseFactor
@@ -582,31 +582,31 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, closeFactor}) => setCloseFactor(world, from, comptroller, closeFactor)
     ),
-    new Command<{comptroller: Comptroller, vaiMintRate: NumberV}>(`
-        #### SetVAIMintRate
+    new Command<{comptroller: Comptroller, baiMintRate: NumberV}>(`
+        #### SetBAIMintRate
 
-        * "Comptroller SetVAIMintRate <Number>" - Sets the vai mint rate to given value
-          * E.g. "Comptroller SetVAIMintRate 5e4"
+        * "Comptroller SetBAIMintRate <Number>" - Sets the bai mint rate to given value
+          * E.g. "Comptroller SetBAIMintRate 5e4"
       `,
-      "SetVAIMintRate",
+      "SetBAIMintRate",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vaiMintRate", getNumberV)
+        new Arg("baiMintRate", getNumberV)
       ],
-      (world, from, {comptroller, vaiMintRate}) => setVAIMintRate(world, from, comptroller, vaiMintRate)
+      (world, from, {comptroller, baiMintRate}) => setBAIMintRate(world, from, comptroller, baiMintRate)
     ),
-    new Command<{comptroller: Comptroller, vaicontroller: AddressV}>(`
-        #### SetVAIController
+    new Command<{comptroller: Comptroller, baicontroller: AddressV}>(`
+        #### SetBAIController
 
-        * "Comptroller SetVAIController vaicontroller:<Address>" - Sets the vai controller address
-          * E.g. "Comptroller SetVAIController 0x..."
+        * "Comptroller SetBAIController baicontroller:<Address>" - Sets the bai controller address
+          * E.g. "Comptroller SetBAIController 0x..."
       `,
-      "SetVAIController",
+      "SetBAIController",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vaicontroller", getAddressV)
+        new Arg("baicontroller", getAddressV)
       ],
-      (world, from, {comptroller, vaicontroller}) => setVAIController(world, from, comptroller, vaicontroller.val)
+      (world, from, {comptroller, baicontroller}) => setBAIController(world, from, comptroller, baicontroller.val)
     ),
     new Command<{comptroller: Comptroller, newPendingAdmin: AddressV}>(`
         #### SetPendingAdmin
@@ -636,7 +636,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, blocks: NumberV, _keyword: StringV}>(`
         #### FastForward
 
-        * "FastForward n:<Number> Blocks" - Moves the block number forward "n" blocks. Note: in "VTokenScenario" and "ComptrollerScenario" the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
+        * "FastForward n:<Number> Blocks" - Moves the block number forward "n" blocks. Note: in "BRTokenScenario" and "ComptrollerScenario" the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
           * E.g. "Comptroller FastForward 5 Blocks" - Move block number forward 5 blocks.
       `,
       "FastForward",
@@ -675,7 +675,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, signature: StringV, callArgs: StringV[]}>(`
       #### Send
       * Comptroller Send functionSignature:<String> callArgs[] - Sends any transaction to comptroller
-      * E.g: Comptroller Send "setXVSAddress(address)" (Address XVS)
+      * E.g: Comptroller Send "setBRNAddress(address)" (Address BRN)
       `,
       "Send",
       [
@@ -685,109 +685,109 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, signature, callArgs}) => sendAny(world, from, comptroller, signature.val, rawValues(callArgs))
     ),
-    new Command<{comptroller: Comptroller, vTokens: VToken[]}>(`
-      #### AddVenusMarkets
+    new Command<{comptroller: Comptroller, brTokens: BRToken[]}>(`
+      #### AddBrainiacMarkets
 
-      * "Comptroller AddVenusMarkets (<Address> ...)" - Makes a market XVS-enabled
-      * E.g. "Comptroller AddVenusMarkets (vZRX vBAT)
+      * "Comptroller AddBrainiacMarkets (<Address> ...)" - Makes a market BRN-enabled
+      * E.g. "Comptroller AddBrainiacMarkets (vZRX vBAT)
       `,
-      "AddVenusMarkets",
+      "AddBrainiacMarkets",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vTokens", getVTokenV, {mapped: true})
+        new Arg("brTokens", getBRTokenV, {mapped: true})
       ],
-      (world, from, {comptroller, vTokens}) => addVenusMarkets(world, from, comptroller, vTokens)
+      (world, from, {comptroller, brTokens}) => addBrainiacMarkets(world, from, comptroller, brTokens)
      ),
-    new Command<{comptroller: Comptroller, vToken: VToken}>(`
-      #### DropVenusMarket
+    new Command<{comptroller: Comptroller, brToken: BRToken}>(`
+      #### DropBrainiacMarket
 
-      * "Comptroller DropVenusMarket <Address>" - Makes a market XVS
-      * E.g. "Comptroller DropVenusMarket vZRX
+      * "Comptroller DropBrainiacMarket <Address>" - Makes a market BRN
+      * E.g. "Comptroller DropBrainiacMarket vZRX
       `,
-      "DropVenusMarket",
+      "DropBrainiacMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, {comptroller, vToken}) => dropVenusMarket(world, from, comptroller, vToken)
+      (world, from, {comptroller, brToken}) => dropBrainiacMarket(world, from, comptroller, brToken)
      ),
 
     new Command<{comptroller: Comptroller}>(`
-      #### RefreshVenusSpeeds
+      #### RefreshBrainiacSpeeds
 
-      * "Comptroller RefreshVenusSpeeds" - Recalculates all the Venus market speeds
-      * E.g. "Comptroller RefreshVenusSpeeds
+      * "Comptroller RefreshBrainiacSpeeds" - Recalculates all the Brainiac market speeds
+      * E.g. "Comptroller RefreshBrainiacSpeeds
       `,
-      "RefreshVenusSpeeds",
+      "RefreshBrainiacSpeeds",
       [
         new Arg("comptroller", getComptroller, {implicit: true})
       ],
-      (world, from, {comptroller}) => refreshVenusSpeeds(world, from, comptroller)
+      (world, from, {comptroller}) => refreshBrainiacSpeeds(world, from, comptroller)
     ),
     new Command<{comptroller: Comptroller, holder: AddressV}>(`
-      #### ClaimVenus
+      #### ClaimBrainiac
 
-      * "Comptroller ClaimVenus <holder>" - Claims xvs
-      * E.g. "Comptroller ClaimVenus Geoff
+      * "Comptroller ClaimBrainiac <holder>" - Claims brn
+      * E.g. "Comptroller ClaimBrainiac Geoff
       `,
-      "ClaimVenus",
+      "ClaimBrainiac",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("holder", getAddressV)
       ],
-      (world, from, {comptroller, holder}) => claimVenus(world, from, comptroller, holder.val)
+      (world, from, {comptroller, holder}) => claimBrainiac(world, from, comptroller, holder.val)
     ),
     new Command<{comptroller: Comptroller, recipient: AddressV, amount: NumberV}>(`
-      #### GrantXVS
-      * "Comptroller GrantXVS <recipient> <amount>" - Grants XVS to a recipient
-      * E.g. "Comptroller GrantXVS Geoff 1e18
+      #### GrantBRN
+      * "Comptroller GrantBRN <recipient> <amount>" - Grants BRN to a recipient
+      * E.g. "Comptroller GrantBRN Geoff 1e18
       `,
-      "GrantXVS",
+      "GrantBRN",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("recipient", getAddressV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, {comptroller, recipient, amount}) => grantXVS(world, from, comptroller, recipient.val, amount)
+      (world, from, {comptroller, recipient, amount}) => grantBRN(world, from, comptroller, recipient.val, amount)
     ),
     new Command<{comptroller: Comptroller, rate: NumberV}>(`
-      #### SetVenusRate
+      #### SetBrainiacRate
 
-      * "Comptroller SetVenusRate <rate>" - Sets Venus rate
-      * E.g. "Comptroller SetVenusRate 1e18
+      * "Comptroller SetBrainiacRate <rate>" - Sets Brainiac rate
+      * E.g. "Comptroller SetBrainiacRate 1e18
       `,
-      "SetVenusRate",
+      "SetBrainiacRate",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("rate", getNumberV)
       ],
-      (world, from, {comptroller, rate}) => setVenusRate(world, from, comptroller, rate)
+      (world, from, {comptroller, rate}) => setBrainiacRate(world, from, comptroller, rate)
     ),
-    new Command<{comptroller: Comptroller, vToken: VToken, speed: NumberV}>(`
-      #### SetVenusSpeed
-      * "Comptroller SetVenusSpeed <vToken> <rate>" - Sets XVS speed for market
-      * E.g. "Comptroller SetVenusSpeed vToken 1000
+    new Command<{comptroller: Comptroller, brToken: BRToken, speed: NumberV}>(`
+      #### SetBrainiacSpeed
+      * "Comptroller SetBrainiacSpeed <brToken> <rate>" - Sets BRN speed for market
+      * E.g. "Comptroller SetBrainiacSpeed brToken 1000
       `,
-      "SetVenusSpeed",
+      "SetBrainiacSpeed",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("speed", getNumberV)
       ],
-      (world, from, {comptroller, vToken, speed}) => setVenusSpeed(world, from, comptroller, vToken, speed)
+      (world, from, {comptroller, brToken, speed}) => setBrainiacSpeed(world, from, comptroller, brToken, speed)
     ),
-    new Command<{comptroller: Comptroller, vTokens: VToken[], borrowCaps: NumberV[]}>(`
+    new Command<{comptroller: Comptroller, brTokens: BRToken[], borrowCaps: NumberV[]}>(`
       #### SetMarketBorrowCaps
-      * "Comptroller SetMarketBorrowCaps (<VToken> ...) (<borrowCap> ...)" - Sets Market Borrow Caps
+      * "Comptroller SetMarketBorrowCaps (<BRToken> ...) (<borrowCap> ...)" - Sets Market Borrow Caps
       * E.g "Comptroller SetMarketBorrowCaps (vZRX vUSDC) (10000.0e18, 1000.0e6)
       `,
       "SetMarketBorrowCaps",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("vTokens", getVTokenV, {mapped: true}),
+        new Arg("brTokens", getBRTokenV, {mapped: true}),
         new Arg("borrowCaps", getNumberV, {mapped: true})
       ],
-      (world, from, {comptroller,vTokens,borrowCaps}) => setMarketBorrowCaps(world, from, comptroller, vTokens, borrowCaps)
+      (world, from, {comptroller,brTokens,borrowCaps}) => setMarketBorrowCaps(world, from, comptroller, brTokens, borrowCaps)
     ),
     new Command<{comptroller: Comptroller, newBorrowCapGuardian: AddressV}>(`
         #### SetBorrowCapGuardian

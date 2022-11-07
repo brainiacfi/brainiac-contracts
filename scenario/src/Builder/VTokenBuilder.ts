@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { VBep20Delegator, VBep20DelegatorScenario } from '../Contract/VBep20Delegator';
-import { VToken } from '../Contract/VToken';
+import { BRErc20Delegator, BRErc20DelegatorScenario } from '../Contract/BRErc20Delegator';
+import { BRToken } from '../Contract/BRToken';
 import { Invokation, invoke } from '../Invokation';
 import { getAddressV, getExpNumberV, getNumberV, getStringV } from '../CoreValue';
 import { AddressV, NumberV, StringV } from '../Value';
@@ -9,16 +9,16 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract, getTestContract } from '../Contract';
 
-const VBep20Contract = getContract('VBep20Immutable');
-const VBep20Delegator = getContract('VBep20Delegator');
-const VBep20DelegatorScenario = getTestContract('VBep20DelegatorScenario');
-const VBNBContract = getContract('VBNB');
-const VBep20ScenarioContract = getTestContract('VBep20Scenario');
-const VBNBScenarioContract = getTestContract('VBNBScenario');
+const BRErc20Contract = getContract('BRErc20Immutable');
+const BRErc20Delegator = getContract('BRErc20Delegator');
+const BRErc20DelegatorScenario = getTestContract('BRErc20DelegatorScenario');
+const BRCKBContract = getContract('BRCKB');
+const BRErc20ScenarioContract = getTestContract('BRErc20Scenario');
+const BRCKBScenarioContract = getTestContract('BRCKBScenario');
 const CEvilContract = getTestContract('VEvil');
 
 export interface TokenData {
-  invokation: Invokation<VToken>;
+  invokation: Invokation<BRToken>;
   name: string;
   symbol: string;
   decimals?: number;
@@ -29,11 +29,11 @@ export interface TokenData {
   admin?: string;
 }
 
-export async function buildVToken(
+export async function buildBRToken(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; vToken: VToken; tokenData: TokenData }> {
+): Promise<{ world: World; brToken: BRToken; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<
       {
@@ -51,12 +51,12 @@ export async function buildVToken(
       TokenData
     >(
     `
-      #### VBep20Delegator
+      #### BRErc20Delegator
 
-      * "VBep20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal VToken
-        * E.g. "VToken Deploy VBep20Delegator vDAI \"Venus DAI\" (Bep20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "BRErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal BRToken
+        * E.g. "BRToken Deploy BRErc20Delegator vDAI \"Brainiac DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (BRToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
-      'VBep20Delegator',
+      'BRErc20Delegator',
       [
         new Arg('symbol', getStringV),
         new Arg('name', getStringV),
@@ -85,7 +85,7 @@ export async function buildVToken(
         }
       ) => {
         return {
-          invokation: await VBep20Delegator.deploy<VBep20Delegator>(world, from, [
+          invokation: await BRErc20Delegator.deploy<BRErc20Delegator>(world, from, [
             underlying.val,
             comptroller.val,
             interestRateModel.val,
@@ -101,7 +101,7 @@ export async function buildVToken(
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'VBep20Delegator',
+          contract: 'BRErc20Delegator',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -124,12 +124,12 @@ export async function buildVToken(
       TokenData
     >(
     `
-      #### VBep20DelegatorScenario
+      #### BRErc20DelegatorScenario
 
-      * "VBep20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A VToken Scenario for local testing
-        * E.g. "VToken Deploy VBep20DelegatorScenario vDAI \"Venus DAI\" (Bep20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "BRErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A BRToken Scenario for local testing
+        * E.g. "BRToken Deploy BRErc20DelegatorScenario vDAI \"Brainiac DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (BRToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
-      'VBep20DelegatorScenario',
+      'BRErc20DelegatorScenario',
       [
         new Arg('symbol', getStringV),
         new Arg('name', getStringV),
@@ -158,7 +158,7 @@ export async function buildVToken(
         }
       ) => {
         return {
-          invokation: await VBep20DelegatorScenario.deploy<VBep20DelegatorScenario>(world, from, [
+          invokation: await BRErc20DelegatorScenario.deploy<BRErc20DelegatorScenario>(world, from, [
             underlying.val,
             comptroller.val,
             interestRateModel.val,
@@ -174,7 +174,7 @@ export async function buildVToken(
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'VBep20DelegatorScenario',
+          contract: 'BRErc20DelegatorScenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -184,8 +184,8 @@ export async function buildVToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV, admin: AddressV}, TokenData>(`
         #### Scenario
 
-        * "Scenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
-          * E.g. "VToken Deploy Scenario vZRX \"Venus ZRX\" (Bep20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "Scenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A BRToken Scenario for local testing
+          * E.g. "BRToken Deploy Scenario vZRX \"Brainiac ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Scenario",
       [
@@ -200,12 +200,12 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await VBep20ScenarioContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await BRErc20ScenarioContract.deploy<BRToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'VBep20Scenario',
+          contract: 'BRErc20Scenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -213,12 +213,12 @@ export async function buildVToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### VBNBScenario
+        #### BRCKBScenario
 
-        * "VBNBScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
-          * E.g. "VToken Deploy VBNBScenario vBNB \"Venus BNB\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "BRCKBScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A BRToken Scenario for local testing
+          * E.g. "BRToken Deploy BRCKBScenario brCKB \"Brainiac CKB\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "VBNBScenario",
+      "BRCKBScenario",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -230,12 +230,12 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await VBNBScenarioContract.deploy<VToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
+          invokation: await BRCKBScenarioContract.deploy<BRToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: "",
-          contract: 'VBNBScenario',
+          contract: 'BRCKBScenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -243,12 +243,12 @@ export async function buildVToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### VBNB
+        #### BRCKB
 
-        * "VBNB symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
-          * E.g. "VToken Deploy VBNB vBNB \"Venus BNB\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "BRCKB symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A BRToken Scenario for local testing
+          * E.g. "BRToken Deploy BRCKB brCKB \"Brainiac CKB\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "VBNB",
+      "BRCKB",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -260,12 +260,12 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await VBNBContract.deploy<VToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await BRCKBContract.deploy<BRToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: "",
-          contract: 'VBNB',
+          contract: 'BRCKB',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -273,12 +273,12 @@ export async function buildVToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### VBep20
+        #### BRErc20
 
-        * "VBep20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official VToken contract
-          * E.g. "VToken Deploy VBep20 vZRX \"Venus ZRX\" (Bep20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "BRErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official BRToken contract
+          * E.g. "BRToken Deploy BRErc20 vZRX \"Brainiac ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "VBep20",
+      "BRErc20",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -292,12 +292,12 @@ export async function buildVToken(
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
 
         return {
-          invokation: await VBep20Contract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await BRErc20Contract.deploy<BRToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: underlying.val,
-          contract: 'VBep20',
+          contract: 'BRErc20',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -307,8 +307,8 @@ export async function buildVToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### VEvil
 
-        * "VEvil symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A malicious VToken contract
-          * E.g. "VToken Deploy VEvil vEVL \"Venus EVL\" (Bep20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "VEvil symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A malicious BRToken contract
+          * E.g. "BRToken Deploy VEvil vEVL \"Brainiac EVL\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "VEvil",
       [
@@ -323,7 +323,7 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEvilContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await CEvilContract.deploy<BRToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -338,8 +338,8 @@ export async function buildVToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### Standard
 
-        * "symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official VToken contract
-          * E.g. "VToken Deploy Standard vZRX \"Venus ZRX\" (Bep20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official BRToken contract
+          * E.g. "BRToken Deploy Standard vZRX \"Brainiac ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Standard",
       [
@@ -356,23 +356,23 @@ export async function buildVToken(
         // Note: we're going to use the scenario contract as the standard deployment on local networks
         if (world.isLocalNetwork()) {
           return {
-            invokation: await VBep20ScenarioContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await BRErc20ScenarioContract.deploy<BRToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
             underlying: underlying.val,
-            contract: 'VBep20Scenario',
+            contract: 'BRErc20Scenario',
             initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
             admin: admin.val
           };
         } else {
           return {
-            invokation: await VBep20Contract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await BRErc20Contract.deploy<BRToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
             underlying: underlying.val,
-            contract: 'VBep20Immutable',
+            contract: 'BRErc20Immutable',
             initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
             admin: admin.val
           };
@@ -382,7 +382,7 @@ export async function buildVToken(
     )
   ];
 
-  let tokenData = await getFetcherValue<any, TokenData>("DeployVToken", fetchers, world, params);
+  let tokenData = await getFetcherValue<any, TokenData>("DeployBRToken", fetchers, world, params);
   let invokation = tokenData.invokation;
   delete tokenData.invokation;
 
@@ -390,19 +390,19 @@ export async function buildVToken(
     throw invokation.error;
   }
 
-  const vToken = invokation.value!;
-  tokenData.address = vToken._address;
+  const brToken = invokation.value!;
+  tokenData.address = brToken._address;
 
   world = await storeAndSaveContract(
     world,
-    vToken,
+    brToken,
     tokenData.symbol,
     invokation,
     [
-      { index: ['vTokens', tokenData.symbol], data: tokenData },
+      { index: ['brTokens', tokenData.symbol], data: tokenData },
       { index: ['Tokens', tokenData.symbol], data: tokenData }
     ]
   );
 
-  return {world, vToken, tokenData};
+  return {world, brToken, tokenData};
 }

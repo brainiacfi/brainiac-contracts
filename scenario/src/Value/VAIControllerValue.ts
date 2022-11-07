@@ -1,6 +1,6 @@
 import {Event} from '../Event';
 import {World} from '../World';
-import {VAIController} from '../Contract/VAIController';
+import {BAIController} from '../Contract/BAIController';
 import {
   getAddressV,
   getCoreValue,
@@ -16,81 +16,81 @@ import {
   Value
 } from '../Value';
 import {Arg, Fetcher, getFetcherValue} from '../Command';
-import {getVAIController} from '../ContractLookup';
+import {getBAIController} from '../ContractLookup';
 import {encodedNumber} from '../Encoding';
-import {getVTokenV} from './VTokenValue';
+import {getBRTokenV} from './BRTokenValue';
 import { encodeParameters, encodeABI } from '../Utils';
 
-export async function getVAIControllerAddress(world: World, vaicontroller: VAIController): Promise<AddressV> {
-  return new AddressV(vaicontroller._address);
+export async function getBAIControllerAddress(world: World, baicontroller: BAIController): Promise<AddressV> {
+  return new AddressV(baicontroller._address);
 }
 
-async function getMintableVAI(world: World, vaicontroller: VAIController, account: string): Promise<NumberV> {
-  let {0: error, 1: amount} = await vaicontroller.methods.getMintableVAI(account).call();
+async function getMintableBAI(world: World, baicontroller: BAIController, account: string): Promise<NumberV> {
+  let {0: error, 1: amount} = await baicontroller.methods.getMintableBAI(account).call();
   if (Number(error) != 0) {
-    throw new Error(`Failed to get mintable vai: error code = ${error}`);
+    throw new Error(`Failed to get mintable bai: error code = ${error}`);
   }
   return new NumberV(Number(amount));
 }
 
-async function getAdmin(world: World, vaicontroller: VAIController): Promise<AddressV> {
-  return new AddressV(await vaicontroller.methods.admin().call());
+async function getAdmin(world: World, baicontroller: BAIController): Promise<AddressV> {
+  return new AddressV(await baicontroller.methods.admin().call());
 }
 
-async function getPendingAdmin(world: World, vaicontroller: VAIController): Promise<AddressV> {
-  return new AddressV(await vaicontroller.methods.pendingAdmin().call());
+async function getPendingAdmin(world: World, baicontroller: BAIController): Promise<AddressV> {
+  return new AddressV(await baicontroller.methods.pendingAdmin().call());
 }
 
 
-export function vaicontrollerFetchers() {
+export function baicontrollerFetchers() {
   return [
-    new Fetcher<{vaicontroller: VAIController}, AddressV>(`
+    new Fetcher<{baicontroller: BAIController}, AddressV>(`
         #### Address
 
-        * "VAIController Address" - Returns address of vaicontroller
+        * "BAIController Address" - Returns address of baicontroller
       `,
       "Address",
-      [new Arg("vaicontroller", getVAIController, {implicit: true})],
-      (world, {vaicontroller}) => getVAIControllerAddress(world, vaicontroller)
+      [new Arg("baicontroller", getBAIController, {implicit: true})],
+      (world, {baicontroller}) => getBAIControllerAddress(world, baicontroller)
     ),
-    new Fetcher<{vaicontroller: VAIController, account: AddressV}, NumberV>(`
-        #### MintableVAI
+    new Fetcher<{baicontroller: BAIController, account: AddressV}, NumberV>(`
+        #### MintableBAI
 
-        * "VAIController MintableVAI <User>" - Returns a given user's mintable vai amount
-          * E.g. "VAIController MintableVAI Geoff"
+        * "BAIController MintableBAI <User>" - Returns a given user's mintable bai amount
+          * E.g. "BAIController MintableBAI Geoff"
       `,
-      "MintableVAI",
+      "MintableBAI",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("account", getAddressV)
       ],
-      (world, {vaicontroller, account}) => getMintableVAI(world, vaicontroller, account.val)
+      (world, {baicontroller, account}) => getMintableBAI(world, baicontroller, account.val)
     ),
-    new Fetcher<{vaicontroller: VAIController}, AddressV>(`
+    new Fetcher<{baicontroller: BAIController}, AddressV>(`
         #### Admin
 
-        * "VAIController Admin" - Returns the VAIControllers's admin
-          * E.g. "VAIController Admin"
+        * "BAIController Admin" - Returns the BAIControllers's admin
+          * E.g. "BAIController Admin"
       `,
       "Admin",
-      [new Arg("vaicontroller", getVAIController, {implicit: true})],
-      (world, {vaicontroller}) => getAdmin(world, vaicontroller)
+      [new Arg("baicontroller", getBAIController, {implicit: true})],
+      (world, {baicontroller}) => getAdmin(world, baicontroller)
     ),
-    new Fetcher<{vaicontroller: VAIController}, AddressV>(`
+    new Fetcher<{baicontroller: BAIController}, AddressV>(`
         #### PendingAdmin
 
-        * "VAIController PendingAdmin" - Returns the pending admin of the VAIController
-          * E.g. "VAIController PendingAdmin" - Returns VAIController's pending admin
+        * "BAIController PendingAdmin" - Returns the pending admin of the BAIController
+          * E.g. "BAIController PendingAdmin" - Returns BAIController's pending admin
       `,
       "PendingAdmin",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
       ],
-      (world, {vaicontroller}) => getPendingAdmin(world, vaicontroller)
+      (world, {baicontroller}) => getPendingAdmin(world, baicontroller)
     ),
   ];
 }
 
-export async function getVAIControllerValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("VAIController", vaicontrollerFetchers(), world, event);
+export async function getBAIControllerValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("BAIController", baicontrollerFetchers(), world, event);
 }

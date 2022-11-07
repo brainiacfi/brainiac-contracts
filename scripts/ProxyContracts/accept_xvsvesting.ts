@@ -7,27 +7,27 @@
 //   const { get } = deployments;
 
 //   const { deployer } = await getNamedAccounts();
-//   //   const XVSVestingContract = await ethers.getContractFactory(
-//   //     "XVSVesting"
+//   //   const BRNVestingContract = await ethers.getContractFactory(
+//   //     "BRNVesting"
 //   //   );
 
-//   const XVSVestingProxy = (await get("XVSVestingProxy")).address;
-//   const XVSVesting = (await get("XVSVesting")).address;
-//   const XVSVestingProxyContract = await ethers.getContractFactory("XVSVestingProxy")
-//   const XVSVestingProxyContractInstance = await XVSVestingProxyContract.attach(
-//     XVSVestingProxy
+//   const BRNVestingProxy = (await get("BRNVestingProxy")).address;
+//   const BRNVesting = (await get("BRNVesting")).address;
+//   const BRNVestingProxyContract = await ethers.getContractFactory("BRNVestingProxy")
+//   const BRNVestingProxyContractInstance = await BRNVestingProxyContract.attach(
+//     BRNVestingProxy
 //   );
-//   const XVSVestingContract = await ethers.getContractFactory("XVSVesting")
-//   const XVSVestingContractInstance = await XVSVestingContract.attach(
-//     XVSVesting
+//   const BRNVestingContract = await ethers.getContractFactory("BRNVesting")
+//   const BRNVestingContractInstance = await BRNVestingContract.attach(
+//     BRNVesting
 //   );
 
-//   const tx = await XVSVestingProxyContractInstance._setPendingImplementation(XVSVesting)
+//   const tx = await BRNVestingProxyContractInstance._setPendingImplementation(BRNVesting)
 //   console.log(tx);
-//   const pendingImplementation = await XVSVestingProxyContractInstance.pendingImplementation();
-//   const becomeImplemenatationTx = await XVSVestingContractInstance._become(XVSVestingProxy)
+//   const pendingImplementation = await BRNVestingProxyContractInstance.pendingImplementation();
+//   const becomeImplemenatationTx = await BRNVestingContractInstance._become(BRNVestingProxy)
 //   console.log(becomeImplemenatationTx)
-//   console.log(`Transaction successfull XVSVesting with address "${pendingImplementation}" become Implementation for proxy`)
+//   console.log(`Transaction successfull BRNVesting with address "${pendingImplementation}" become Implementation for proxy`)
 // };
 
 // main()

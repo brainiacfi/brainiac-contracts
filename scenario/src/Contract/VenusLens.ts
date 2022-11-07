@@ -2,17 +2,17 @@ import { Contract } from '../Contract';
 import { encodedNumber } from '../Encoding';
 import { Callable, Sendable } from '../Invokation';
 
-export interface VenusLensMethods {
-  vTokenBalances(vToken: string, account: string): Sendable<[string,number,number,number,number,number]>;
-  vTokenBalancesAll(vTokens: string[], account: string): Sendable<[string,number,number,number,number,number][]>;
-  vTokenMetadata(vToken: string): Sendable<[string,number,number,number,number,number,number,number,number,boolean,number,string,number,number,number,number,number,number]>;
-  vTokenMetadataAll(vTokens: string[]): Sendable<[string,number,number,number,number,number,number,number,number,boolean,number,string,number,number,number,number,number,number][]>;
-  vTokenUnderlyingPrice(vToken: string): Sendable<[string,number]>;
-  vTokenUnderlyingPriceAll(vTokens: string[]): Sendable<[string,number][]>;
+export interface BrainiacLensMethods {
+  brTokenBalances(brToken: string, account: string): Sendable<[string,number,number,number,number,number]>;
+  brTokenBalancesAll(brTokens: string[], account: string): Sendable<[string,number,number,number,number,number][]>;
+  brTokenMetadata(brToken: string): Sendable<[string,number,number,number,number,number,number,number,number,boolean,number,string,number,number,number,number,number,number]>;
+  brTokenMetadataAll(brTokens: string[]): Sendable<[string,number,number,number,number,number,number,number,number,boolean,number,string,number,number,number,number,number,number][]>;
+  brTokenUnderlyingPrice(brToken: string): Sendable<[string,number]>;
+  brTokenUnderlyingPriceAll(brTokens: string[]): Sendable<[string,number][]>;
   getAccountLimits(comptroller: string, account: string): Sendable<[string[],number,number]>;
 }
 
-export interface VenusLens extends Contract {
-  methods: VenusLensMethods;
+export interface BrainiacLens extends Contract {
+  methods: BrainiacLensMethods;
   name: string;
 }

@@ -4,9 +4,9 @@ import "./InterestRateModel.sol";
 import "./SafeMath.sol";
 
 /**
-  * @title Venus's WhitePaperInterestRateModel Contract
-  * @author Venus
-  * @notice The parameterized model described in section 2.4 of the original Venus Protocol whitepaper
+  * @title Brainiac's WhitePaperInterestRateModel Contract
+  * @author Brainiac
+  * @notice The parameterized model described in section 2.4 of the original Brainiac Protocol whitepaper
   */
 contract WhitePaperInterestRateModel is InterestRateModel {
     using SafeMath for uint;
@@ -16,7 +16,7 @@ contract WhitePaperInterestRateModel is InterestRateModel {
     /**
      * @notice The approximate number of blocks per year that is assumed by the interest rate model
      */
-    uint public constant blocksPerYear = 60 * 60 * 24 * 365 / 3; // (assuming 3s blocks)
+    uint public constant blocksPerYear = 60 * 60 * 24 * 365 / 60; // (assuming 3s blocks)
 
     /**
      * @notice The multiplier of utilization rate that gives the slope of the interest rate

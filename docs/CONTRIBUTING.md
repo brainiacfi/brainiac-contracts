@@ -17,7 +17,7 @@ By default, git merges the upstream changes into your local branch on pull. This
 
 1. Prefer to base your feature branches on master. If it is not possible, make sure to **not include** someone else's commits in your PR later.
 2. Prefer short and descriptive names for branches (good: `polynomial-interest-curve`, bad: `fix-rate`).
-3. Use lowercase words separated by dashes (good: `xvs-vault`, bad: `XVSVault`).
+3. Use lowercase words separated by dashes (good: `brn-vault`, bad: `BRNVault`).
 4. You may include work type into the branch name (ok: `feature/polynomial-interest-curve`).
 5. Make sure no-one else works in your feature branch.
 

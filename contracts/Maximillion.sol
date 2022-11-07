@@ -1,47 +1,47 @@
 pragma solidity ^0.5.16;
 
-import "./VBNB.sol";
+import "./BRCKB.sol";
 
 /**
- * @title Venus's Maximillion Contract
- * @author Venus
+ * @title Brainiac's Maximillion Contract
+ * @author Brainiac
  */
 contract Maximillion {
     /**
-     * @notice The default vBnb market to repay in
+     * @notice The default brCkb market to repay in
      */
-    VBNB public vBnb;
+    BRCKB public brCkb;
 
     /**
-     * @notice Construct a Maximillion to repay max in a VBNB market
+     * @notice Construct a Maximillion to repay max in a BRCKB market
      */
-    constructor(VBNB vBnb_) public {
-        vBnb = vBnb_;
+    constructor(BRCKB brCkb_) public {
+        brCkb = brCkb_;
     }
 
     /**
-     * @notice msg.sender sends BNB to repay an account's borrow in the vBnb market
-     * @dev The provided BNB is applied towards the borrow balance, any excess is refunded
+     * @notice msg.sender sends CKB to repay an account's borrow in the brCkb market
+     * @dev The provided CKB is applied towards the borrow balance, any excess is refunded
      * @param borrower The address of the borrower account to repay on behalf of
      */
     function repayBehalf(address borrower) public payable {
-        repayBehalfExplicit(borrower, vBnb);
+        repayBehalfExplicit(borrower, brCkb);
     }
 
     /**
-     * @notice msg.sender sends BNB to repay an account's borrow in a vBnb market
-     * @dev The provided BNB is applied towards the borrow balance, any excess is refunded
+     * @notice msg.sender sends CKB to repay an account's borrow in a brCkb market
+     * @dev The provided CKB is applied towards the borrow balance, any excess is refunded
      * @param borrower The address of the borrower account to repay on behalf of
-     * @param vBnb_ The address of the vBnb contract to repay in
+     * @param brCkb_ The address of the brCkb contract to repay in
      */
-    function repayBehalfExplicit(address borrower, VBNB vBnb_) public payable {
+    function repayBehalfExplicit(address borrower, BRCKB brCkb_) public payable {
         uint received = msg.value;
-        uint borrows = vBnb_.borrowBalanceCurrent(borrower);
+        uint borrows = brCkb_.borrowBalanceCurrent(borrower);
         if (received > borrows) {
-            vBnb_.repayBorrowBehalf.value(borrows)(borrower);
+            brCkb_.repayBorrowBehalf.value(borrows)(borrower);
             msg.sender.transfer(received - borrows);
         } else {
-            vBnb_.repayBorrowBehalf.value(received)(borrower);
+            brCkb_.repayBorrowBehalf.value(received)(borrower);
         }
     }
 }

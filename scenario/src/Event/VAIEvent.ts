@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { addAction, World, describeUser } from '../World';
-import { VAI, VAIScenario } from '../Contract/VAI';
-import { buildVAI } from '../Builder/VAIBuilder';
+import { BAI, BAIScenario } from '../Contract/BAI';
+import { buildBAI } from '../Builder/BAIBuilder';
 import { invoke } from '../Invokation';
 import {
   getAddressV,
@@ -16,263 +16,263 @@ import {
   StringV
 } from '../Value';
 import { Arg, Command, processCommandEvent, View } from '../Command';
-import { getVAI } from '../ContractLookup';
+import { getBAI } from '../ContractLookup';
 import { NoErrorReporter } from '../ErrorReporter';
 import { verify } from '../Verify';
 import { encodedNumber } from '../Encoding';
 
-async function genVAI(world: World, from: string, params: Event): Promise<World> {
-  let { world: nextWorld, vai, tokenData } = await buildVAI(world, from, params);
+async function genBAI(world: World, from: string, params: Event): Promise<World> {
+  let { world: nextWorld, bai, tokenData } = await buildBAI(world, from, params);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Deployed VAI (${vai.name}) to address ${vai._address}`,
+    `Deployed BAI (${bai.name}) to address ${bai._address}`,
     tokenData.invokation
   );
 
   return world;
 }
 
-async function verifyVAI(world: World, vai: VAI, apiKey: string, modelName: string, contractName: string): Promise<World> {
+async function verifyBAI(world: World, bai: BAI, apiKey: string, modelName: string, contractName: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {
-    await verify(world, apiKey, modelName, contractName, vai._address);
+    await verify(world, apiKey, modelName, contractName, bai._address);
   }
 
   return world;
 }
 
-async function approve(world: World, from: string, vai: VAI, address: string, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.approve(address, amount.encode()), from, NoErrorReporter);
+async function approve(world: World, from: string, bai: BAI, address: string, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.approve(address, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Approved VAI token for ${from} of ${amount.show()}`,
+    `Approved BAI token for ${from} of ${amount.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function faucet(world: World, from: string, vai: VAI, address: string, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.allocateTo(address, amount.encode()), from, NoErrorReporter);
+async function faucet(world: World, from: string, bai: BAI, address: string, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.allocateTo(address, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Fauceted ${amount.show()} VAI tokens to ${address}`,
+    `Fauceted ${amount.show()} BAI tokens to ${address}`,
     invokation
   );
 
   return world;
 }
 
-async function transfer(world: World, from: string, vai: VAI, address: string, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.transfer(address, amount.encode()), from, NoErrorReporter);
+async function transfer(world: World, from: string, bai: BAI, address: string, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.transfer(address, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Transferred ${amount.show()} VAI tokens from ${from} to ${address}`,
+    `Transferred ${amount.show()} BAI tokens from ${from} to ${address}`,
     invokation
   );
 
   return world;
 }
 
-async function transferFrom(world: World, from: string, vai: VAI, owner: string, spender: string, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.transferFrom(owner, spender, amount.encode()), from, NoErrorReporter);
+async function transferFrom(world: World, from: string, bai: BAI, owner: string, spender: string, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.transferFrom(owner, spender, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `"Transferred from" ${amount.show()} VAI tokens from ${owner} to ${spender}`,
+    `"Transferred from" ${amount.show()} BAI tokens from ${owner} to ${spender}`,
     invokation
   );
 
   return world;
 }
 
-async function transferScenario(world: World, from: string, vai: VAIScenario, addresses: string[], amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.transferScenario(addresses, amount.encode()), from, NoErrorReporter);
+async function transferScenario(world: World, from: string, bai: BAIScenario, addresses: string[], amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.transferScenario(addresses, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Transferred ${amount.show()} VAI tokens from ${from} to ${addresses}`,
+    `Transferred ${amount.show()} BAI tokens from ${from} to ${addresses}`,
     invokation
   );
 
   return world;
 }
 
-async function transferFromScenario(world: World, from: string, vai: VAIScenario, addresses: string[], amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vai.methods.transferFromScenario(addresses, amount.encode()), from, NoErrorReporter);
+async function transferFromScenario(world: World, from: string, bai: BAIScenario, addresses: string[], amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, bai.methods.transferFromScenario(addresses, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Transferred ${amount.show()} VAI tokens from ${addresses} to ${from}`,
+    `Transferred ${amount.show()} BAI tokens from ${addresses} to ${from}`,
     invokation
   );
 
   return world;
 }
 
-async function rely(world: World, from: string, vai: VAI, address: string): Promise<World> {
-  let invokation = await invoke(world, vai.methods.rely(address), from, NoErrorReporter);
+async function rely(world: World, from: string, bai: BAI, address: string): Promise<World> {
+  let invokation = await invoke(world, bai.methods.rely(address), from, NoErrorReporter);
 
   world = addAction(
     world,
-    `Add rely to VAI token to ${address}`,
+    `Add rely to BAI token to ${address}`,
     invokation
   );
 
   return world;
 }
 
-export function vaiCommands() {
+export function baiCommands() {
   return [
     new Command<{ params: EventV }>(`
         #### Deploy
 
-        * "Deploy ...params" - Generates a new VAI token
-          * E.g. "VAI Deploy"
+        * "Deploy ...params" - Generates a new BAI token
+          * E.g. "BAI Deploy"
       `,
       "Deploy",
       [
         new Arg("params", getEventV, { variadic: true })
       ],
-      (world, from, { params }) => genVAI(world, from, params.val)
+      (world, from, { params }) => genBAI(world, from, params.val)
     ),
 
-    new View<{ vai: VAI, apiKey: StringV, contractName: StringV }>(`
+    new View<{ bai: BAI, apiKey: StringV, contractName: StringV }>(`
         #### Verify
 
-        * "<VAI> Verify apiKey:<String> contractName:<String>=VAI" - Verifies VAI token in BscScan
-          * E.g. "VAI Verify "myApiKey"
+        * "<BAI> Verify apiKey:<String> contractName:<String>=BAI" - Verifies BAI token in BscScan
+          * E.g. "BAI Verify "myApiKey"
       `,
       "Verify",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("apiKey", getStringV),
-        new Arg("contractName", getStringV, { default: new StringV("VAI") })
+        new Arg("contractName", getStringV, { default: new StringV("BAI") })
       ],
-      async (world, { vai, apiKey, contractName }) => {
-        return await verifyVAI(world, vai, apiKey.val, vai.name, contractName.val)
+      async (world, { bai, apiKey, contractName }) => {
+        return await verifyBAI(world, bai, apiKey.val, bai.name, contractName.val)
       }
     ),
 
-    new Command<{ vai: VAI, spender: AddressV, amount: NumberV }>(`
+    new Command<{ bai: BAI, spender: AddressV, amount: NumberV }>(`
         #### Approve
 
-        * "VAI Approve spender:<Address> <Amount>" - Adds an allowance between user and address
-          * E.g. "VAI Approve Geoff 1.0e18"
+        * "BAI Approve spender:<Address> <Amount>" - Adds an allowance between user and address
+          * E.g. "BAI Approve Geoff 1.0e18"
       `,
       "Approve",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("spender", getAddressV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vai, spender, amount }) => {
-        return approve(world, from, vai, spender.val, amount)
+      (world, from, { bai, spender, amount }) => {
+        return approve(world, from, bai, spender.val, amount)
       }
     ),
 
-    new Command<{ vai: VAI, recipient: AddressV, amount: NumberV}>(`
+    new Command<{ bai: BAI, recipient: AddressV, amount: NumberV}>(`
         #### Faucet
 
-        * "VAI Faucet recipient:<User> <Amount>" - Adds an arbitrary balance to given user
-          * E.g. "VAI Faucet Geoff 1.0e18"
+        * "BAI Faucet recipient:<User> <Amount>" - Adds an arbitrary balance to given user
+          * E.g. "BAI Faucet Geoff 1.0e18"
       `,
       "Faucet",
       [ 
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("recipient", getAddressV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, {vai, recipient, amount}) => {
-        return faucet(world, from, vai, recipient.val, amount)
+      (world, from, {bai, recipient, amount}) => {
+        return faucet(world, from, bai, recipient.val, amount)
       }
     ),
 
-    new Command<{ vai: VAI, recipient: AddressV, amount: NumberV }>(`
+    new Command<{ bai: BAI, recipient: AddressV, amount: NumberV }>(`
         #### Transfer
 
-        * "VAI Transfer recipient:<User> <Amount>" - Transfers a number of tokens via "transfer" as given user to recipient (this does not depend on allowance)
-          * E.g. "VAI Transfer Torrey 1.0e18"
+        * "BAI Transfer recipient:<User> <Amount>" - Transfers a number of tokens via "transfer" as given user to recipient (this does not depend on allowance)
+          * E.g. "BAI Transfer Torrey 1.0e18"
       `,
       "Transfer",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("recipient", getAddressV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vai, recipient, amount }) => transfer(world, from, vai, recipient.val, amount)
+      (world, from, { bai, recipient, amount }) => transfer(world, from, bai, recipient.val, amount)
     ),
 
-    new Command<{ vai: VAI, owner: AddressV, spender: AddressV, amount: NumberV }>(`
+    new Command<{ bai: BAI, owner: AddressV, spender: AddressV, amount: NumberV }>(`
         #### TransferFrom
 
-        * "VAI TransferFrom owner:<User> spender:<User> <Amount>" - Transfers a number of tokens via "transfeFrom" to recipient (this depends on allowances)
-          * E.g. "VAI TransferFrom Geoff Torrey 1.0e18"
+        * "BAI TransferFrom owner:<User> spender:<User> <Amount>" - Transfers a number of tokens via "transfeFrom" to recipient (this depends on allowances)
+          * E.g. "BAI TransferFrom Geoff Torrey 1.0e18"
       `,
       "TransferFrom",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("owner", getAddressV),
         new Arg("spender", getAddressV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vai, owner, spender, amount }) => transferFrom(world, from, vai, owner.val, spender.val, amount)
+      (world, from, { bai, owner, spender, amount }) => transferFrom(world, from, bai, owner.val, spender.val, amount)
     ),
 
-    new Command<{ vai: VAIScenario, recipients: AddressV[], amount: NumberV }>(`
+    new Command<{ bai: BAIScenario, recipients: AddressV[], amount: NumberV }>(`
         #### TransferScenario
 
-        * "VAI TransferScenario recipients:<User[]> <Amount>" - Transfers a number of tokens via "transfer" to the given recipients (this does not depend on allowance)
-          * E.g. "VAI TransferScenario (Jared Torrey) 10"
+        * "BAI TransferScenario recipients:<User[]> <Amount>" - Transfers a number of tokens via "transfer" to the given recipients (this does not depend on allowance)
+          * E.g. "BAI TransferScenario (Jared Torrey) 10"
       `,
       "TransferScenario",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("recipients", getAddressV, { mapped: true }),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vai, recipients, amount }) => transferScenario(world, from, vai, recipients.map(recipient => recipient.val), amount)
+      (world, from, { bai, recipients, amount }) => transferScenario(world, from, bai, recipients.map(recipient => recipient.val), amount)
     ),
 
-    new Command<{ vai: VAIScenario, froms: AddressV[], amount: NumberV }>(`
+    new Command<{ bai: BAIScenario, froms: AddressV[], amount: NumberV }>(`
         #### TransferFromScenario
 
-        * "VAI TransferFromScenario froms:<User[]> <Amount>" - Transfers a number of tokens via "transferFrom" from the given users to msg.sender (this depends on allowance)
-          * E.g. "VAI TransferFromScenario (Jared Torrey) 10"
+        * "BAI TransferFromScenario froms:<User[]> <Amount>" - Transfers a number of tokens via "transferFrom" from the given users to msg.sender (this depends on allowance)
+          * E.g. "BAI TransferFromScenario (Jared Torrey) 10"
       `,
       "TransferFromScenario",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("froms", getAddressV, { mapped: true }),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vai, froms, amount }) => transferFromScenario(world, from, vai, froms.map(_from => _from.val), amount)
+      (world, from, { bai, froms, amount }) => transferFromScenario(world, from, bai, froms.map(_from => _from.val), amount)
     ),
 
-    new Command<{ vai: VAI, address: AddressV, amount: NumberV }>(`
+    new Command<{ bai: BAI, address: AddressV, amount: NumberV }>(`
         #### Rely
 
-        * "VAI Rely rely:<Address>" - Adds rely address
-          * E.g. "VAI Rely 0xXX..."
+        * "BAI Rely rely:<Address>" - Adds rely address
+          * E.g. "BAI Rely 0xXX..."
       `,
       "Rely",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("address", getAddressV)
       ],
-      (world, from, { vai, address }) => {
-        return rely(world, from, vai, address.val)
+      (world, from, { bai, address }) => {
+        return rely(world, from, bai, address.val)
       }
     ),
   ];
 }
 
-export async function processVAIEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("VAI", vaiCommands(), world, event, from);
+export async function processBAIEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("BAI", baiCommands(), world, event, from);
 }

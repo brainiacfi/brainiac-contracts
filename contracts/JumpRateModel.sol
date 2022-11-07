@@ -4,8 +4,8 @@ import "./InterestRateModel.sol";
 import "./SafeMath.sol";
 
 /**
-  * @title Venus's JumpRateModel Contract
-  * @author Venus
+  * @title Brainiac's JumpRateModel Contract
+  * @author Brainiac
   */
 contract JumpRateModel is InterestRateModel {
     using SafeMath for uint;
@@ -15,7 +15,7 @@ contract JumpRateModel is InterestRateModel {
     /**
      * @notice The approximate number of blocks per year that is assumed by the interest rate model
      */
-    uint public constant blocksPerYear = 60 * 60 * 24 * 365 / 3; // (assuming 3s blocks)
+    uint public constant blocksPerYear = 60 * 60 * 24 * 365 / 60; // (assuming 3s blocks)
 
     /**
      * @notice The multiplier of utilization rate that gives the slope of the interest rate

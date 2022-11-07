@@ -7,7 +7,7 @@ interface Checkpoint {
   votes: number;
 }
 
-export interface XVSMethods {
+export interface BRNMethods {
   name(): Callable<string>;
   symbol(): Callable<string>;
   decimals(): Callable<number>;
@@ -25,17 +25,17 @@ export interface XVSMethods {
   setBlockNumber(blockNumber: encodedNumber): Sendable<void>;
 }
 
-export interface XVSScenarioMethods extends XVSMethods {
+export interface BRNScenarioMethods extends BRNMethods {
   transferScenario(destinations: string[], amount: encodedNumber): Sendable<boolean>;
   transferFromScenario(froms: string[], amount: encodedNumber): Sendable<boolean>;
 }
 
-export interface XVS extends Contract {
-  methods: XVSMethods;
+export interface BRN extends Contract {
+  methods: BRNMethods;
   name: string;
 }
 
-export interface XVSScenario extends Contract {
-  methods: XVSScenarioMethods;
+export interface BRNScenario extends Contract {
+  methods: BRNScenarioMethods;
   name: string;
 }

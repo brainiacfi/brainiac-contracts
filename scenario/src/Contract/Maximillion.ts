@@ -2,7 +2,7 @@ import {Contract} from '../Contract';
 import {Callable, Sendable} from '../Invokation';
 
 interface MaximillionMethods {
-  vBnb(): Callable<string>
+  brCkb(): Callable<string>
   repayBehalf(string): Sendable<void>
 }
 

@@ -1,8 +1,8 @@
 
-Test "Attempt to borrow over set cap BEP20"
+Test "Attempt to borrow over set cap ERC20"
     NewComptroller price:1.0
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
     Comptroller SetMarketBorrowCaps (vBAT) (0.5e18)
     Assert Equal (Comptroller BorrowCaps vBAT) (Exactly 0.5e18)
     Give vBAT 10e18 BAT -- Faucet some bat to borrow
@@ -14,14 +14,14 @@ Test "Attempt to borrow over set cap BEP20"
     AllowFailures
     Borrow Geoff 1e18 vBAT
     Assert Revert
-    Assert Equal (vToken vBAT BorrowBalance Geoff) (Exactly 0)
-    Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 0)
-    Assert Equal (Bep20 BAT TokenBalance vBAT) (Exactly 10e18)
+    Assert Equal (brToken vBAT BorrowBalance Geoff) (Exactly 0)
+    Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 0)
+    Assert Equal (Erc20 BAT TokenBalance vBAT) (Exactly 10e18)
 
-Test "Attempt to borrow at set cap BEP20"
+Test "Attempt to borrow at set cap ERC20"
     NewComptroller price:1.0
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
     Comptroller SetMarketBorrowCaps (vBAT) (1000000000000000001)
     Give vBAT 10e18 BAT -- Faucet some bat to borrow
     Support vZRX collateralFactor:0.5
@@ -30,17 +30,17 @@ Test "Attempt to borrow at set cap BEP20"
     Mint Geoff 100e18 vZRX
     EnterMarkets Geoff vZRX
     Borrow Geoff 1e18 vBAT
-    Assert Equal (vToken vBAT BorrowBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance vBAT) (Exactly 9e18)
+    Assert Equal (brToken vBAT BorrowBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance vBAT) (Exactly 9e18)
     Assert Equal (Comptroller MembershipLength Geoff) (Exactly 2)
     Assert True (Comptroller CheckMembership Geoff vZRX)
     Assert True (Comptroller CheckMembership Geoff vBAT)
 
-Test "Attempt to borrow below set cap BEP20"
+Test "Attempt to borrow below set cap ERC20"
     NewComptroller price:1.0
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
     Comptroller SetMarketBorrowCaps (vBAT) (10e18)
     Give vBAT 10e18 BAT -- Faucet some bat to borrow
     Support vZRX collateralFactor:0.5
@@ -49,81 +49,81 @@ Test "Attempt to borrow below set cap BEP20"
     Mint Geoff 100e18 vZRX
     EnterMarkets Geoff vZRX
     Borrow Geoff 1e18 vBAT
-    Assert Equal (vToken vBAT BorrowBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance vBAT) (Exactly 9e18)
+    Assert Equal (brToken vBAT BorrowBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance vBAT) (Exactly 9e18)
     Assert Equal (Comptroller MembershipLength Geoff) (Exactly 2)
     Assert True (Comptroller CheckMembership Geoff vZRX)
     Assert True (Comptroller CheckMembership Geoff vBAT)
 
-Test "Borrow some Bnb over cap"
+Test "Borrow some Ckb over cap"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
-    Comptroller SetMarketBorrowCaps (vBNB) (0.0001e18)
-    Donate vBNB 0.003e18
+    SetCollateralFactor brCKB collateralFactor:0.5
+    Comptroller SetMarketBorrowCaps (brCKB) (0.0001e18)
+    Donate brCKB 0.003e18
     Prep Geoff Some ZRX vZRX
     Mint Geoff 1e18 vZRX
     EnterMarkets Geoff vZRX
     AllowFailures
-    BorrowBnb Geoff 0.001e18 vBNB
+    BorrowCkb Geoff 0.001e18 brCKB
     Assert Revert
-    Assert Equal (BNBBalance vBNB) 0.003e18
+    Assert Equal (CKBBalance brCKB) 0.003e18
 
-Test "Borrow some Bnb enters Bnb and succeeds when Bnb not entered. At borrow cap"
+Test "Borrow some Ckb enters Ckb and succeeds when Ckb not entered. At borrow cap"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
-    Comptroller SetMarketBorrowCaps (vBNB) (1000000000000001)
-    Donate vBNB 0.003e18
+    SetCollateralFactor brCKB collateralFactor:0.5
+    Comptroller SetMarketBorrowCaps (brCKB) (1000000000000001)
+    Donate brCKB 0.003e18
     Prep Geoff Some ZRX vZRX
     Mint Geoff 1e18 vZRX
     EnterMarkets Geoff vZRX
-    Expect Changes (BNBBalance Geoff) +0.001e18
-    BorrowBnb Geoff 0.001e18 vBNB
-    Assert Equal (BNBBalance vBNB) 0.002e18
+    Expect Changes (CKBBalance Geoff) +0.001e18
+    BorrowCkb Geoff 0.001e18 brCKB
+    Assert Equal (CKBBalance brCKB) 0.002e18
     Assert Equal (Comptroller Liquidity Geoff) 4.99e17
     Assert Equal (Comptroller MembershipLength Geoff) (Exactly 2)
-    Assert True (Comptroller CheckMembership Geoff vBNB)
+    Assert True (Comptroller CheckMembership Geoff brCKB)
 
-Test "Borrow some Bnb enters Bnb and succeeds when Bnb not entered. At under borrow cap"
+Test "Borrow some Ckb enters Ckb and succeeds when Ckb not entered. At under borrow cap"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
-    Comptroller SetMarketBorrowCaps (vBNB) (0.01e18)
-    Donate vBNB 0.003e18
+    SetCollateralFactor brCKB collateralFactor:0.5
+    Comptroller SetMarketBorrowCaps (brCKB) (0.01e18)
+    Donate brCKB 0.003e18
     Prep Geoff Some ZRX vZRX
     Mint Geoff 1e18 vZRX
     EnterMarkets Geoff vZRX
-    Expect Changes (BNBBalance Geoff) +0.001e18
-    BorrowBnb Geoff 0.001e18 vBNB
-    Assert Equal (BNBBalance vBNB) 0.002e18
+    Expect Changes (CKBBalance Geoff) +0.001e18
+    BorrowCkb Geoff 0.001e18 brCKB
+    Assert Equal (CKBBalance brCKB) 0.002e18
     Assert Equal (Comptroller Liquidity Geoff) 4.99e17
     Assert Equal (Comptroller MembershipLength Geoff) (Exactly 2)
-    Assert True (Comptroller CheckMembership Geoff vBNB)
+    Assert True (Comptroller CheckMembership Geoff brCKB)
 
 Test "Setting borrow cap restricted to admin"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
+    SetCollateralFactor brCKB collateralFactor:0.5
     AllowFailures
-    From Robert (Comptroller SetMarketBorrowCaps (vBNB) (0.01e18))
+    From Robert (Comptroller SetMarketBorrowCaps (brCKB) (0.01e18))
     Assert Revert
 
 Test "Borrow cap guardian can set borrow caps"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
+    SetCollateralFactor brCKB collateralFactor:0.5
     Comptroller SetBorrowCapGuardian Geoff
     From Geoff (Comptroller SetMarketBorrowCaps (vZRX) (0.5e18))
     AllowFailures
@@ -142,9 +142,9 @@ Test "Only admin can set Borrow Cap Guardian"
 
 Test "SetBorrowCaps works correctly too"
     NewComptroller price:1.0
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
-    NewVToken USDC vUSDC
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
+    NewBRToken USDC vUSDC
     Comptroller SetMarketBorrowCaps (vBAT vUSDC) (0.5e18 1000001)
     Assert Equal (Comptroller BorrowCaps vBAT) (Exactly 0.5e18)
     Assert Equal (Comptroller BorrowCaps vUSDC) (Exactly 1000001)
@@ -163,7 +163,7 @@ Test "SetBorrowCaps works correctly too"
     Assert Revert
     Successfully
     Borrow Geoff 1e6 vUSDC
-    Assert Equal (vToken vBAT BorrowBalance Geoff) (Exactly 0)
-    Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 0)
-    Assert Equal (Bep20 BAT TokenBalance vBAT) (Exactly 10e18)
-    Assert Equal (Bep20 USDC TokenBalance Geoff) (Exactly 1e6)
+    Assert Equal (brToken vBAT BorrowBalance Geoff) (Exactly 0)
+    Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 0)
+    Assert Equal (Erc20 BAT TokenBalance vBAT) (Exactly 10e18)
+    Assert Equal (Erc20 USDC TokenBalance Geoff) (Exactly 1e6)

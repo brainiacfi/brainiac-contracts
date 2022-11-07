@@ -1,23 +1,23 @@
 const {
-  bnbUnsigned,
-  bnbMantissa,
-  bnbExp,
+  ckbUnsigned,
+  ckbMantissa,
+  ckbExp,
 } = require('./Utils/BSC');
 
 const {
   makeComptroller,
-  makeVToken,
+  makeBRToken,
   preApprove,
   preSupply,
   quickRedeem,
-} = require('./Utils/Venus');
+} = require('./Utils/Brainiac');
 
-async function xvsBalance(comptroller, user) {
-  return bnbUnsigned(await call(comptroller.xvs, 'balanceOf', [user]))
+async function brnBalance(comptroller, user) {
+  return ckbUnsigned(await call(comptroller.brn, 'balanceOf', [user]))
 }
 
-async function venusAccrued(comptroller, user) {
-  return bnbUnsigned(await call(comptroller, 'venusAccrued', [user]));
+async function brainiacAccrued(comptroller, user) {
+  return ckbUnsigned(await call(comptroller, 'brainiacAccrued', [user]));
 }
 
 async function fastForwardPatch(patch, comptroller, blocks) {
@@ -34,15 +34,15 @@ const diffStringsUnified = require('jest-diff').default;
 
 
 async function preRedeem(
-  vToken,
+  brToken,
   redeemer,
   redeemTokens,
   redeemAmount,
   exchangeRate
 ) {
-  await preSupply(vToken, redeemer, redeemTokens);
-  await send(vToken.underlying, 'harnessSetBalance', [
-    vToken._address,
+  await preSupply(brToken, redeemer, redeemTokens);
+  await send(brToken.underlying, 'harnessSetBalance', [
+    brToken._address,
     redeemAmount
   ]);
 }
@@ -71,32 +71,32 @@ const recordGasCost = (totalFee, key, filename, opcodes = {}) => {
   fs.writeFileSync(filename, JSON.stringify(fileObj, null, ' '), 'utf-8');
 };
 
-async function mint(vToken, minter, mintAmount, exchangeRate) {
-  expect(await preApprove(vToken, minter, mintAmount, {})).toSucceed();
-  return send(vToken, 'mint', [mintAmount], { from: minter });
+async function mint(brToken, minter, mintAmount, exchangeRate) {
+  expect(await preApprove(brToken, minter, mintAmount, {})).toSucceed();
+  return send(brToken, 'mint', [mintAmount], { from: minter });
 }
 
-async function claimVenus(comptroller, holder) {
-  return send(comptroller, 'claimVenus', [holder], { from: holder });
+async function claimBrainiac(comptroller, holder) {
+  return send(comptroller, 'claimBrainiac', [holder], { from: holder });
 }
 
-/// GAS PROFILER: saves a digest of the gas prices of common VToken operations
+/// GAS PROFILER: saves a digest of the gas prices of common BRToken operations
 /// transiently fails, not sure why
 
 describe('Gas report', () => {
-  let root, minter, redeemer, accounts, vToken;
+  let root, minter, redeemer, accounts, brToken;
   const exchangeRate = 50e3;
-  const preMintAmount = bnbUnsigned(30e4);
-  const mintAmount = bnbUnsigned(10e4);
+  const preMintAmount = ckbUnsigned(30e4);
+  const mintAmount = ckbUnsigned(10e4);
   const mintTokens = mintAmount.div(exchangeRate);
-  const redeemTokens = bnbUnsigned(10e3);
+  const redeemTokens = ckbUnsigned(10e3);
   const redeemAmount = redeemTokens.multipliedBy(exchangeRate);
   const filename = './gasCosts.json';
 
-  describe('VToken', () => {
+  describe('BRToken', () => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
-      vToken = await makeVToken({
+      brToken = await makeBRToken({
         comptrollerOpts: { kind: 'bool'}, 
         interestRateModelOpts: { kind: 'white-paper'},
         exchangeRate
@@ -104,20 +104,20 @@ describe('Gas report', () => {
     });
 
     it('first mint', async () => {
-      await send(vToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(vToken, 'harnessSetBlockNumber', [41]);
+      await send(brToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(brToken, 'harnessSetBlockNumber', [41]);
 
-      const trxReceipt = await mint(vToken, minter, mintAmount, exchangeRate);
+      const trxReceipt = await mint(brToken, minter, mintAmount, exchangeRate);
       recordGasCost(trxReceipt.gasUsed, 'first mint', filename);
     });
 
     it('second mint', async () => {
-      await mint(vToken, minter, mintAmount, exchangeRate);
+      await mint(brToken, minter, mintAmount, exchangeRate);
 
-      await send(vToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(vToken, 'harnessSetBlockNumber', [41]);
+      await send(brToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(brToken, 'harnessSetBlockNumber', [41]);
 
-      const mint2Receipt = await mint(vToken, minter, mintAmount, exchangeRate);
+      const mint2Receipt = await mint(brToken, minter, mintAmount, exchangeRate);
       expect(Object.keys(mint2Receipt.events)).toEqual(['AccrueInterest', 'Transfer', 'Mint']);
 
       console.log(mint2Receipt.gasUsed);
@@ -136,12 +136,12 @@ describe('Gas report', () => {
     });
 
     it('second mint, no interest accrued', async () => {
-      await mint(vToken, minter, mintAmount, exchangeRate);
+      await mint(brToken, minter, mintAmount, exchangeRate);
 
-      await send(vToken, 'harnessSetAccrualBlockNumber', [40]);
-      await send(vToken, 'harnessSetBlockNumber', [40]);
+      await send(brToken, 'harnessSetAccrualBlockNumber', [40]);
+      await send(brToken, 'harnessSetBlockNumber', [40]);
 
-      const mint2Receipt = await mint(vToken, minter, mintAmount, exchangeRate);
+      const mint2Receipt = await mint(brToken, minter, mintAmount, exchangeRate);
       expect(Object.keys(mint2Receipt.events)).toEqual(['Transfer', 'Mint']);
       recordGasCost(mint2Receipt.gasUsed, 'second mint, no interest accrued', filename);
 
@@ -156,14 +156,14 @@ describe('Gas report', () => {
     });
 
     it('redeem', async () => {
-      await preRedeem(vToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
-      const trxReceipt = await quickRedeem(vToken, redeemer, redeemTokens);
+      await preRedeem(brToken, redeemer, redeemTokens, redeemAmount, exchangeRate);
+      const trxReceipt = await quickRedeem(brToken, redeemer, redeemTokens);
       recordGasCost(trxReceipt.gasUsed, 'redeem', filename);
     });
 
     it.skip('print mint opcode list', async () => {
-      await preMint(vToken, minter, mintAmount, mintTokens, exchangeRate);
-      const trxReceipt = await quickMint(vToken, minter, mintAmount);
+      await preMint(brToken, minter, mintAmount, mintTokens, exchangeRate);
+      const trxReceipt = await quickMint(brToken, minter, mintAmount);
       const opcodeCount = {};
       await saddle.trace(trxReceipt, {
         execLog: log => {
@@ -177,45 +177,45 @@ describe('Gas report', () => {
   describe.each([
     ['unitroller-g2'],
     ['unitroller']
-  ])('XVS claims %s', (patch) => {
+  ])('BRN claims %s', (patch) => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
       comptroller = await makeComptroller({ kind: patch });
       let interestRateModelOpts = {borrowRate: 0.000001};
-      vToken = await makeVToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
+      brToken = await makeBRToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
       if (patch == 'unitroller') {
-        await send(comptroller, '_setVenusSpeed', [vToken._address, bnbExp(0.05)]);
+        await send(comptroller, '_setBrainiacSpeed', [brToken._address, ckbExp(0.05)]);
       } else {
-        await send(comptroller, '_addVenusMarkets', [[vToken].map(c => c._address)]);
-        await send(comptroller, 'setVenusSpeed', [vToken._address, bnbExp(0.05)]);
+        await send(comptroller, '_addBrainiacMarkets', [[brToken].map(c => c._address)]);
+        await send(comptroller, 'setBrainiacSpeed', [brToken._address, ckbExp(0.05)]);
       }
-      await send(comptroller.xvs, 'transfer', [comptroller._address, bnbUnsigned(50e18)], {from: root});
+      await send(comptroller.brn, 'transfer', [comptroller._address, ckbUnsigned(50e18)], {from: root});
     });
 
-    it(`${patch} second mint with xvs accrued`, async () => {
-      await mint(vToken, minter, mintAmount, exchangeRate);
+    it(`${patch} second mint with brn accrued`, async () => {
+      await mint(brToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('XVS balance before mint', (await xvsBalance(comptroller, minter)).toString());
-      console.log('XVS accrued before mint', (await venusAccrued(comptroller, minter)).toString());
-      const mint2Receipt = await mint(vToken, minter, mintAmount, exchangeRate);
-      console.log('XVS balance after mint', (await xvsBalance(comptroller, minter)).toString());
-      console.log('XVS accrued after mint', (await venusAccrued(comptroller, minter)).toString());
-      recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with xvs accrued`, filename);
+      console.log('BRN balance before mint', (await brnBalance(comptroller, minter)).toString());
+      console.log('BRN accrued before mint', (await brainiacAccrued(comptroller, minter)).toString());
+      const mint2Receipt = await mint(brToken, minter, mintAmount, exchangeRate);
+      console.log('BRN balance after mint', (await brnBalance(comptroller, minter)).toString());
+      console.log('BRN accrued after mint', (await brainiacAccrued(comptroller, minter)).toString());
+      recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with brn accrued`, filename);
     });
 
-    it(`${patch} claim xvs`, async () => {
-      await mint(vToken, minter, mintAmount, exchangeRate);
+    it(`${patch} claim brn`, async () => {
+      await mint(brToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('XVS balance before claim', (await xvsBalance(comptroller, minter)).toString());
-      console.log('XVS accrued before claim', (await venusAccrued(comptroller, minter)).toString());
-      const claimReceipt = await claimVenus(comptroller, minter);
-      console.log('XVS balance after claim', (await xvsBalance(comptroller, minter)).toString());
-      console.log('XVS accrued after claim', (await venusAccrued(comptroller, minter)).toString());
-      recordGasCost(claimReceipt.gasUsed, `${patch} claim xvs`, filename);
+      console.log('BRN balance before claim', (await brnBalance(comptroller, minter)).toString());
+      console.log('BRN accrued before claim', (await brainiacAccrued(comptroller, minter)).toString());
+      const claimReceipt = await claimBrainiac(comptroller, minter);
+      console.log('BRN balance after claim', (await brnBalance(comptroller, minter)).toString());
+      console.log('BRN accrued after claim', (await brainiacAccrued(comptroller, minter)).toString());
+      recordGasCost(claimReceipt.gasUsed, `${patch} claim brn`, filename);
     });
   });
 });

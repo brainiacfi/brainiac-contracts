@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { VBep20Delegate } from '../Contract/VBep20Delegate';
+import { BRErc20Delegate } from '../Contract/BRErc20Delegate';
 import {
   getCoreValue,
   mapValue
@@ -10,42 +10,42 @@ import {
   AddressV,
   Value,
 } from '../Value';
-import { getWorldContractByAddress, getVTokenDelegateAddress } from '../ContractLookup';
+import { getWorldContractByAddress, getBRTokenDelegateAddress } from '../ContractLookup';
 
-export async function getVTokenDelegateV(world: World, event: Event): Promise<VBep20Delegate> {
+export async function getBRTokenDelegateV(world: World, event: Event): Promise<BRErc20Delegate> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getVTokenDelegateAddress(world, str)),
+    (str) => new AddressV(getBRTokenDelegateAddress(world, str)),
     getCoreValue,
     AddressV
   );
 
-  return getWorldContractByAddress<VBep20Delegate>(world, address.val);
+  return getWorldContractByAddress<BRErc20Delegate>(world, address.val);
 }
 
-async function vTokenDelegateAddress(world: World, vTokenDelegate: VBep20Delegate): Promise<AddressV> {
-  return new AddressV(vTokenDelegate._address);
+async function brTokenDelegateAddress(world: World, brTokenDelegate: BRErc20Delegate): Promise<AddressV> {
+  return new AddressV(brTokenDelegate._address);
 }
 
-export function vTokenDelegateFetchers() {
+export function brTokenDelegateFetchers() {
   return [
-    new Fetcher<{ vTokenDelegate: VBep20Delegate }, AddressV>(`
+    new Fetcher<{ brTokenDelegate: BRErc20Delegate }, AddressV>(`
         #### Address
 
-        * "VTokenDelegate <VTokenDelegate> Address" - Returns address of VTokenDelegate contract
-          * E.g. "VTokenDelegate vDaiDelegate Address" - Returns vDaiDelegate's address
+        * "BRTokenDelegate <BRTokenDelegate> Address" - Returns address of BRTokenDelegate contract
+          * E.g. "BRTokenDelegate vDaiDelegate Address" - Returns vDaiDelegate's address
       `,
       "Address",
       [
-        new Arg("vTokenDelegate", getVTokenDelegateV)
+        new Arg("brTokenDelegate", getBRTokenDelegateV)
       ],
-      (world, { vTokenDelegate }) => vTokenDelegateAddress(world, vTokenDelegate),
+      (world, { brTokenDelegate }) => brTokenDelegateAddress(world, brTokenDelegate),
       { namePos: 1 }
     ),
   ];
 }
 
-export async function getVTokenDelegateValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("VTokenDelegate", vTokenDelegateFetchers(), world, event);
+export async function getBRTokenDelegateValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("BRTokenDelegate", brTokenDelegateFetchers(), world, event);
 }

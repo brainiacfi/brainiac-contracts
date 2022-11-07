@@ -26,10 +26,10 @@ contract VRTConverterProxy is VRTConverterAdminStorage {
 
     constructor(address implementation_,
                 address _vrtAddress,
-                address _xvsAddress,
+                address _brnAddress,
                 uint256 _conversionRatio,
                 uint256 _conversionStartTime,
-                uint256 _conversionPeriod) nonZeroAddress(implementation_) nonZeroAddress(_vrtAddress) nonZeroAddress(_xvsAddress) public {
+                uint256 _conversionPeriod) nonZeroAddress(implementation_) nonZeroAddress(_vrtAddress) nonZeroAddress(_brnAddress) public {
         // Creator of the contract is admin during initialization
         admin = msg.sender;
 
@@ -39,7 +39,7 @@ contract VRTConverterProxy is VRTConverterAdminStorage {
         // First delegate gets to initialize the delegator (i.e. storage contract)
         delegateTo(implementation_, abi.encodeWithSignature("initialize(address,address,uint256,uint256,uint256)",
                                                             _vrtAddress,
-                                                            _xvsAddress,
+                                                            _brnAddress,
                                                             _conversionRatio,
                                                             _conversionStartTime,
                                                             _conversionPeriod));

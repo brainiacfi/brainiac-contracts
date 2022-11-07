@@ -2,8 +2,8 @@ pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
 import "./PriceOracle.sol";
-import "./VBep20.sol";
-import "./BEP20Interface.sol";
+import "./BRErc20.sol";
+import "./ERC20Interface.sol";
 import "./SafeMath.sol";
 
 interface IStdReference {
@@ -21,7 +21,7 @@ interface IStdReference {
     function getReferenceDataBulk(string[] calldata _bases, string[] calldata _quotes) external view returns (ReferenceData[] memory);
 }
 
-contract VenusPriceOracle is PriceOracle {
+contract BrainiacPriceOracle is PriceOracle {
     using SafeMath for uint256;
     address public admin;
 
@@ -36,15 +36,15 @@ contract VenusPriceOracle is PriceOracle {
         admin = msg.sender;
     }
 
-    function getUnderlyingPrice(VToken vToken) public view returns (uint) {
-        if (compareStrings(vToken.symbol(), "vBNB")) {
-            IStdReference.ReferenceData memory data = ref.getReferenceData("BNB", "USD");
+    function getUnderlyingPrice(BRToken brToken) public view returns (uint) {
+        if (compareStrings(brToken.symbol(), "brCKB")) {
+            IStdReference.ReferenceData memory data = ref.getReferenceData("CKB", "USD");
             return data.rate;
-        }else if (compareStrings(vToken.symbol(), "XVS")) {
-            return prices[address(vToken)];
+        }else if (compareStrings(brToken.symbol(), "BRN")) {
+            return prices[address(brToken)];
         } else {
             uint256 price;
-            BEP20Interface token = BEP20Interface(VBep20(address(vToken)).underlying());
+            ERC20Interface token = ERC20Interface(BRErc20(address(brToken)).underlying());
 
             if(prices[address(token)] != 0) {
                 price = prices[address(token)];
@@ -66,9 +66,9 @@ contract VenusPriceOracle is PriceOracle {
         }
     }
 
-    function setUnderlyingPrice(VToken vToken, uint underlyingPriceMantissa) public {
+    function setUnderlyingPrice(BRToken brToken, uint underlyingPriceMantissa) public {
         require(msg.sender == admin, "only admin can set underlying price");
-        address asset = address(VBep20(address(vToken)).underlying());
+        address asset = address(BRErc20(address(brToken)).underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
     }

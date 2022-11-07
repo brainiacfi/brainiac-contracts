@@ -1,28 +1,28 @@
 pragma solidity ^0.5.16;
 
-import "./VBep20Delegate.sol";
+import "./BRErc20Delegate.sol";
 
-interface XvsLike {
+interface BrnLike {
   function delegate(address delegatee) external;
 }
 
 /**
- * @title Venus's VXvsLikeDelegate Contract
- * @notice VTokens which can 'delegate votes' of their underlying BEP-20
- * @author Venus
+ * @title Brainiac's VBrnLikeDelegate Contract
+ * @notice BRTokens which can 'delegate votes' of their underlying BEP-20
+ * @author Brainiac
  */
-contract VXvsLikeDelegate is VBep20Delegate {
+contract VBrnLikeDelegate is BRErc20Delegate {
   /**
    * @notice Construct an empty delegate
    */
-  constructor() public VBep20Delegate() {}
+  constructor() public BRErc20Delegate() {}
 
   /**
-   * @notice Admin call to delegate the votes of the XVS-like underlying
-   * @param xvsLikeDelegatee The address to delegate votes to
+   * @notice Admin call to delegate the votes of the BRN-like underlying
+   * @param brnLikeDelegatee The address to delegate votes to
    */
-  function _delegateXvsLikeTo(address xvsLikeDelegatee) external {
-    require(msg.sender == admin, "only the admin may set the xvs-like delegate");
-    XvsLike(underlying).delegate(xvsLikeDelegatee);
+  function _delegateBrnLikeTo(address brnLikeDelegatee) external {
+    require(msg.sender == admin, "only the admin may set the brn-like delegate");
+    BrnLike(underlying).delegate(brnLikeDelegatee);
   }
 }

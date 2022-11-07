@@ -1,8 +1,8 @@
 pragma solidity ^0.5.16;
 
-import "./VToken.sol";
+import "./BRToken.sol";
 import "./PriceOracle.sol";
-import "./VAIControllerInterface.sol";
+import "./BAIControllerInterface.sol";
 import "./ComptrollerLensInterface.sol";
 
 contract UnitrollerAdminStorage {
@@ -52,7 +52,7 @@ contract ComptrollerV1Storage is UnitrollerAdminStorage {
     /**
      * @notice Per-account mapping of "assets you are in", capped by maxAssets
      */
-    mapping(address => VToken[]) public accountAssets;
+    mapping(address => BRToken[]) public accountAssets;
 
     struct Market {
         /// @notice Whether or not this market is listed
@@ -68,12 +68,12 @@ contract ComptrollerV1Storage is UnitrollerAdminStorage {
         /// @notice Per-market mapping of "accounts in this asset"
         mapping(address => bool) accountMembership;
 
-        /// @notice Whether or not this market receives XVS
-        bool isVenus;
+        /// @notice Whether or not this market receives BRN
+        bool isBrainiac;
     }
 
     /**
-     * @notice Official mapping of vTokens -> Market metadata
+     * @notice Official mapping of brTokens -> Market metadata
      * @dev Used e.g. to determine if a market is supported
      */
     mapping(address => Market) public markets;
@@ -91,8 +91,8 @@ contract ComptrollerV1Storage is UnitrollerAdminStorage {
     mapping(address => bool) public mintGuardianPaused;
     mapping(address => bool) public borrowGuardianPaused;
 
-    struct VenusMarketState {
-        /// @notice The market's last updated venusBorrowIndex or venusSupplyIndex
+    struct BrainiacMarketState {
+        /// @notice The market's last updated brainiacBorrowIndex or brainiacSupplyIndex
         uint224 index;
 
         /// @notice The block number the index was last updated at
@@ -100,64 +100,64 @@ contract ComptrollerV1Storage is UnitrollerAdminStorage {
     }
 
     /// @notice A list of all markets
-    VToken[] public allMarkets;
+    BRToken[] public allMarkets;
 
-    /// @notice The rate at which the flywheel distributes XVS, per block
-    uint public venusRate;
+    /// @notice The rate at which the flywheel distributes BRN, per block
+    uint public brainiacRate;
 
-    /// @notice The portion of venusRate that each market currently receives
-    mapping(address => uint) public venusSpeeds;
+    /// @notice The portion of brainiacRate that each market currently receives
+    mapping(address => uint) public brainiacSpeeds;
 
-    /// @notice The Venus market supply state for each market
-    mapping(address => VenusMarketState) public venusSupplyState;
+    /// @notice The Brainiac market supply state for each market
+    mapping(address => BrainiacMarketState) public brainiacSupplyState;
 
-    /// @notice The Venus market borrow state for each market
-    mapping(address => VenusMarketState) public venusBorrowState;
+    /// @notice The Brainiac market borrow state for each market
+    mapping(address => BrainiacMarketState) public brainiacBorrowState;
 
-    /// @notice The Venus supply index for each market for each supplier as of the last time they accrued XVS
-    mapping(address => mapping(address => uint)) public venusSupplierIndex;
+    /// @notice The Brainiac supply index for each market for each supplier as of the last time they accrued BRN
+    mapping(address => mapping(address => uint)) public brainiacSupplierIndex;
 
-    /// @notice The Venus borrow index for each market for each borrower as of the last time they accrued XVS
-    mapping(address => mapping(address => uint)) public venusBorrowerIndex;
+    /// @notice The Brainiac borrow index for each market for each borrower as of the last time they accrued BRN
+    mapping(address => mapping(address => uint)) public brainiacBorrowerIndex;
 
-    /// @notice The XVS accrued but not yet transferred to each user
-    mapping(address => uint) public venusAccrued;
+    /// @notice The BRN accrued but not yet transferred to each user
+    mapping(address => uint) public brainiacAccrued;
 
-    /// @notice The Address of VAIController
-    VAIControllerInterface public vaiController;
+    /// @notice The Address of BAIController
+    BAIControllerInterface public baiController;
 
-    /// @notice The minted VAI amount to each user
-    mapping(address => uint) public mintedVAIs;
+    /// @notice The minted BAI amount to each user
+    mapping(address => uint) public mintedBAIs;
 
-    /// @notice VAI Mint Rate as a percentage
-    uint public vaiMintRate;
+    /// @notice BAI Mint Rate as a percentage
+    uint public baiMintRate;
 
     /**
      * @notice The Pause Guardian can pause certain actions as a safety mechanism.
      */
-    bool public mintVAIGuardianPaused;
-    bool public repayVAIGuardianPaused;
+    bool public mintBAIGuardianPaused;
+    bool public repayBAIGuardianPaused;
 
     /**
      * @notice Pause/Unpause whole protocol actions
      */
     bool public protocolPaused;
 
-    /// @notice The rate at which the flywheel distributes XVS to VAI Minters, per block
-    uint public venusVAIRate;
+    /// @notice The rate at which the flywheel distributes BRN to BAI Minters, per block
+    uint public brainiacBAIRate;
 }
 
 contract ComptrollerV2Storage is ComptrollerV1Storage {
-    /// @notice The rate at which the flywheel distributes XVS to VAI Vault, per block
-    uint public venusVAIVaultRate;
+    /// @notice The rate at which the flywheel distributes BRN to BAI Vault, per block
+    uint public brainiacBAIVaultRate;
 
-    // address of VAI Vault
-    address public vaiVaultAddress;
+    // address of BAI Vault
+    address public baiVaultAddress;
 
-    // start block of release to VAI Vault
+    // start block of release to BAI Vault
     uint256 public releaseStartBlock;
 
-    // minimum release amount to VAI Vault
+    // minimum release amount to BAI Vault
     uint256 public minReleaseAmount;
 }
 
@@ -165,7 +165,7 @@ contract ComptrollerV3Storage is ComptrollerV2Storage {
     /// @notice The borrowCapGuardian can set borrowCaps to any number for any market. Lowering the borrow cap could disable borrowing on the given market.
     address public borrowCapGuardian;
 
-    /// @notice Borrow caps enforced by borrowAllowed for each vToken address. Defaults to zero which corresponds to unlimited borrowing.
+    /// @notice Borrow caps enforced by borrowAllowed for each brToken address. Defaults to zero which corresponds to unlimited borrowing.
     mapping(address => uint) public borrowCaps;
 }
 
@@ -180,10 +180,10 @@ contract ComptrollerV4Storage is ComptrollerV3Storage {
     uint256 public treasuryPercent;
 }
 contract ComptrollerV5Storage is ComptrollerV4Storage {
-    /// @notice The portion of XVS that each contributor receives per block
-    mapping(address => uint) public venusContributorSpeeds;
+    /// @notice The portion of BRN that each contributor receives per block
+    mapping(address => uint) public brainiacContributorSpeeds;
 
-    /// @notice Last block at which a contributor's XVS rewards have been allocated
+    /// @notice Last block at which a contributor's BRN rewards have been allocated
     mapping(address => uint) public lastContributorBlock;
 }
 
@@ -193,4 +193,11 @@ contract ComptrollerV6Storage is ComptrollerV5Storage {
 
 contract ComptrollerV7Storage is ComptrollerV6Storage {
     ComptrollerLensInterface public comptrollerLens;
+    address public brnToken;
+    address public brBrnToken;
+}
+contract ComptrollerV8Storage is ComptrollerV7Storage {
+    
+    /// @notice Supply caps enforced by mintAllowed for each vToken address. Defaults to zero which corresponds to minting notAllowed
+    mapping(address => uint256) public supplyCaps;
 }

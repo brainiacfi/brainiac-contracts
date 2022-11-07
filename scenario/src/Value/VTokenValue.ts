@@ -1,8 +1,8 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { VToken } from '../Contract/VToken';
-import { VBep20Delegator } from '../Contract/VBep20Delegator';
-import { Bep20 } from '../Contract/Bep20';
+import { BRToken } from '../Contract/BRToken';
+import { BRErc20Delegator } from '../Contract/BRErc20Delegator';
+import { Erc20 } from '../Contract/Erc20';
 import {
   getAddressV,
   getCoreValue,
@@ -16,356 +16,356 @@ import {
   Value,
   StringV
 } from '../Value';
-import { getWorldContractByAddress, getVTokenAddress } from '../ContractLookup';
+import { getWorldContractByAddress, getBRTokenAddress } from '../ContractLookup';
 
-export async function getVTokenV(world: World, event: Event): Promise<VToken> {
+export async function getBRTokenV(world: World, event: Event): Promise<BRToken> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getVTokenAddress(world, str)),
+    (str) => new AddressV(getBRTokenAddress(world, str)),
     getCoreValue,
     AddressV
   );
 
-  return getWorldContractByAddress<VToken>(world, address.val);
+  return getWorldContractByAddress<BRToken>(world, address.val);
 }
 
-export async function getVBep20DelegatorV(world: World, event: Event): Promise<VBep20Delegator> {
+export async function getBRErc20DelegatorV(world: World, event: Event): Promise<BRErc20Delegator> {
   const address = await mapValue<AddressV>(
     world,
     event,
-    (str) => new AddressV(getVTokenAddress(world, str)),
+    (str) => new AddressV(getBRTokenAddress(world, str)),
     getCoreValue,
     AddressV
   );
 
-  return getWorldContractByAddress<VBep20Delegator>(world, address.val);
+  return getWorldContractByAddress<BRErc20Delegator>(world, address.val);
 }
 
-async function getInterestRateModel(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await vToken.methods.interestRateModel().call());
+async function getInterestRateModel(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(await brToken.methods.interestRateModel().call());
 }
 
-async function vTokenAddress(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(vToken._address);
+async function brTokenAddress(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(brToken._address);
 }
 
-async function getVTokenAdmin(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await vToken.methods.admin().call());
+async function getBRTokenAdmin(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(await brToken.methods.admin().call());
 }
 
-async function getVTokenPendingAdmin(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await vToken.methods.pendingAdmin().call());
+async function getBRTokenPendingAdmin(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(await brToken.methods.pendingAdmin().call());
 }
 
-async function balanceOfUnderlying(world: World, vToken: VToken, user: string): Promise<NumberV> {
-  return new NumberV(await vToken.methods.balanceOfUnderlying(user).call());
+async function balanceOfUnderlying(world: World, brToken: BRToken, user: string): Promise<NumberV> {
+  return new NumberV(await brToken.methods.balanceOfUnderlying(user).call());
 }
 
-async function getBorrowBalance(world: World, vToken: VToken, user): Promise<NumberV> {
-  return new NumberV(await vToken.methods.borrowBalanceCurrent(user).call());
+async function getBorrowBalance(world: World, brToken: BRToken, user): Promise<NumberV> {
+  return new NumberV(await brToken.methods.borrowBalanceCurrent(user).call());
 }
 
-async function getBorrowBalanceStored(world: World, vToken: VToken, user): Promise<NumberV> {
-  return new NumberV(await vToken.methods.borrowBalanceStored(user).call());
+async function getBorrowBalanceStored(world: World, brToken: BRToken, user): Promise<NumberV> {
+  return new NumberV(await brToken.methods.borrowBalanceStored(user).call());
 }
 
-async function getTotalBorrows(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.totalBorrows().call());
+async function getTotalBorrows(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.totalBorrows().call());
 }
 
-async function getTotalBorrowsCurrent(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.totalBorrowsCurrent().call());
+async function getTotalBorrowsCurrent(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.totalBorrowsCurrent().call());
 }
 
-async function getReserveFactor(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.reserveFactorMantissa().call(), 1.0e18);
+async function getReserveFactor(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.reserveFactorMantissa().call(), 1.0e18);
 }
 
-async function getTotalReserves(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.totalReserves().call());
+async function getTotalReserves(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.totalReserves().call());
 }
 
-async function getComptroller(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await vToken.methods.comptroller().call());
+async function getComptroller(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(await brToken.methods.comptroller().call());
 }
 
-async function getExchangeRateStored(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.exchangeRateStored().call());
+async function getExchangeRateStored(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.exchangeRateStored().call());
 }
 
-async function getExchangeRate(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.exchangeRateCurrent().call(), 1e18);
+async function getExchangeRate(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.exchangeRateCurrent().call(), 1e18);
 }
 
-async function getCash(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.getCash().call());
+async function getCash(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.getCash().call());
 }
 
-async function getInterestRate(world: World, vToken: VToken): Promise<NumberV> {
-  return new NumberV(await vToken.methods.borrowRatePerBlock().call(), 1.0e18 / 2102400);
+async function getInterestRate(world: World, brToken: BRToken): Promise<NumberV> {
+  return new NumberV(await brToken.methods.borrowRatePerBlock().call(), 1.0e18 / 2102400);
 }
 
-async function getImplementation(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await (vToken as VBep20Delegator).methods.implementation().call());
+async function getImplementation(world: World, brToken: BRToken): Promise<AddressV> {
+  return new AddressV(await (brToken as BRErc20Delegator).methods.implementation().call());
 }
 
-export function vTokenFetchers() {
+export function brTokenFetchers() {
   return [
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### Address
 
-        * "VToken <VToken> Address" - Returns address of VToken contract
-          * E.g. "VToken vZRX Address" - Returns vZRX's address
+        * "BRToken <BRToken> Address" - Returns address of BRToken contract
+          * E.g. "BRToken vZRX Address" - Returns vZRX's address
       `,
       "Address",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => vTokenAddress(world, vToken),
+      (world, { brToken }) => brTokenAddress(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### InterestRateModel
 
-        * "VToken <VToken> InterestRateModel" - Returns the interest rate model of VToken contract
-          * E.g. "VToken vZRX InterestRateModel" - Returns vZRX's interest rate model
+        * "BRToken <BRToken> InterestRateModel" - Returns the interest rate model of BRToken contract
+          * E.g. "BRToken vZRX InterestRateModel" - Returns vZRX's interest rate model
       `,
       "InterestRateModel",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getInterestRateModel(world, vToken),
+      (world, { brToken }) => getInterestRateModel(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### Admin
 
-        * "VToken <VToken> Admin" - Returns the admin of VToken contract
-          * E.g. "VToken vZRX Admin" - Returns vZRX's admin
+        * "BRToken <BRToken> Admin" - Returns the admin of BRToken contract
+          * E.g. "BRToken vZRX Admin" - Returns vZRX's admin
       `,
       "Admin",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getVTokenAdmin(world, vToken),
+      (world, { brToken }) => getBRTokenAdmin(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### PendingAdmin
 
-        * "VToken <VToken> PendingAdmin" - Returns the pending admin of VToken contract
-          * E.g. "VToken vZRX PendingAdmin" - Returns vZRX's pending admin
+        * "BRToken <BRToken> PendingAdmin" - Returns the pending admin of BRToken contract
+          * E.g. "BRToken vZRX PendingAdmin" - Returns vZRX's pending admin
       `,
       "PendingAdmin",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getVTokenPendingAdmin(world, vToken),
+      (world, { brToken }) => getBRTokenPendingAdmin(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### Underlying
 
-        * "VToken <VToken> Underlying" - Returns the underlying asset (if applicable)
-          * E.g. "VToken vZRX Underlying"
+        * "BRToken <BRToken> Underlying" - Returns the underlying asset (if applicable)
+          * E.g. "BRToken vZRX Underlying"
       `,
       "Underlying",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      async (world, { vToken }) => new AddressV(await vToken.methods.underlying().call()),
+      async (world, { brToken }) => new AddressV(await brToken.methods.underlying().call()),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ brToken: BRToken, address: AddressV }, NumberV>(`
         #### UnderlyingBalance
 
-        * "VToken <VToken> UnderlyingBalance <User>" - Returns a user's underlying balance (based on given exchange rate)
-          * E.g. "VToken vZRX UnderlyingBalance Geoff"
+        * "BRToken <BRToken> UnderlyingBalance <User>" - Returns a user's underlying balance (based on given exchange rate)
+          * E.g. "BRToken vZRX UnderlyingBalance Geoff"
       `,
       "UnderlyingBalance",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg<AddressV>("address", getAddressV)
       ],
-      (world, { vToken, address }) => balanceOfUnderlying(world, vToken, address.val),
+      (world, { brToken, address }) => balanceOfUnderlying(world, brToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ brToken: BRToken, address: AddressV }, NumberV>(`
         #### BorrowBalance
 
-        * "VToken <VToken> BorrowBalance <User>" - Returns a user's borrow balance (including interest)
-          * E.g. "VToken vZRX BorrowBalance Geoff"
+        * "BRToken <BRToken> BorrowBalance <User>" - Returns a user's borrow balance (including interest)
+          * E.g. "BRToken vZRX BorrowBalance Geoff"
       `,
       "BorrowBalance",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("address", getAddressV)
       ],
-      (world, { vToken, address }) => getBorrowBalance(world, vToken, address.val),
+      (world, { brToken, address }) => getBorrowBalance(world, brToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken, address: AddressV }, NumberV>(`
+    new Fetcher<{ brToken: BRToken, address: AddressV }, NumberV>(`
         #### BorrowBalanceStored
 
-        * "VToken <VToken> BorrowBalanceStored <User>" - Returns a user's borrow balance (without specifically re-accruing interest)
-          * E.g. "VToken vZRX BorrowBalanceStored Geoff"
+        * "BRToken <BRToken> BorrowBalanceStored <User>" - Returns a user's borrow balance (without specifically re-accruing interest)
+          * E.g. "BRToken vZRX BorrowBalanceStored Geoff"
       `,
       "BorrowBalanceStored",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("address", getAddressV)
       ],
-      (world, { vToken, address }) => getBorrowBalanceStored(world, vToken, address.val),
+      (world, { brToken, address }) => getBorrowBalanceStored(world, brToken, address.val),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### TotalBorrows
 
-        * "VToken <VToken> TotalBorrows" - Returns the vToken's total borrow balance
-          * E.g. "VToken vZRX TotalBorrows"
+        * "BRToken <BRToken> TotalBorrows" - Returns the brToken's total borrow balance
+          * E.g. "BRToken vZRX TotalBorrows"
       `,
       "TotalBorrows",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getTotalBorrows(world, vToken),
+      (world, { brToken }) => getTotalBorrows(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### TotalBorrowsCurrent
 
-        * "VToken <VToken> TotalBorrowsCurrent" - Returns the vToken's total borrow balance with interest
-          * E.g. "VToken vZRX TotalBorrowsCurrent"
+        * "BRToken <BRToken> TotalBorrowsCurrent" - Returns the brToken's total borrow balance with interest
+          * E.g. "BRToken vZRX TotalBorrowsCurrent"
       `,
       "TotalBorrowsCurrent",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getTotalBorrowsCurrent(world, vToken),
+      (world, { brToken }) => getTotalBorrowsCurrent(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### Reserves
 
-        * "VToken <VToken> Reserves" - Returns the vToken's total reserves
-          * E.g. "VToken vZRX Reserves"
+        * "BRToken <BRToken> Reserves" - Returns the brToken's total reserves
+          * E.g. "BRToken vZRX Reserves"
       `,
       "Reserves",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getTotalReserves(world, vToken),
+      (world, { brToken }) => getTotalReserves(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### ReserveFactor
 
-        * "VToken <VToken> ReserveFactor" - Returns reserve factor of VToken contract
-          * E.g. "VToken vZRX ReserveFactor" - Returns vZRX's reserve factor
+        * "BRToken <BRToken> ReserveFactor" - Returns reserve factor of BRToken contract
+          * E.g. "BRToken vZRX ReserveFactor" - Returns vZRX's reserve factor
       `,
       "ReserveFactor",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getReserveFactor(world, vToken),
+      (world, { brToken }) => getReserveFactor(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### Comptroller
 
-        * "VToken <VToken> Comptroller" - Returns the vToken's comptroller
-          * E.g. "VToken vZRX Comptroller"
+        * "BRToken <BRToken> Comptroller" - Returns the brToken's comptroller
+          * E.g. "BRToken vZRX Comptroller"
       `,
       "Comptroller",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getComptroller(world, vToken),
+      (world, { brToken }) => getComptroller(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### ExchangeRateStored
 
-        * "VToken <VToken> ExchangeRateStored" - Returns the vToken's exchange rate (based on balances stored)
-          * E.g. "VToken vZRX ExchangeRateStored"
+        * "BRToken <BRToken> ExchangeRateStored" - Returns the brToken's exchange rate (based on balances stored)
+          * E.g. "BRToken vZRX ExchangeRateStored"
       `,
       "ExchangeRateStored",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getExchangeRateStored(world, vToken),
+      (world, { brToken }) => getExchangeRateStored(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### ExchangeRate
 
-        * "VToken <VToken> ExchangeRate" - Returns the vToken's current exchange rate
-          * E.g. "VToken vZRX ExchangeRate"
+        * "BRToken <BRToken> ExchangeRate" - Returns the brToken's current exchange rate
+          * E.g. "BRToken vZRX ExchangeRate"
       `,
       "ExchangeRate",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getExchangeRate(world, vToken),
+      (world, { brToken }) => getExchangeRate(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### Cash
 
-        * "VToken <VToken> Cash" - Returns the vToken's current cash
-          * E.g. "VToken vZRX Cash"
+        * "BRToken <BRToken> Cash" - Returns the brToken's current cash
+          * E.g. "BRToken vZRX Cash"
       `,
       "Cash",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getCash(world, vToken),
+      (world, { brToken }) => getCash(world, brToken),
       { namePos: 1 }
     ),
 
-    new Fetcher<{ vToken: VToken }, NumberV>(`
+    new Fetcher<{ brToken: BRToken }, NumberV>(`
         #### InterestRate
 
-        * "VToken <VToken> InterestRate" - Returns the vToken's current interest rate
-          * E.g. "VToken vZRX InterestRate"
+        * "BRToken <BRToken> InterestRate" - Returns the brToken's current interest rate
+          * E.g. "BRToken vZRX InterestRate"
       `,
       "InterestRate",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, {vToken}) => getInterestRate(world, vToken),
+      (world, {brToken}) => getInterestRate(world, brToken),
       {namePos: 1}
     ),
-    new Fetcher<{vToken: VToken, signature: StringV}, NumberV>(`
+    new Fetcher<{brToken: BRToken, signature: StringV}, NumberV>(`
         #### CallNum
 
-        * "VToken <VToken> Call <signature>" - Simple direct call method, for now with no parameters
-          * E.g. "VToken vZRX Call \"borrowIndex()\""
+        * "BRToken <BRToken> Call <signature>" - Simple direct call method, for now with no parameters
+          * E.g. "BRToken vZRX Call \"borrowIndex()\""
       `,
       "CallNum",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("signature", getStringV),
       ],
-      async (world, {vToken, signature}) => {
+      async (world, {brToken, signature}) => {
         const res = await world.web3.eth.call({
-            to: vToken._address,
+            to: brToken._address,
             data: world.web3.eth.abi.encodeFunctionSignature(signature.val)
           })
         const resNum : any = world.web3.eth.abi.decodeParameter('uint256',res);
@@ -374,22 +374,22 @@ export function vTokenFetchers() {
       ,
       {namePos: 1}
     ),
-    new Fetcher<{ vToken: VToken }, AddressV>(`
+    new Fetcher<{ brToken: BRToken }, AddressV>(`
         #### Implementation
 
-        * "VToken <VToken> Implementation" - Returns the vToken's current implementation
-          * E.g. "VToken vDAI Implementation"
+        * "BRToken <BRToken> Implementation" - Returns the brToken's current implementation
+          * E.g. "BRToken vDAI Implementation"
       `,
       "Implementation",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => getImplementation(world, vToken),
+      (world, { brToken }) => getImplementation(world, brToken),
       { namePos: 1 }
     )
   ];
 }
 
-export async function getVTokenValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("vToken", vTokenFetchers(), world, event);
+export async function getBRTokenValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("brToken", brTokenFetchers(), world, event);
 }

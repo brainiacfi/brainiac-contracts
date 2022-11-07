@@ -1,9 +1,9 @@
 -- Liquidate Tests
 
-Test "Supply OMG, Mint VAI, OMG price crashes, Liquidate VAI"
-    NewComptrollerWithVAIController price:1.0
-    NewVToken ZRX vZRX
-    NewVToken BAT vBAT
+Test "Supply OMG, Mint BAI, OMG price crashes, Liquidate BAI"
+    NewComptrollerWithBAIController price:1.0
+    NewBRToken ZRX vZRX
+    NewBRToken BAT vBAT
     Give vBAT 10e18 BAT -- Faucet some bat to borrow
     Support vZRX collateralFactor:0.5
     Support vBAT collateralFactor:0.5
@@ -11,32 +11,32 @@ Test "Supply OMG, Mint VAI, OMG price crashes, Liquidate VAI"
     Mint Geoff 100e18 vZRX
     EnterMarkets Geoff vZRX
     Borrow Geoff 1e18 vBAT
-	Assert Equal (vToken vBAT BorrowBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 1e18)
-    Assert Equal (Bep20 BAT TokenBalance vBAT) (Exactly 9e18)
-	MintVAI Geoff 1e18
-	Assert Equal (Bep20 TokenBalance Geoff) 1e18 -- liquidator token balance should be reduced
+	Assert Equal (brToken vBAT BorrowBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 1e18)
+    Assert Equal (Erc20 BAT TokenBalance vBAT) (Exactly 9e18)
+	MintBAI Geoff 1e18
+	Assert Equal (Erc20 TokenBalance Geoff) 1e18 -- liquidator token balance should be reduced
 	Assert Success
-	-- Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- includes origination fee
-	-- Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18") -- includes origination fee
-	-- Assert Equal (TokenBalance Geoff BNB) (Exactly "1e18") -- does not include origination fee
+	-- Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- includes origination fee
+	-- Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18") -- includes origination fee
+	-- Assert Equal (TokenBalance Geoff CKB) (Exactly "1e18") -- does not include origination fee
 	----
-	---- BNB total supply unchanged
-	--Assert Equal (BalanceSheetSupply BNB) (Exactly "2.0e18")
+	---- CKB total supply unchanged
+	--Assert Equal (BalanceSheetSupply CKB) (Exactly "2.0e18")
 	----
 	---- Crash OMG price and liquidate
 	PriceOracle SetPrice vOMG 0.5
-	LiquidateVAI Torrey Geoff 1e18 OMG
+	LiquidateBAI Torrey Geoff 1e18 OMG
 	Assert Success
-	-- Assert Equal (BalanceSheetBorrow BNB) (Exactly "0.05e18") -- borrow was paid by liquidator
-	-- Assert Equal (BorrowBalance Geoff BNB) (Exactly "0.05e18") -- target user should have liquidated amount closed on borrow
+	-- Assert Equal (BalanceSheetBorrow CKB) (Exactly "0.05e18") -- borrow was paid by liquidator
+	-- Assert Equal (BorrowBalance Geoff CKB) (Exactly "0.05e18") -- target user should have liquidated amount closed on borrow
 	-- Assert Equal (BalanceSheetSupply OMG) (Exactly "2.1e18")
 	-- Assert Equal (SupplyBalance Geoff OMG) (Exactly "0e18") -- Collateral was the limit in this scenario
-	-- Assert Equal (TokenBalance Torrey BNB) (Exactly "2.0e18") -- liquidator token balance should be reduced
+	-- Assert Equal (TokenBalance Torrey CKB) (Exactly "2.0e18") -- liquidator token balance should be reduced
 	-- Assert Equal (TokenBalance Torrey OMG) (Exactly "0e18")
 	-- Assert Equal (SupplyBalance Torrey OMG) (Exactly "2.1e18") -- Liquidator now has seized collateral
 
-Test "Supply OMG, Borrow BNB, gain interest, OMG price crashes, Liquidate BNB"
+Test "Supply OMG, Borrow CKB, gain interest, OMG price crashes, Liquidate CKB"
 	AddToken OMG
 	SupportMarket OMG (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
 	Approve Geoff OMG "2.1e18"
@@ -44,33 +44,33 @@ Test "Supply OMG, Borrow BNB, gain interest, OMG price crashes, Liquidate BNB"
 	Supply Geoff OMG "2.1e18"
 	Assert Success
 	Assert Equal (SupplyBalance Geoff OMG) (Exactly "2.1e18")
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Torrey BNB "20.0e18"
-	Faucet Torrey BNB "20.0e18"
-	Supply Torrey BNB "10.0e18"
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Torrey CKB "20.0e18"
+	Faucet Torrey CKB "20.0e18"
+	Supply Torrey CKB "10.0e18"
 	Assert Equal (BalanceSheetSupply OMG) (Exactly "2.1e18")
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "0.0e18")
-	EnterMarkets Geoff BNB
-	Borrow Geoff BNB "1e18"
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "0.0e18")
+	EnterMarkets Geoff CKB
+	Borrow Geoff CKB "1e18"
 	Assert Success
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- includes origination fee
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18")
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "1e18") -- does not include origination fee
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- includes origination fee
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18")
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "1e18") -- does not include origination fee
 	FastForward 2 Blocks
 	--
 	-- Crash OMG price and liquidate
 	SetMarketPriceOracle OMG (FixedPrice "0.8") -- Max liquidate at this price should be maxClose ~ 1.98947 E to meet collateral ratio
-	Liquidate Torrey Geoff BNB "2e18" OMG
+	Liquidate Torrey Geoff CKB "2e18" OMG
 	Assert Failure INVALID_CLOSE_AMOUNT_REQUESTED LIQUIDATE_CLOSE_AMOUNT_TOO_HIGH
-	Liquidate Torrey Geoff BNB "1.5e18" OMG
+	Liquidate Torrey Geoff CKB "1.5e18" OMG
 	Assert Success
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.125e18") -- (1.05) * ( 1 + 2 * .75 ) - 1.5
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.125e18") -- (1.05) * ( 1 + 2 * .75 ) - 1.5
 	Assert Equal (BalanceSheetSupply OMG) (Exactly "4.2e18")
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.125e18")
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.125e18")
 	Assert Equal (SupplyBalance Geoff OMG) (Exactly "2.23125e18") -- (2.1) * (1 + 2 * .5) - 1.96875 [amountSeize]
-	Assert Equal (TokenBalance Torrey BNB) (Exactly "8.5e18")
-	Assert Equal (SupplyBalance Torrey BNB) (Exactly "20e18") -- (10) * (1 + 2 * .5)
+	Assert Equal (TokenBalance Torrey CKB) (Exactly "8.5e18")
+	Assert Equal (SupplyBalance Torrey CKB) (Exactly "20e18") -- (10) * (1 + 2 * .5)
 	Assert Equal (TokenBalance Torrey OMG) (Exactly "0e18")
 	Assert Equal (SupplyBalance Torrey OMG) (Exactly "1.96875e18")
 
@@ -82,30 +82,30 @@ Test "Can't liquidate when contract is borrow asset is paused"
 	Supply Geoff OMG "2.1e18"
 	Assert Success
 	Assert Equal (SupplyBalance Geoff OMG) (Exactly "2.1e18")
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Torrey BNB "5.0e18"
-	Faucet Torrey BNB "5.0e18"
-	Supply Torrey BNB "2.0e18"
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Torrey CKB "5.0e18"
+	Faucet Torrey CKB "5.0e18"
+	Supply Torrey CKB "2.0e18"
 	Assert Equal (BalanceSheetSupply OMG) (Exactly "2.1e18")
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "0.0e18")
-	EnterMarkets Geoff BNB
-	Borrow Geoff BNB "1e18"
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "0.0e18")
+	EnterMarkets Geoff CKB
+	Borrow Geoff CKB "1e18"
 	Assert Success
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- includes origination fee
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18") -- includes origination fee
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "1e18") -- does not include origination fee
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- includes origination fee
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18") -- includes origination fee
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "1e18") -- does not include origination fee
 	--
-	-- BNB total supply unchanged
-	Assert Equal (BalanceSheetSupply BNB) (Exactly "2.0e18")
+	-- CKB total supply unchanged
+	Assert Equal (BalanceSheetSupply CKB) (Exactly "2.0e18")
 	--
 	-- Crash OMG price and liquidate
 	SetMarketPriceOracle OMG (FixedPrice "0.5") -- Max liquidate at this price should be maxClose = 1E for all the supply
-	PolicyHook BNB (SetProtocolPaused True)
-	Liquidate Torrey Geoff BNB "1e18" OMG
+	PolicyHook CKB (SetProtocolPaused True)
+	Liquidate Torrey Geoff CKB "1e18" OMG
 	Assert Failure COMPTROLLER_REJECTION LIQUIDATE_POLICY_HOOK_ASSET_BORROW_REJECTION 1
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- unchanged
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18") -- unchanged
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- unchanged
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18") -- unchanged
 
 Test "Can't liquidate when contract is collateral asset is paused"
 	AddToken OMG
@@ -115,27 +115,27 @@ Test "Can't liquidate when contract is collateral asset is paused"
 	Supply Geoff OMG "2.1e18"
 	Assert Success
 	Assert Equal (SupplyBalance Geoff OMG) (Exactly "2.1e18")
-	AddToken BNB
-	SupportMarket BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	Approve Torrey BNB "5.0e18"
-	Faucet Torrey BNB "5.0e18"
-	Supply Torrey BNB "2.0e18"
+	AddToken CKB
+	SupportMarket CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	Approve Torrey CKB "5.0e18"
+	Faucet Torrey CKB "5.0e18"
+	Supply Torrey CKB "2.0e18"
 	Assert Equal (BalanceSheetSupply OMG) (Exactly "2.1e18")
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "0.0e18")
-	EnterMarkets Geoff OMG BNB
-	Borrow Geoff BNB "1e18"
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "0.0e18")
+	EnterMarkets Geoff OMG CKB
+	Borrow Geoff CKB "1e18"
 	Assert Success
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- includes origination fee
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18") -- includes origination fee
-	Assert Equal (TokenBalance Geoff BNB) (Exactly "1e18") -- does not include origination fee
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- includes origination fee
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18") -- includes origination fee
+	Assert Equal (TokenBalance Geoff CKB) (Exactly "1e18") -- does not include origination fee
 	--
-	-- BNB total supply unchanged
-	Assert Equal (BalanceSheetSupply BNB) (Exactly "2.0e18")
+	-- CKB total supply unchanged
+	Assert Equal (BalanceSheetSupply CKB) (Exactly "2.0e18")
 	--
 	-- Crash OMG price and liquidate
 	SetMarketPriceOracle OMG (FixedPrice "0.5") -- Max liquidate at this price should be maxClose = 1E for all the supply
 	PolicyHook OMG (SetProtocolPaused True)
-	Liquidate Torrey Geoff BNB "1e18" OMG
+	Liquidate Torrey Geoff CKB "1e18" OMG
 	Assert Failure COMPTROLLER_REJECTION LIQUIDATE_POLICY_HOOK_ASSET_COLLATERAL_REJECTION 1
-	Assert Equal (BalanceSheetBorrow BNB) (Exactly "1.05e18") -- unchanged
-	Assert Equal (BorrowBalance Geoff BNB) (Exactly "1.05e18") -- unchanged
+	Assert Equal (BalanceSheetBorrow CKB) (Exactly "1.05e18") -- unchanged
+	Assert Equal (BorrowBalance Geoff CKB) (Exactly "1.05e18") -- unchanged

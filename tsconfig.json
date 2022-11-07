@@ -7,7 +7,7 @@
       "resolveJsonModule": true,
       "outDir": "dist"
     },
-    "include": ["./scripts", "./tests"],
+    "include": ["./scripts", "./tests", "old-script/ProxyContracts", "old-test/BAI", "old-test/VRTConverterProxyTest.js", "old-test/releaseToVaultTest.js", "old-test/FlywheelBAITest.js", "old-test/BRNScenarioTest.js", "old-test/BrainiacChainlinkOracleTest.js", "old-test/TimelockTest.js"],
     "files": [
       "./hardhat.config.ts"
     ]

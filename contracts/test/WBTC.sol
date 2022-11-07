@@ -4,14 +4,14 @@
 
 pragma solidity ^0.5.16;
 
-// File: openzeppelin-solidity/contracts/token/BEP20/BEP20Basic.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol
 
 /**
- * @title BEP20Basic
- * @dev Simpler version of BEP20 interface
+ * @title ERC20Basic
+ * @dev Simpler version of ERC20 interface
  * See https://github.com/ethereum/EIPs/issues/179
  */
-contract BEP20Basic {
+contract ERC20Basic {
   function totalSupply() public view returns (uint256);
   function balanceOf(address _who) public view returns (uint256);
   function transfer(address _to, uint256 _value) public returns (bool);
@@ -70,13 +70,13 @@ library SafeMath {
   }
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/BasivToken.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/BasibrToken.sol
 
 /**
  * @title Basic token
  * @dev Basic version of StandardToken, with no allowances.
  */
-contract BasivToken is BEP20Basic {
+contract BasibrToken is ERC20Basic {
   using SafeMath for uint256;
 
   mapping(address => uint256) internal balances;
@@ -116,13 +116,13 @@ contract BasivToken is BEP20Basic {
 
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/BEP20.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
 /**
- * @title BEP20 interface
+ * @title ERC20 interface
  * @dev see https://github.com/ethereum/EIPs/issues/20
  */
-contract BEP20 is BEP20Basic {
+contract ERC20 is ERC20Basic {
   function allowance(address _owner, address _spender)
     public view returns (uint256);
 
@@ -137,16 +137,16 @@ contract BEP20 is BEP20Basic {
   );
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/StandardToken.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol
 
 /**
- * @title Standard BEP20 token
+ * @title Standard ERC20 token
  *
  * @dev Implementation of the basic standard token.
  * https://github.com/ethereum/EIPs/issues/20
  * Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
  */
-contract StandardToken is BEP20, BasivToken {
+contract StandardToken is ERC20, BasibrToken {
 
   mapping (address => mapping (address => uint256)) internal allowed;
 
@@ -258,15 +258,15 @@ contract StandardToken is BEP20, BasivToken {
 
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/DetailedBEP20.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol
 
 /**
- * @title DetailedBEP20 token
+ * @title DetailedERC20 token
  * @dev The decimals are only for visualization purposes.
  * All the operations are done using the smallest and indivisible token unit,
  * just as on BSC all the operations are done in wei.
  */
-contract DetailedBEP20 is BEP20 {
+contract DetailedERC20 is ERC20 {
   string public name;
   string public symbol;
   uint8 public decimals;
@@ -342,11 +342,11 @@ contract Ownable {
   }
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/MintableToken.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol
 
 /**
  * @title Mintable token
- * @dev Simple BEP20 Token example, with mintable token creation
+ * @dev Simple ERC20 Token example, with mintable token creation
  * Based on code by TokenMarketNet: https://github.com/TokenMarketNet/ico/blob/master/contracts/MintableToken.sol
  */
 contract MintableToken is StandardToken, Ownable {
@@ -399,13 +399,13 @@ contract MintableToken is StandardToken, Ownable {
   }
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/BurnableToken.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol
 
 /**
  * @title Burnable Token
  * @dev Token that can be irreversibly burned (destroyed).
  */
-contract BurnableToken is BasivToken {
+contract BurnableToken is BasibrToken {
 
   event Burn(address indexed burner, uint256 value);
 
@@ -475,7 +475,7 @@ contract Pausable is Ownable {
   }
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/PausableToken.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol
 
 /**
  * @title Pausable token
@@ -576,17 +576,17 @@ contract Claimable is Ownable {
   }
 }
 
-// File: openzeppelin-solidity/contracts/token/BEP20/SafeBEP20.sol
+// File: openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol
 
 /**
- * @title SafeBEP20
- * @dev Wrappers around BEP20 operations that throw on failure.
- * To use this library you can add a `using SafeBEP20 for BEP20;` statement to your contract,
+ * @title SafeERC20
+ * @dev Wrappers around ERC20 operations that throw on failure.
+ * To use this library you can add a `using SafeERC20 for ERC20;` statement to your contract,
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
-library SafeBEP20 {
+library SafeERC20 {
   function safeTransfer(
-    BEP20Basic _token,
+    ERC20Basic _token,
     address _to,
     uint256 _value
   )
@@ -596,7 +596,7 @@ library SafeBEP20 {
   }
 
   function safeTransferFrom(
-    BEP20 _token,
+    ERC20 _token,
     address _from,
     address _to,
     uint256 _value
@@ -607,7 +607,7 @@ library SafeBEP20 {
   }
 
   function safeApprove(
-    BEP20 _token,
+    ERC20 _token,
     address _spender,
     uint256 _value
   )
@@ -622,17 +622,17 @@ library SafeBEP20 {
 /**
  * @title Contracts that should be able to recover tokens
  * @author SylTi
- * @dev This allow a contract to recover any BEP20 token received in a contract by transferring the balance to the contract owner.
+ * @dev This allow a contract to recover any ERC20 token received in a contract by transferring the balance to the contract owner.
  * This will prevent any accidental loss of tokens.
  */
 contract CanReclaimToken is Ownable {
-  using SafeBEP20 for BEP20Basic;
+  using SafeERC20 for ERC20Basic;
 
   /**
-   * @dev Reclaim all BEP20Basic compatible tokens
-   * @param _token BEP20Basic The address of the token contract
+   * @dev Reclaim all ERC20Basic compatible tokens
+   * @param _token ERC20Basic The address of the token contract
    */
-  function reclaimToken(BEP20Basic _token) external onlyOwner {
+  function reclaimToken(ERC20Basic _token) external onlyOwner {
     uint256 balance = _token.balanceOf(address(this));
     _token.safeTransfer(owner, balance);
   }
@@ -646,7 +646,7 @@ contract OwnableContract is CanReclaimToken, Claimable { } /* solhint-disable-li
 
 // File: contracts/token/WBTC.sol
 
-contract WBTVToken is StandardToken, DetailedBEP20("Wrapped BTC", "WBTC", 8),
+contract WBTBRToken is StandardToken, DetailedERC20("Wrapped BTC", "WBTC", 8),
     MintableToken, BurnableToken, PausableToken, OwnableContract {
 
     function burn(uint value) public onlyOwner {

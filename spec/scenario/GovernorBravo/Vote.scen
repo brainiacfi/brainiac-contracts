@@ -1,10 +1,10 @@
 Macro GivenProposal
     Counter Deploy
-    Xvs Deploy Bank
-    DeployVault Xvs
+    Brn Deploy Bank
+    DeployVault Brn
     Timelock Deploy Jared 604800
     GovernorBravo Deploy BravoDelegateHarness BravoDelegateHarness
-    GovernorBravo Deploy BravoDelegator LegitGov (Address Timelock) (Address XVSVault) (Address Root) (Address BravoDelegateHarness) 86400 1 300000e18 Guardian
+    GovernorBravo Deploy BravoDelegator LegitGov (Address Timelock) (Address BRNVault) (Address Root) (Address BravoDelegateHarness) 86400 1 300000e18 Guardian
     GovernorBravo LegitGov MergeABI BravoDelegateHarness
     GovernorBravo LegitGov HarnessInitiate
     Timelock SetAdmin (Address LegitGov)
@@ -14,10 +14,10 @@ Macro GivenProposal
     MineBlock
 
 Macro Enfranchise user amount
-    From Bank (Xvs Transfer user amount)
-    From user (Xvs Approve (Address XVSVault) amount)
-    From user (XVSVault Deposit (Address Xvs) 0 amount)
-    From user (XVSVault Delegate user)
+    From Bank (Brn Transfer user amount)
+    From user (Brn Approve (Address BRNVault) amount)
+    From user (BRNVault Deposit (Address Brn) 0 amount)
+    From user (BRNVault Delegate user)
 
 Test "Successfully Cast For Vote"
     GivenProposal

@@ -2,7 +2,7 @@ import { Contract } from '../Contract';
 import { Callable, Sendable } from '../Invokation';
 import { encodedNumber } from '../Encoding';
 
-export interface VTokenMethods {
+export interface BRTokenMethods {
   _resignImplementation(): Sendable<void>;
   balanceOfUnderlying(address: string): Callable<number>;
   borrowBalanceCurrent(address: string): Callable<string>;
@@ -27,8 +27,8 @@ export interface VTokenMethods {
   repayBorrow(amount: encodedNumber): Sendable<number>;
   repayBorrowBehalf(address: string): Sendable<number>;
   repayBorrowBehalf(address: string, amount: encodedNumber): Sendable<number>;
-  liquidateBorrow(borrower: string, vTokenCollateral: string): Sendable<number>;
-  liquidateBorrow(borrower: string, repayAmount: encodedNumber, vTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, brTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, repayAmount: encodedNumber, brTokenCollateral: string): Sendable<number>;
   seize(liquidator: string, borrower: string, seizeTokens: encodedNumber): Sendable<number>;
   evilSeize(
     treasure: string,
@@ -51,17 +51,17 @@ export interface VTokenMethods {
   _acceptAdmin(): Sendable<number>;
 }
 
-export interface VTokenScenarioMethods extends VTokenMethods {
+export interface BRTokenScenarioMethods extends BRTokenMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface VToken extends Contract {
-  methods: VTokenMethods;
+export interface BRToken extends Contract {
+  methods: BRTokenMethods;
   name: string;
 }
 
-export interface VTokenScenario extends Contract {
-  methods: VTokenScenarioMethods;
+export interface BRTokenScenario extends Contract {
+  methods: BRTokenScenarioMethods;
   name: string;
 }

@@ -39,11 +39,11 @@ async function setPriceOracleFn(world: World, params: Event): Promise<World> {
   return nextWorld;
 }
 
-async function setPrice(world: World, from: string, priceOracle: PriceOracle, vToken: string, amount: NumberV): Promise<World> {
+async function setPrice(world: World, from: string, priceOracle: PriceOracle, brToken: string, amount: NumberV): Promise<World> {
   return addAction(
     world,
-    `Set price oracle price for ${vToken} to ${amount.show()}`,
-    await invoke(world, priceOracle.methods.setUnderlyingPrice(vToken, amount.encode()), from)
+    `Set price oracle price for ${brToken} to ${amount.show()}`,
+    await invoke(world, priceOracle.methods.setUnderlyingPrice(brToken, amount.encode()), from)
   );
 }
 
@@ -94,25 +94,25 @@ export function priceOracleCommands() {
       (world, from, {params}) => setPriceOracleFn(world, params.val)
     ),
 
-    new Command<{priceOracle: PriceOracle, vToken: AddressV, amount: NumberV}>(`
+    new Command<{priceOracle: PriceOracle, brToken: AddressV, amount: NumberV}>(`
         #### SetPrice
 
-        * "SetPrice <VToken> <Amount>" - Sets the per-bnb price for the given vToken
+        * "SetPrice <BRToken> <Amount>" - Sets the per-ckb price for the given brToken
           * E.g. "PriceOracle SetPrice vZRX 1.0"
       `,
       "SetPrice",
       [
         new Arg("priceOracle", getPriceOracle, {implicit: true}),
-        new Arg("vToken", getAddressV),
+        new Arg("brToken", getAddressV),
         new Arg("amount", getExpNumberV)
       ],
-      (world, from, {priceOracle, vToken, amount}) => setPrice(world, from, priceOracle, vToken.val, amount)
+      (world, from, {priceOracle, brToken, amount}) => setPrice(world, from, priceOracle, brToken.val, amount)
     ),
 
     new Command<{priceOracle: PriceOracle, address: AddressV, amount: NumberV}>(`
         #### SetDirectPrice
 
-        * "SetDirectPrice <Address> <Amount>" - Sets the per-bnb price for the given vToken
+        * "SetDirectPrice <Address> <Amount>" - Sets the per-ckb price for the given brToken
           * E.g. "PriceOracle SetDirectPrice (Address Zero) 1.0"
       `,
       "SetDirectPrice",

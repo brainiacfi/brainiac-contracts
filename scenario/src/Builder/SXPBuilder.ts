@@ -42,7 +42,7 @@ export async function buildSXP(
           invokation: await SXPScenarioContract.deploy<SXPScenario>(world, from, [account.val]),
           contract: 'SXPScenario',
           symbol: 'SXP',
-          name: 'Venus Governance Token',
+          name: 'Brainiac Governance Token',
           decimals: 18
         };
       }
@@ -65,7 +65,7 @@ export async function buildSXP(
             invokation: await SXPScenarioContract.deploy<SXPScenario>(world, from, [account.val]),
             contract: 'SXPScenario',
             symbol: 'SXP',
-            name: 'Venus Governance Token',
+            name: 'Brainiac Governance Token',
             decimals: 18
           };
         } else {
@@ -73,7 +73,7 @@ export async function buildSXP(
             invokation: await SXPContract.deploy<SXP>(world, from, [account.val]),
             contract: 'SXP',
             symbol: 'SXP',
-            name: 'Venus Governance Token',
+            name: 'Brainiac Governance Token',
             decimals: 18
           };
         }

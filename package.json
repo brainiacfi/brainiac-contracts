@@ -1,7 +1,7 @@
 {
-  "name": "venus-protocol",
+  "name": "brainiac-protocol",
   "version": "0.2.1",
-  "description": "The Venus Money Market",
+  "description": "The Brainiac Money Market",
   "main": "index.js",
   "scripts": {
     "compile": "./script/compile",
@@ -19,8 +19,8 @@
     "test:hardhat": "hardhat test",
     "clean:hardhat": "hardhat clean"
   },
-  "repository": "git@github.com:VenusProtocol/venus-protocol.git",
-  "author": "Venus",
+  "repository": "git@github.com:BrainiacProtocol/brainiac-protocol.git",
+  "author": "Brainiac",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
@@ -33,7 +33,7 @@
     "bignumber.js": "9.0.0",
     "chai": "^4.3.4",
     "dotenv": "^14.2.0",
-    "eth-saddle": "^0.1.21",
+    "eth-saddle": "^0.1.25",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.4",
     "hardhat": "^2.8.0",
@@ -54,10 +54,11 @@
   },
   "resolutions": {
     "scrypt.js": "https://registry.npmjs.org/@compound-finance/ethereumjs-wallet/-/ethereumjs-wallet-0.6.3.tgz",
-    "**/ganache-core": "github:compound-finance/ganache-core.git#jflatow/unbreak-fork",
-    "solidity-parser-antlr": "https://github.com/solidity-parser/parser#0.7.0"
+    "ganache-core": "github:compound-finance/ganache-core.git#jflatow/unbreak-fork",
+    "solidity-parser-antlr": "github:solidity-parser/parser.git#tag=v0.7.0"
   },
   "dependencies": {
+    "solc": "^0.8.13",
     "solidity-parser-antlr": "^0.4.11"
   }
 }

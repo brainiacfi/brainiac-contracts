@@ -10,12 +10,12 @@ export function printHelp(printer: Printer, event: Event, expressions: Expressio
     if (path.length === 0) {
       banner = (
 `
-## Venus Command Runner
+## Brainiac Command Runner
 
-The Venus Command Runner makes it easy to interact with Venus. You can input simple commands
-and it will construct Web3 calls to pull data or generate transactions. A list of available commands
+The Brainiac Command Runner makes it easy to interact with Brainiac. You can input simple commands
+and it will construct Web3 calls to pull data or generate transactions. A list of abailable commands
 is included below. To dig further into a command run \`Help <Command>\`, such as \`Help From\` or for
-sub-commands run \`Help VToken\` or \`Help VToken Mint\`.
+sub-commands run \`Help BRToken\` or \`Help BRToken Mint\`.
 `).trim();
     } else {
       if (expressions.length > 0) {

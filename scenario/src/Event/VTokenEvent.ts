@@ -1,9 +1,9 @@
 import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
-import { VToken, VTokenScenario } from '../Contract/VToken';
-import { VBep20Delegate } from '../Contract/VBep20Delegate'
-import { VBep20Delegator } from '../Contract/VBep20Delegator'
+import { BRToken, BRTokenScenario } from '../Contract/BRToken';
+import { BRErc20Delegate } from '../Contract/BRErc20Delegate'
+import { BRErc20Delegator } from '../Contract/BRErc20Delegator'
 import { invoke, Sendable } from '../Invokation';
 import {
   getAddressV,
@@ -23,287 +23,287 @@ import {
 } from '../Value';
 import { getContract } from '../Contract';
 import { Arg, Command, View, processCommandEvent } from '../Command';
-import { VTokenErrorReporter } from '../ErrorReporter';
-import { getComptroller, getVTokenData } from '../ContractLookup';
+import { BRTokenErrorReporter } from '../ErrorReporter';
+import { getComptroller, getBRTokenData } from '../ContractLookup';
 import { getExpMantissa } from '../Encoding';
-import { buildVToken } from '../Builder/VTokenBuilder';
+import { buildBRToken } from '../Builder/BRTokenBuilder';
 import { verify } from '../Verify';
 import { getLiquidity } from '../Value/ComptrollerValue';
 import { encodedNumber } from '../Encoding';
-import { getVTokenV, getVBep20DelegatorV } from '../Value/VTokenValue';
+import { getBRTokenV, getBRErc20DelegatorV } from '../Value/BRTokenValue';
 
 function showTrxValue(world: World): string {
   return new NumberV(world.trxInvokationOpts.get('value')).show();
 }
 
-async function genVToken(world: World, from: string, event: Event): Promise<World> {
-  let { world: nextWorld, vToken, tokenData } = await buildVToken(world, from, event);
+async function genBRToken(world: World, from: string, event: Event): Promise<World> {
+  let { world: nextWorld, brToken, tokenData } = await buildBRToken(world, from, event);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Added vToken ${tokenData.name} (${tokenData.contract}<decimals=${tokenData.decimals}>) at address ${vToken._address}`,
+    `Added brToken ${tokenData.name} (${tokenData.contract}<decimals=${tokenData.decimals}>) at address ${brToken._address}`,
     tokenData.invokation
   );
 
   return world;
 }
 
-async function accrueInterest(world: World, from: string, vToken: VToken): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.accrueInterest(), from, VTokenErrorReporter);
+async function accrueInterest(world: World, from: string, brToken: BRToken): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.accrueInterest(), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: Interest accrued`,
+    `BRToken ${brToken.name}: Interest accrued`,
     invokation
   );
 
   return world;
 }
 
-async function mint(world: World, from: string, vToken: VToken, amount: NumberV | NothingV): Promise<World> {
+async function mint(world: World, from: string, brToken: BRToken, amount: NumberV | NothingV): Promise<World> {
   let invokation;
   let showAmount;
 
   if (amount instanceof NumberV) {
     showAmount = amount.show();
-    invokation = await invoke(world, vToken.methods.mint(amount.encode()), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.mint(amount.encode()), from, BRTokenErrorReporter);
   } else {
     showAmount = showTrxValue(world);
-    invokation = await invoke(world, vToken.methods.mint(), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.mint(), from, BRTokenErrorReporter);
   }
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} mints ${showAmount}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} mints ${showAmount}`,
     invokation
   );
 
   return world;
 }
 
-async function mintBehalf(world: World, from: string, vToken: VToken, receiver: string, amount: NumberV | NothingV): Promise<World> {
+async function mintBehalf(world: World, from: string, brToken: BRToken, receiver: string, amount: NumberV | NothingV): Promise<World> {
   let invokation;
   let showAmount;
 
   if (amount instanceof NumberV) {
     showAmount = amount.show();
-    invokation = await invoke(world, vToken.methods.mintBehalf(receiver, amount.encode()), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.mintBehalf(receiver, amount.encode()), from, BRTokenErrorReporter);
   } else {
     showAmount = showTrxValue(world);
-    invokation = await invoke(world, vToken.methods.mintBehalf(receiver), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.mintBehalf(receiver), from, BRTokenErrorReporter);
   }
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} mints ${showAmount}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} mints ${showAmount}`,
     invokation
   );
 
   return world;
 }
 
-async function redeem(world: World, from: string, vToken: VToken, tokens: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.redeem(tokens.encode()), from, VTokenErrorReporter);
+async function redeem(world: World, from: string, brToken: BRToken, tokens: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.redeem(tokens.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} redeems ${tokens.show()} tokens`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} redeems ${tokens.show()} tokens`,
     invokation
   );
 
   return world;
 }
 
-async function redeemUnderlying(world: World, from: string, vToken: VToken, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.redeemUnderlying(amount.encode()), from, VTokenErrorReporter);
+async function redeemUnderlying(world: World, from: string, brToken: BRToken, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.redeemUnderlying(amount.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} redeems ${amount.show()} underlying`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} redeems ${amount.show()} underlying`,
     invokation
   );
 
   return world;
 }
 
-async function borrow(world: World, from: string, vToken: VToken, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.borrow(amount.encode()), from, VTokenErrorReporter);
+async function borrow(world: World, from: string, brToken: BRToken, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.borrow(amount.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} borrows ${amount.show()}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} borrows ${amount.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function repayBorrow(world: World, from: string, vToken: VToken, amount: NumberV | NothingV): Promise<World> {
+async function repayBorrow(world: World, from: string, brToken: BRToken, amount: NumberV | NothingV): Promise<World> {
   let invokation;
   let showAmount;
 
   if (amount instanceof NumberV) {
     showAmount = amount.show();
-    invokation = await invoke(world, vToken.methods.repayBorrow(amount.encode()), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.repayBorrow(amount.encode()), from, BRTokenErrorReporter);
   } else {
     showAmount = showTrxValue(world);
-    invokation = await invoke(world, vToken.methods.repayBorrow(), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.repayBorrow(), from, BRTokenErrorReporter);
   }
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} repays ${showAmount} of borrow`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} repays ${showAmount} of borrow`,
     invokation
   );
 
   return world;
 }
 
-async function repayBorrowBehalf(world: World, from: string, behalf: string, vToken: VToken, amount: NumberV | NothingV): Promise<World> {
+async function repayBorrowBehalf(world: World, from: string, behalf: string, brToken: BRToken, amount: NumberV | NothingV): Promise<World> {
   let invokation;
   let showAmount;
 
   if (amount instanceof NumberV) {
     showAmount = amount.show();
-    invokation = await invoke(world, vToken.methods.repayBorrowBehalf(behalf, amount.encode()), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.repayBorrowBehalf(behalf, amount.encode()), from, BRTokenErrorReporter);
   } else {
     showAmount = showTrxValue(world);
-    invokation = await invoke(world, vToken.methods.repayBorrowBehalf(behalf), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.repayBorrowBehalf(behalf), from, BRTokenErrorReporter);
   }
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} repays ${showAmount} of borrow on behalf of ${describeUser(world, behalf)}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} repays ${showAmount} of borrow on behalf of ${describeUser(world, behalf)}`,
     invokation
   );
 
   return world;
 }
 
-async function liquidateBorrow(world: World, from: string, vToken: VToken, borrower: string, collateral: VToken, repayAmount: NumberV | NothingV): Promise<World> {
+async function liquidateBorrow(world: World, from: string, brToken: BRToken, borrower: string, collateral: BRToken, repayAmount: NumberV | NothingV): Promise<World> {
   let invokation;
   let showAmount;
 
   if (repayAmount instanceof NumberV) {
     showAmount = repayAmount.show();
-    invokation = await invoke(world, vToken.methods.liquidateBorrow(borrower, repayAmount.encode(), collateral._address), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.liquidateBorrow(borrower, repayAmount.encode(), collateral._address), from, BRTokenErrorReporter);
   } else {
     showAmount = showTrxValue(world);
-    invokation = await invoke(world, vToken.methods.liquidateBorrow(borrower, collateral._address), from, VTokenErrorReporter);
+    invokation = await invoke(world, brToken.methods.liquidateBorrow(borrower, collateral._address), from, BRTokenErrorReporter);
   }
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} liquidates ${showAmount} from of ${describeUser(world, borrower)}, seizing ${collateral.name}.`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} liquidates ${showAmount} from of ${describeUser(world, borrower)}, seizing ${collateral.name}.`,
     invokation
   );
 
   return world;
 }
 
-async function seize(world: World, from: string, vToken: VToken, liquidator: string, borrower: string, seizeTokens: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.seize(liquidator, borrower, seizeTokens.encode()), from, VTokenErrorReporter);
+async function seize(world: World, from: string, brToken: BRToken, liquidator: string, borrower: string, seizeTokens: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.seize(liquidator, borrower, seizeTokens.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} initiates seizing ${seizeTokens.show()} to ${describeUser(world, liquidator)} from ${describeUser(world, borrower)}.`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} initiates seizing ${seizeTokens.show()} to ${describeUser(world, liquidator)} from ${describeUser(world, borrower)}.`,
     invokation
   );
 
   return world;
 }
 
-async function evilSeize(world: World, from: string, vToken: VToken, treasure: VToken, liquidator: string, borrower: string, seizeTokens: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.evilSeize(treasure._address, liquidator, borrower, seizeTokens.encode()), from, VTokenErrorReporter);
+async function evilSeize(world: World, from: string, brToken: BRToken, treasure: BRToken, liquidator: string, borrower: string, seizeTokens: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.evilSeize(treasure._address, liquidator, borrower, seizeTokens.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} initiates illegal seizing ${seizeTokens.show()} to ${describeUser(world, liquidator)} from ${describeUser(world, borrower)}.`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} initiates illegal seizing ${seizeTokens.show()} to ${describeUser(world, liquidator)} from ${describeUser(world, borrower)}.`,
     invokation
   );
 
   return world;
 }
 
-async function setPendingAdmin(world: World, from: string, vToken: VToken, newPendingAdmin: string): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._setPendingAdmin(newPendingAdmin), from, VTokenErrorReporter);
+async function setPendingAdmin(world: World, from: string, brToken: BRToken, newPendingAdmin: string): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._setPendingAdmin(newPendingAdmin), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} sets pending admin to ${newPendingAdmin}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} sets pending admin to ${newPendingAdmin}`,
     invokation
   );
 
   return world;
 }
 
-async function acceptAdmin(world: World, from: string, vToken: VToken): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._acceptAdmin(), from, VTokenErrorReporter);
+async function acceptAdmin(world: World, from: string, brToken: BRToken): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._acceptAdmin(), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} accepts admin`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} accepts admin`,
     invokation
   );
 
   return world;
 }
 
-async function addReserves(world: World, from: string, vToken: VToken, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._addReserves(amount.encode()), from, VTokenErrorReporter);
+async function addReserves(world: World, from: string, brToken: BRToken, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._addReserves(amount.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} adds to reserves by ${amount.show()}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} adds to reserves by ${amount.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function reduceReserves(world: World, from: string, vToken: VToken, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._reduceReserves(amount.encode()), from, VTokenErrorReporter);
+async function reduceReserves(world: World, from: string, brToken: BRToken, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._reduceReserves(amount.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} reduces reserves by ${amount.show()}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} reduces reserves by ${amount.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function setReserveFactor(world: World, from: string, vToken: VToken, reserveFactor: NumberV): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._setReserveFactor(reserveFactor.encode()), from, VTokenErrorReporter);
+async function setReserveFactor(world: World, from: string, brToken: BRToken, reserveFactor: NumberV): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._setReserveFactor(reserveFactor.encode()), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(world, from)} sets reserve factor to ${reserveFactor.show()}`,
+    `BRToken ${brToken.name}: ${describeUser(world, from)} sets reserve factor to ${reserveFactor.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function setInterestRateModel(world: World, from: string, vToken: VToken, interestRateModel: string): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._setInterestRateModel(interestRateModel), from, VTokenErrorReporter);
+async function setInterestRateModel(world: World, from: string, brToken: BRToken, interestRateModel: string): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._setInterestRateModel(interestRateModel), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `Set interest rate for ${vToken.name} to ${interestRateModel} as ${describeUser(world, from)}`,
+    `Set interest rate for ${brToken.name} to ${interestRateModel} as ${describeUser(world, from)}`,
     invokation
   );
 
   return world;
 }
 
-async function setComptroller(world: World, from: string, vToken: VToken, comptroller: string): Promise<World> {
-  let invokation = await invoke(world, vToken.methods._setComptroller(comptroller), from, VTokenErrorReporter);
+async function setComptroller(world: World, from: string, brToken: BRToken, comptroller: string): Promise<World> {
+  let invokation = await invoke(world, brToken.methods._setComptroller(comptroller), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `Set comptroller for ${vToken.name} to ${comptroller} as ${describeUser(world, from)}`,
+    `Set comptroller for ${brToken.name} to ${comptroller} as ${describeUser(world, from)}`,
     invokation
   );
 
@@ -313,23 +313,23 @@ async function setComptroller(world: World, from: string, vToken: VToken, comptr
 async function becomeImplementation(
   world: World,
   from: string,
-  vToken: VToken,
+  brToken: BRToken,
   becomeImplementationData: string
 ): Promise<World> {
 
-  const vBep20Delegate = getContract('VBep20Delegate');
-  const vBep20DelegateContract = await vBep20Delegate.at<VBep20Delegate>(world, vToken._address);
+  const brErc20Delegate = getContract('BRErc20Delegate');
+  const brErc20DelegateContract = await brErc20Delegate.at<BRErc20Delegate>(world, brToken._address);
 
   let invokation = await invoke(
     world,
-    vBep20DelegateContract.methods._becomeImplementation(becomeImplementationData),
+    brErc20DelegateContract.methods._becomeImplementation(becomeImplementationData),
     from,
-    VTokenErrorReporter
+    BRTokenErrorReporter
   );
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(
+    `BRToken ${brToken.name}: ${describeUser(
       world,
       from
     )} initiates _becomeImplementation with data:${becomeImplementationData}.`,
@@ -342,22 +342,22 @@ async function becomeImplementation(
 async function resignImplementation(
   world: World,
   from: string,
-  vToken: VToken,
+  brToken: BRToken,
 ): Promise<World> {
 
-  const vBep20Delegate = getContract('VBep20Delegate');
-  const vBep20DelegateContract = await vBep20Delegate.at<VBep20Delegate>(world, vToken._address);
+  const brErc20Delegate = getContract('BRErc20Delegate');
+  const brErc20DelegateContract = await brErc20Delegate.at<BRErc20Delegate>(world, brToken._address);
 
   let invokation = await invoke(
     world,
-    vBep20DelegateContract.methods._resignImplementation(),
+    brErc20DelegateContract.methods._resignImplementation(),
     from,
-    VTokenErrorReporter
+    BRTokenErrorReporter
   );
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(
+    `BRToken ${brToken.name}: ${describeUser(
       world,
       from
     )} initiates _resignImplementation.`,
@@ -370,25 +370,25 @@ async function resignImplementation(
 async function setImplementation(
   world: World,
   from: string,
-  vToken: VBep20Delegator,
+  brToken: BRErc20Delegator,
   implementation: string,
   allowResign: boolean,
   becomeImplementationData: string
 ): Promise<World> {
   let invokation = await invoke(
     world,
-    vToken.methods._setImplementation(
+    brToken.methods._setImplementation(
       implementation,
       allowResign,
       becomeImplementationData
     ),
     from,
-    VTokenErrorReporter
+    BRTokenErrorReporter
   );
 
   world = addAction(
     world,
-    `VToken ${vToken.name}: ${describeUser(
+    `BRToken ${brToken.name}: ${describeUser(
       world,
       from
     )} initiates setImplementation with implementation:${implementation} allowResign:${allowResign} data:${becomeImplementationData}.`,
@@ -398,55 +398,55 @@ async function setImplementation(
   return world;
 }
 
-async function donate(world: World, from: string, vToken: VToken): Promise<World> {
-  let invokation = await invoke(world, vToken.methods.donate(), from, VTokenErrorReporter);
+async function donate(world: World, from: string, brToken: BRToken): Promise<World> {
+  let invokation = await invoke(world, brToken.methods.donate(), from, BRTokenErrorReporter);
 
   world = addAction(
     world,
-    `Donate for ${vToken.name} as ${describeUser(world, from)} with value ${showTrxValue(world)}`,
+    `Donate for ${brToken.name} as ${describeUser(world, from)} with value ${showTrxValue(world)}`,
     invokation
   );
 
   return world;
 }
 
-async function setVTokenMock(world: World, from: string, vToken: VTokenScenario, mock: string, value: NumberV): Promise<World> {
+async function setBRTokenMock(world: World, from: string, brToken: BRTokenScenario, mock: string, value: NumberV): Promise<World> {
   let mockMethod: (number) => Sendable<void>;
 
   switch (mock.toLowerCase()) {
     case "totalborrows":
-      mockMethod = vToken.methods.setTotalBorrows;
+      mockMethod = brToken.methods.setTotalBorrows;
       break;
     case "totalreserves":
-      mockMethod = vToken.methods.setTotalReserves;
+      mockMethod = brToken.methods.setTotalReserves;
       break;
     default:
-      throw new Error(`Mock "${mock}" not defined for vToken`);
+      throw new Error(`Mock "${mock}" not defined for brToken`);
   }
 
   let invokation = await invoke(world, mockMethod(value.encode()), from);
 
   world = addAction(
     world,
-    `Mocked ${mock}=${value.show()} for ${vToken.name}`,
+    `Mocked ${mock}=${value.show()} for ${brToken.name}`,
     invokation
   );
 
   return world;
 }
 
-async function verifyVToken(world: World, vToken: VToken, name: string, contract: string, apiKey: string): Promise<World> {
+async function verifyBRToken(world: World, brToken: BRToken, name: string, contract: string, apiKey: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {
-    await verify(world, apiKey, name, contract, vToken._address);
+    await verify(world, apiKey, name, contract, brToken._address);
   }
 
   return world;
 }
 
-async function printMinters(world: World, vToken: VToken): Promise<World> {
-  let events = await getPastEvents(world, vToken, vToken.name, 'Mint');
+async function printMinters(world: World, brToken: BRToken): Promise<World> {
+  let events = await getPastEvents(world, brToken, brToken.name, 'Mint');
   let addresses = events.map((event) => event.returnValues['minter']);
   let uniq = [...new Set(addresses)];
 
@@ -459,8 +459,8 @@ async function printMinters(world: World, vToken: VToken): Promise<World> {
   return world;
 }
 
-async function printBorrowers(world: World, vToken: VToken): Promise<World> {
-  let events = await getPastEvents(world, vToken, vToken.name, 'Borrow');
+async function printBorrowers(world: World, brToken: BRToken): Promise<World> {
+  let events = await getPastEvents(world, brToken, brToken.name, 'Borrow');
   let addresses = events.map((event) => event.returnValues['borrower']);
   let uniq = [...new Set(addresses)];
 
@@ -473,10 +473,10 @@ async function printBorrowers(world: World, vToken: VToken): Promise<World> {
   return world;
 }
 
-async function printLiquidity(world: World, vToken: VToken): Promise<World> {
-  let mintEvents = await getPastEvents(world, vToken, vToken.name, 'Mint');
+async function printLiquidity(world: World, brToken: BRToken): Promise<World> {
+  let mintEvents = await getPastEvents(world, brToken, brToken.name, 'Mint');
   let mintAddresses = mintEvents.map((event) => event.returnValues['minter']);
-  let borrowEvents = await getPastEvents(world, vToken, vToken.name, 'Borrow');
+  let borrowEvents = await getPastEvents(world, brToken, brToken.name, 'Borrow');
   let borrowAddresses = borrowEvents.map((event) => event.returnValues['borrower']);
   let uniq = [...new Set(mintAddresses.concat(borrowAddresses))];
   let comptroller = await getComptroller(world);
@@ -496,339 +496,339 @@ async function printLiquidity(world: World, vToken: VToken): Promise<World> {
   return world;
 }
 
-export function vTokenCommands() {
+export function brTokenCommands() {
   return [
-    new Command<{ vTokenParams: EventV }>(`
+    new Command<{ brTokenParams: EventV }>(`
         #### Deploy
 
-        * "VToken Deploy ...vTokenParams" - Generates a new VToken
-          * E.g. "VToken vZRX Deploy"
+        * "BRToken Deploy ...brTokenParams" - Generates a new BRToken
+          * E.g. "BRToken vZRX Deploy"
       `,
       "Deploy",
-      [new Arg("vTokenParams", getEventV, { variadic: true })],
-      (world, from, { vTokenParams }) => genVToken(world, from, vTokenParams.val)
+      [new Arg("brTokenParams", getEventV, { variadic: true })],
+      (world, from, { brTokenParams }) => genBRToken(world, from, brTokenParams.val)
     ),
-    new View<{ vTokenArg: StringV, apiKey: StringV }>(`
+    new View<{ brTokenArg: StringV, apiKey: StringV }>(`
         #### Verify
 
-        * "VToken <vToken> Verify apiKey:<String>" - Verifies VToken in BscScan
-          * E.g. "VToken vZRX Verify "myApiKey"
+        * "BRToken <brToken> Verify apiKey:<String>" - Verifies BRToken in BscScan
+          * E.g. "BRToken vZRX Verify "myApiKey"
       `,
       "Verify",
       [
-        new Arg("vTokenArg", getStringV),
+        new Arg("brTokenArg", getStringV),
         new Arg("apiKey", getStringV)
       ],
-      async (world, { vTokenArg, apiKey }) => {
-        let [vToken, name, data] = await getVTokenData(world, vTokenArg.val);
+      async (world, { brTokenArg, apiKey }) => {
+        let [brToken, name, data] = await getBRTokenData(world, brTokenArg.val);
 
-        return await verifyVToken(world, vToken, name, data.get('contract')!, apiKey.val);
+        return await verifyBRToken(world, brToken, name, data.get('contract')!, apiKey.val);
       },
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken }>(`
+    new Command<{ brToken: BRToken }>(`
         #### AccrueInterest
 
-        * "VToken <vToken> AccrueInterest" - Accrues interest for given token
-          * E.g. "VToken vZRX AccrueInterest"
+        * "BRToken <brToken> AccrueInterest" - Accrues interest for given token
+          * E.g. "BRToken vZRX AccrueInterest"
       `,
       "AccrueInterest",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, { vToken }) => accrueInterest(world, from, vToken),
+      (world, from, { brToken }) => accrueInterest(world, from, brToken),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV | NothingV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV | NothingV }>(`
         #### Mint
 
-        * "VToken <vToken> Mint amount:<Number>" - Mints the given amount of vToken as specified user
-          * E.g. "VToken vZRX Mint 1.0e18"
+        * "BRToken <brToken> Mint amount:<Number>" - Mints the given amount of brToken as specified user
+          * E.g. "BRToken vZRX Mint 1.0e18"
       `,
       "Mint",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV, { nullable: true })
       ],
-      (world, from, { vToken, amount }) => mint(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => mint(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, receiver: AddressV, amount: NumberV | NothingV }>(`
+    new Command<{ brToken: BRToken, receiver: AddressV, amount: NumberV | NothingV }>(`
         #### MintBehalf
 
-        * "VToken <vToken> MintBehalf receiver:<User> amount:<Number>" - Mints the given amount of vToken as specified user
-          * E.g. "VToken vZRX MintBehalf Torrey 1.0e18"
+        * "BRToken <brToken> MintBehalf receiver:<User> amount:<Number>" - Mints the given amount of brToken as specified user
+          * E.g. "BRToken vZRX MintBehalf Torrey 1.0e18"
       `,
       "MintBehalf",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("receiver", getAddressV),
         new Arg("amount", getNumberV, { nullable: true })
       ],
-      (world, from, { vToken, receiver, amount }) => mintBehalf(world, from, vToken, receiver.val, amount),
+      (world, from, { brToken, receiver, amount }) => mintBehalf(world, from, brToken, receiver.val, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, tokens: NumberV }>(`
+    new Command<{ brToken: BRToken, tokens: NumberV }>(`
         #### Redeem
 
-        * "VToken <vToken> Redeem tokens:<Number>" - Redeems the given amount of vTokens as specified user
-          * E.g. "VToken vZRX Redeem 1.0e9"
+        * "BRToken <brToken> Redeem tokens:<Number>" - Redeems the given amount of brTokens as specified user
+          * E.g. "BRToken vZRX Redeem 1.0e9"
       `,
       "Redeem",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("tokens", getNumberV)
       ],
-      (world, from, { vToken, tokens }) => redeem(world, from, vToken, tokens),
+      (world, from, { brToken, tokens }) => redeem(world, from, brToken, tokens),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV }>(`
         #### RedeemUnderlying
 
-        * "VToken <vToken> RedeemUnderlying amount:<Number>" - Redeems the given amount of underlying as specified user
-          * E.g. "VToken vZRX RedeemUnderlying 1.0e18"
+        * "BRToken <brToken> RedeemUnderlying amount:<Number>" - Redeems the given amount of underlying as specified user
+          * E.g. "BRToken vZRX RedeemUnderlying 1.0e18"
       `,
       "RedeemUnderlying",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vToken, amount }) => redeemUnderlying(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => redeemUnderlying(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV }>(`
         #### Borrow
 
-        * "VToken <vToken> Borrow amount:<Number>" - Borrows the given amount of this vToken as specified user
-          * E.g. "VToken vZRX Borrow 1.0e18"
+        * "BRToken <brToken> Borrow amount:<Number>" - Borrows the given amount of this brToken as specified user
+          * E.g. "BRToken vZRX Borrow 1.0e18"
       `,
       "Borrow",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV)
       ],
       // Note: we override from
-      (world, from, { vToken, amount }) => borrow(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => borrow(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV | NothingV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV | NothingV }>(`
         #### RepayBorrow
 
-        * "VToken <vToken> RepayBorrow underlyingAmount:<Number>" - Repays borrow in the given underlying amount as specified user
-          * E.g. "VToken vZRX RepayBorrow 1.0e18"
+        * "BRToken <brToken> RepayBorrow underlyingAmount:<Number>" - Repays borrow in the given underlying amount as specified user
+          * E.g. "BRToken vZRX RepayBorrow 1.0e18"
       `,
       "RepayBorrow",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV, { nullable: true })
       ],
-      (world, from, { vToken, amount }) => repayBorrow(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => repayBorrow(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, behalf: AddressV, amount: NumberV | NothingV }>(`
+    new Command<{ brToken: BRToken, behalf: AddressV, amount: NumberV | NothingV }>(`
         #### RepayBorrowBehalf
 
-        * "VToken <vToken> RepayBorrowBehalf behalf:<User> underlyingAmount:<Number>" - Repays borrow in the given underlying amount on behalf of another user
-          * E.g. "VToken vZRX RepayBorrowBehalf Geoff 1.0e18"
+        * "BRToken <brToken> RepayBorrowBehalf behalf:<User> underlyingAmount:<Number>" - Repays borrow in the given underlying amount on behalf of another user
+          * E.g. "BRToken vZRX RepayBorrowBehalf Geoff 1.0e18"
       `,
       "RepayBorrowBehalf",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("behalf", getAddressV),
         new Arg("amount", getNumberV, { nullable: true })
       ],
-      (world, from, { vToken, behalf, amount }) => repayBorrowBehalf(world, from, behalf.val, vToken, amount),
+      (world, from, { brToken, behalf, amount }) => repayBorrowBehalf(world, from, behalf.val, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ borrower: AddressV, vToken: VToken, collateral: VToken, repayAmount: NumberV | NothingV }>(`
+    new Command<{ borrower: AddressV, brToken: BRToken, collateral: BRToken, repayAmount: NumberV | NothingV }>(`
         #### Liquidate
 
-        * "VToken <vToken> Liquidate borrower:<User> vTokenCollateral:<Address> repayAmount:<Number>" - Liquidates repayAmount of given token seizing collateral token
-          * E.g. "VToken vZRX Liquidate Geoff vBAT 1.0e18"
+        * "BRToken <brToken> Liquidate borrower:<User> brTokenCollateral:<Address> repayAmount:<Number>" - Liquidates repayAmount of given token seizing collateral token
+          * E.g. "BRToken vZRX Liquidate Geoff vBAT 1.0e18"
       `,
       "Liquidate",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("borrower", getAddressV),
-        new Arg("collateral", getVTokenV),
+        new Arg("collateral", getBRTokenV),
         new Arg("repayAmount", getNumberV, { nullable: true })
       ],
-      (world, from, { borrower, vToken, collateral, repayAmount }) => liquidateBorrow(world, from, vToken, borrower.val, collateral, repayAmount),
+      (world, from, { borrower, brToken, collateral, repayAmount }) => liquidateBorrow(world, from, brToken, borrower.val, collateral, repayAmount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, liquidator: AddressV, borrower: AddressV, seizeTokens: NumberV }>(`
+    new Command<{ brToken: BRToken, liquidator: AddressV, borrower: AddressV, seizeTokens: NumberV }>(`
         #### Seize
 
-        * "VToken <vToken> Seize liquidator:<User> borrower:<User> seizeTokens:<Number>" - Seizes a given number of tokens from a user (to be called from other VToken)
-          * E.g. "VToken vZRX Seize Geoff Torrey 1.0e18"
+        * "BRToken <brToken> Seize liquidator:<User> borrower:<User> seizeTokens:<Number>" - Seizes a given number of tokens from a user (to be called from other BRToken)
+          * E.g. "BRToken vZRX Seize Geoff Torrey 1.0e18"
       `,
       "Seize",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("liquidator", getAddressV),
         new Arg("borrower", getAddressV),
         new Arg("seizeTokens", getNumberV)
       ],
-      (world, from, { vToken, liquidator, borrower, seizeTokens }) => seize(world, from, vToken, liquidator.val, borrower.val, seizeTokens),
+      (world, from, { brToken, liquidator, borrower, seizeTokens }) => seize(world, from, brToken, liquidator.val, borrower.val, seizeTokens),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, treasure: VToken, liquidator: AddressV, borrower: AddressV, seizeTokens: NumberV }>(`
+    new Command<{ brToken: BRToken, treasure: BRToken, liquidator: AddressV, borrower: AddressV, seizeTokens: NumberV }>(`
         #### EvilSeize
 
-        * "VToken <vToken> EvilSeize treasure:<Token> liquidator:<User> borrower:<User> seizeTokens:<Number>" - Improperly seizes a given number of tokens from a user
-          * E.g. "VToken vEVL EvilSeize vZRX Geoff Torrey 1.0e18"
+        * "BRToken <brToken> EvilSeize treasure:<Token> liquidator:<User> borrower:<User> seizeTokens:<Number>" - Improperly seizes a given number of tokens from a user
+          * E.g. "BRToken vEVL EvilSeize vZRX Geoff Torrey 1.0e18"
       `,
       "EvilSeize",
       [
-        new Arg("vToken", getVTokenV),
-        new Arg("treasure", getVTokenV),
+        new Arg("brToken", getBRTokenV),
+        new Arg("treasure", getBRTokenV),
         new Arg("liquidator", getAddressV),
         new Arg("borrower", getAddressV),
         new Arg("seizeTokens", getNumberV)
       ],
-      (world, from, { vToken, treasure, liquidator, borrower, seizeTokens }) => evilSeize(world, from, vToken, treasure, liquidator.val, borrower.val, seizeTokens),
+      (world, from, { brToken, treasure, liquidator, borrower, seizeTokens }) => evilSeize(world, from, brToken, treasure, liquidator.val, borrower.val, seizeTokens),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV }>(`
         #### ReduceReserves
 
-        * "VToken <vToken> ReduceReserves amount:<Number>" - Reduces the reserves of the vToken
-          * E.g. "VToken vZRX ReduceReserves 1.0e18"
+        * "BRToken <brToken> ReduceReserves amount:<Number>" - Reduces the reserves of the brToken
+          * E.g. "BRToken vZRX ReduceReserves 1.0e18"
       `,
       "ReduceReserves",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vToken, amount }) => reduceReserves(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => reduceReserves(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, amount: NumberV }>(`
+    new Command<{ brToken: BRToken, amount: NumberV }>(`
     #### AddReserves
 
-    * "VToken <vToken> AddReserves amount:<Number>" - Adds reserves to the vToken
-      * E.g. "VToken vZRX AddReserves 1.0e18"
+    * "BRToken <brToken> AddReserves amount:<Number>" - Adds reserves to the brToken
+      * E.g. "BRToken vZRX AddReserves 1.0e18"
   `,
       "AddReserves",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("amount", getNumberV)
       ],
-      (world, from, { vToken, amount }) => addReserves(world, from, vToken, amount),
+      (world, from, { brToken, amount }) => addReserves(world, from, brToken, amount),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, newPendingAdmin: AddressV }>(`
+    new Command<{ brToken: BRToken, newPendingAdmin: AddressV }>(`
         #### SetPendingAdmin
 
-        * "VToken <vToken> SetPendingAdmin newPendingAdmin:<Address>" - Sets the pending admin for the vToken
-          * E.g. "VToken vZRX SetPendingAdmin Geoff"
+        * "BRToken <brToken> SetPendingAdmin newPendingAdmin:<Address>" - Sets the pending admin for the brToken
+          * E.g. "BRToken vZRX SetPendingAdmin Geoff"
       `,
       "SetPendingAdmin",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("newPendingAdmin", getAddressV)
       ],
-      (world, from, { vToken, newPendingAdmin }) => setPendingAdmin(world, from, vToken, newPendingAdmin.val),
+      (world, from, { brToken, newPendingAdmin }) => setPendingAdmin(world, from, brToken, newPendingAdmin.val),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken }>(`
+    new Command<{ brToken: BRToken }>(`
         #### AcceptAdmin
 
-        * "VToken <vToken> AcceptAdmin" - Accepts admin for the vToken
-          * E.g. "From Geoff (VToken vZRX AcceptAdmin)"
+        * "BRToken <brToken> AcceptAdmin" - Accepts admin for the brToken
+          * E.g. "From Geoff (BRToken vZRX AcceptAdmin)"
       `,
       "AcceptAdmin",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, { vToken }) => acceptAdmin(world, from, vToken),
+      (world, from, { brToken }) => acceptAdmin(world, from, brToken),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, reserveFactor: NumberV }>(`
+    new Command<{ brToken: BRToken, reserveFactor: NumberV }>(`
         #### SetReserveFactor
 
-        * "VToken <vToken> SetReserveFactor reserveFactor:<Number>" - Sets the reserve factor for the vToken
-          * E.g. "VToken vZRX SetReserveFactor 0.1"
+        * "BRToken <brToken> SetReserveFactor reserveFactor:<Number>" - Sets the reserve factor for the brToken
+          * E.g. "BRToken vZRX SetReserveFactor 0.1"
       `,
       "SetReserveFactor",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("reserveFactor", getExpNumberV)
       ],
-      (world, from, { vToken, reserveFactor }) => setReserveFactor(world, from, vToken, reserveFactor),
+      (world, from, { brToken, reserveFactor }) => setReserveFactor(world, from, brToken, reserveFactor),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, interestRateModel: AddressV }>(`
+    new Command<{ brToken: BRToken, interestRateModel: AddressV }>(`
         #### SetInterestRateModel
 
-        * "VToken <vToken> SetInterestRateModel interestRateModel:<Contract>" - Sets the interest rate model for the given vToken
-          * E.g. "VToken vZRX SetInterestRateModel (FixedRate 1.5)"
+        * "BRToken <brToken> SetInterestRateModel interestRateModel:<Contract>" - Sets the interest rate model for the given brToken
+          * E.g. "BRToken vZRX SetInterestRateModel (FixedRate 1.5)"
       `,
       "SetInterestRateModel",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("interestRateModel", getAddressV)
       ],
-      (world, from, { vToken, interestRateModel }) => setInterestRateModel(world, from, vToken, interestRateModel.val),
+      (world, from, { brToken, interestRateModel }) => setInterestRateModel(world, from, brToken, interestRateModel.val),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, comptroller: AddressV }>(`
+    new Command<{ brToken: BRToken, comptroller: AddressV }>(`
         #### SetComptroller
 
-        * "VToken <vToken> SetComptroller comptroller:<Contract>" - Sets the comptroller for the given vToken
-          * E.g. "VToken vZRX SetComptroller Comptroller"
+        * "BRToken <brToken> SetComptroller comptroller:<Contract>" - Sets the comptroller for the given brToken
+          * E.g. "BRToken vZRX SetComptroller Comptroller"
       `,
       "SetComptroller",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("comptroller", getAddressV)
       ],
-      (world, from, { vToken, comptroller }) => setComptroller(world, from, vToken, comptroller.val),
+      (world, from, { brToken, comptroller }) => setComptroller(world, from, brToken, comptroller.val),
       { namePos: 1 }
     ),
     new Command<{
-      vToken: VToken;
+      brToken: BRToken;
       becomeImplementationData: StringV;
     }>(
       `
         #### BecomeImplementation
 
-        * "VToken <vToken> BecomeImplementation becomeImplementationData:<String>"
-          * E.g. "VToken vDAI BecomeImplementation "0x01234anyByTeS56789""
+        * "BRToken <brToken> BecomeImplementation becomeImplementationData:<String>"
+          * E.g. "BRToken vDAI BecomeImplementation "0x01234anyByTeS56789""
       `,
       'BecomeImplementation',
       [
-        new Arg('vToken', getVTokenV),
+        new Arg('brToken', getBRTokenV),
         new Arg('becomeImplementationData', getStringV)
       ],
-      (world, from, { vToken, becomeImplementationData }) =>
+      (world, from, { brToken, becomeImplementationData }) =>
         becomeImplementation(
           world,
           from,
-          vToken,
+          brToken,
           becomeImplementationData.val
         ),
       { namePos: 1 }
     ),
-    new Command<{vToken: VToken;}>(
+    new Command<{brToken: BRToken;}>(
       `
         #### ResignImplementation
 
-        * "VToken <vToken> ResignImplementation"
-          * E.g. "VToken vDAI ResignImplementation"
+        * "BRToken <brToken> ResignImplementation"
+          * E.g. "BRToken vDAI ResignImplementation"
       `,
       'ResignImplementation',
-      [new Arg('vToken', getVTokenV)],
-      (world, from, { vToken }) =>
+      [new Arg('brToken', getBRTokenV)],
+      (world, from, { brToken }) =>
         resignImplementation(
           world,
           from,
-          vToken
+          brToken
         ),
       { namePos: 1 }
     ),
     new Command<{
-      vToken: VBep20Delegator;
+      brToken: BRErc20Delegator;
       implementation: AddressV;
       allowResign: BoolV;
       becomeImplementationData: StringV;
@@ -836,109 +836,109 @@ export function vTokenCommands() {
       `
         #### SetImplementation
 
-        * "VToken <vToken> SetImplementation implementation:<Address> allowResign:<Bool> becomeImplementationData:<String>"
-          * E.g. "VToken vDAI SetImplementation (VToken vDAIDelegate Address) True "0x01234anyByTeS56789"
+        * "BRToken <brToken> SetImplementation implementation:<Address> allowResign:<Bool> becomeImplementationData:<String>"
+          * E.g. "BRToken vDAI SetImplementation (BRToken vDAIDelegate Address) True "0x01234anyByTeS56789"
       `,
       'SetImplementation',
       [
-        new Arg('vToken', getVBep20DelegatorV),
+        new Arg('brToken', getBRErc20DelegatorV),
         new Arg('implementation', getAddressV),
         new Arg('allowResign', getBoolV),
         new Arg('becomeImplementationData', getStringV)
       ],
-      (world, from, { vToken, implementation, allowResign, becomeImplementationData }) =>
+      (world, from, { brToken, implementation, allowResign, becomeImplementationData }) =>
         setImplementation(
           world,
           from,
-          vToken,
+          brToken,
           implementation.val,
           allowResign.val,
           becomeImplementationData.val
         ),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken }>(`
+    new Command<{ brToken: BRToken }>(`
         #### Donate
 
-        * "VToken <vToken> Donate" - Calls the donate (payable no-op) function
-          * E.g. "(Trx Value 5.0e18 (VToken vBNB Donate))"
+        * "BRToken <brToken> Donate" - Calls the donate (payable no-op) function
+          * E.g. "(Trx Value 5.0e18 (BRToken brCKB Donate))"
       `,
       "Donate",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, from, { vToken }) => donate(world, from, vToken),
+      (world, from, { brToken }) => donate(world, from, brToken),
       { namePos: 1 }
     ),
-    new Command<{ vToken: VToken, variable: StringV, value: NumberV }>(`
+    new Command<{ brToken: BRToken, variable: StringV, value: NumberV }>(`
         #### Mock
 
-        * "VToken <vToken> Mock variable:<String> value:<Number>" - Mocks a given value on vToken. Note: value must be a supported mock and this will only work on a "VTokenScenario" contract.
-          * E.g. "VToken vZRX Mock totalBorrows 5.0e18"
-          * E.g. "VToken vZRX Mock totalReserves 0.5e18"
+        * "BRToken <brToken> Mock variable:<String> value:<Number>" - Mocks a given value on brToken. Note: value must be a supported mock and this will only work on a "BRTokenScenario" contract.
+          * E.g. "BRToken vZRX Mock totalBorrows 5.0e18"
+          * E.g. "BRToken vZRX Mock totalReserves 0.5e18"
       `,
       "Mock",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("variable", getStringV),
         new Arg("value", getNumberV),
       ],
-      (world, from, { vToken, variable, value }) => setVTokenMock(world, from, <VTokenScenario>vToken, variable.val, value),
+      (world, from, { brToken, variable, value }) => setBRTokenMock(world, from, <BRTokenScenario>brToken, variable.val, value),
       { namePos: 1 }
     ),
-    new View<{ vToken: VToken }>(`
+    new View<{ brToken: BRToken }>(`
         #### Minters
 
-        * "VToken <vToken> Minters" - Print address of all minters
+        * "BRToken <brToken> Minters" - Print address of all minters
       `,
       "Minters",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => printMinters(world, vToken),
+      (world, { brToken }) => printMinters(world, brToken),
       { namePos: 1 }
     ),
-    new View<{ vToken: VToken }>(`
+    new View<{ brToken: BRToken }>(`
         #### Borrowers
 
-        * "VToken <vToken> Borrowers" - Print address of all borrowers
+        * "BRToken <brToken> Borrowers" - Print address of all borrowers
       `,
       "Borrowers",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => printBorrowers(world, vToken),
+      (world, { brToken }) => printBorrowers(world, brToken),
       { namePos: 1 }
     ),
-    new View<{ vToken: VToken }>(`
+    new View<{ brToken: BRToken }>(`
         #### Liquidity
 
-        * "VToken <vToken> Liquidity" - Prints liquidity of all minters or borrowers
+        * "BRToken <brToken> Liquidity" - Prints liquidity of all minters or borrowers
       `,
       "Liquidity",
       [
-        new Arg("vToken", getVTokenV)
+        new Arg("brToken", getBRTokenV)
       ],
-      (world, { vToken }) => printLiquidity(world, vToken),
+      (world, { brToken }) => printLiquidity(world, brToken),
       { namePos: 1 }
     ),
-    new View<{ vToken: VToken, input: StringV }>(`
+    new View<{ brToken: BRToken, input: StringV }>(`
         #### Decode
 
-        * "Decode <vToken> input:<String>" - Prints information about a call to a vToken contract
+        * "Decode <brToken> input:<String>" - Prints information about a call to a brToken contract
       `,
       "Decode",
       [
-        new Arg("vToken", getVTokenV),
+        new Arg("brToken", getBRTokenV),
         new Arg("input", getStringV)
 
       ],
-      (world, { vToken, input }) => decodeCall(world, vToken, input.val),
+      (world, { brToken, input }) => decodeCall(world, brToken, input.val),
       { namePos: 1 }
     )
   ];
 }
 
-export async function processVTokenEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("VToken", vTokenCommands(), world, event, from);
+export async function processBRTokenEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("BRToken", brTokenCommands(), world, event, from);
 }

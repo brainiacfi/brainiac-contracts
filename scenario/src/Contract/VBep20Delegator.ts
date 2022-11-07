@@ -1,9 +1,9 @@
 import { Contract } from '../Contract';
 import { Callable, Sendable } from '../Invokation';
-import { VTokenMethods } from './VToken';
+import { BRTokenMethods } from './BRToken';
 import { encodedNumber } from '../Encoding';
 
-interface VBep20DelegatorMethods extends VTokenMethods {
+interface BRErc20DelegatorMethods extends BRTokenMethods {
   implementation(): Callable<string>;
   _setImplementation(
     implementation_: string,
@@ -12,17 +12,17 @@ interface VBep20DelegatorMethods extends VTokenMethods {
   ): Sendable<void>;
 }
 
-interface VBep20DelegatorScenarioMethods extends VBep20DelegatorMethods {
+interface BRErc20DelegatorScenarioMethods extends BRErc20DelegatorMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface VBep20Delegator extends Contract {
-  methods: VBep20DelegatorMethods;
+export interface BRErc20Delegator extends Contract {
+  methods: BRErc20DelegatorMethods;
   name: string;
 }
 
-export interface VBep20DelegatorScenario extends Contract {
-  methods: VBep20DelegatorMethods;
+export interface BRErc20DelegatorScenario extends Contract {
+  methods: BRErc20DelegatorMethods;
   name: string;
 }

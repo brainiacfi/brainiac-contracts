@@ -4,29 +4,29 @@ import "../Comptroller.sol";
 
 contract ComptrollerScenario is Comptroller {
     uint public blockNumber;
-    address public xvsAddress;
-    address public vaiAddress;
+    address public brnAddress;
+    address public baiAddress;
 
     constructor() Comptroller() public {}
 
-    function setXVSAddress(address xvsAddress_) public {
-        xvsAddress = xvsAddress_;
+    function setBRNAddress(address brnAddress_) public {
+        brnAddress = brnAddress_;
     }
 
-    function getXVSAddress() public view returns (address) {
-        return xvsAddress;
+    function getBRNAddress() public view returns (address) {
+        return brnAddress;
     }
 
-    function setVAIAddress(address vaiAddress_) public {
-        vaiAddress = vaiAddress_;
+    function setBAIAddress(address baiAddress_) public {
+        baiAddress = baiAddress_;
     }
 
-    function getVAIAddress() public view returns (address) {
-        return vaiAddress;
+    function getBAIAddress() public view returns (address) {
+        return baiAddress;
     }
 
-    function membershipLength(VToken vToken) public view returns (uint) {
-        return accountAssets[address(vToken)].length;
+    function membershipLength(BRToken brToken) public view returns (uint) {
+        return accountAssets[address(brToken)].length;
     }
 
     function fastForward(uint blocks) public returns (uint) {
@@ -43,58 +43,58 @@ contract ComptrollerScenario is Comptroller {
         return blockNumber;
     }
 
-    function getVenusMarkets() public view returns (address[] memory) {
+    function getBrainiacMarkets() public view returns (address[] memory) {
         uint m = allMarkets.length;
         uint n = 0;
         for (uint i = 0; i < m; i++) {
-            if (markets[address(allMarkets[i])].isVenus) {
+            if (markets[address(allMarkets[i])].isBrainiac) {
                 n++;
             }
         }
 
-        address[] memory venusMarkets = new address[](n);
+        address[] memory brainiacMarkets = new address[](n);
         uint k = 0;
         for (uint i = 0; i < m; i++) {
-            if (markets[address(allMarkets[i])].isVenus) {
-                venusMarkets[k++] = address(allMarkets[i]);
+            if (markets[address(allMarkets[i])].isBrainiac) {
+                brainiacMarkets[k++] = address(allMarkets[i]);
             }
         }
-        return venusMarkets;
+        return brainiacMarkets;
     }
 
-    function unlist(VToken vToken) public {
-        markets[address(vToken)].isListed = false;
+    function unlist(BRToken brToken) public {
+        markets[address(brToken)].isListed = false;
     }
 
     /**
-     * @notice Recalculate and update XVS speeds for all XVS markets
+     * @notice Recalculate and update BRN speeds for all BRN markets
      */
-    function refreshVenusSpeeds() public {
-        VToken[] memory allMarkets_ = allMarkets;
+    function refreshBrainiacSpeeds() public {
+        BRToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets_[i];
-            Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-            updateVenusSupplyIndex(address(vToken));
-            updateVenusBorrowIndex(address(vToken), borrowIndex);
+            BRToken brToken = allMarkets_[i];
+            Exp memory borrowIndex = Exp({mantissa: brToken.borrowIndex()});
+            updateBrainiacSupplyIndex(address(brToken));
+            updateBrainiacBorrowIndex(address(brToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets_[i];
-            if (venusSpeeds[address(vToken)] > 0) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(vToken)});
-                Exp memory utility = mul_(assetPrice, vToken.totalBorrows());
+            BRToken brToken = allMarkets_[i];
+            if (brainiacSpeeds[address(brToken)] > 0) {
+                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(brToken)});
+                Exp memory utility = mul_(assetPrice, brToken.totalBorrows());
                 utilities[i] = utility;
                 totalUtility = add_(totalUtility, utility);
             }
         }
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(venusRate, div_(utilities[i], totalUtility)) : 0;
-            setVenusSpeedInternal(vToken, newSpeed);
+            BRToken brToken = allMarkets[i];
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(brainiacRate, div_(utilities[i], totalUtility)) : 0;
+            setBrainiacSpeedInternal(brToken, newSpeed);
         }
     }
 }

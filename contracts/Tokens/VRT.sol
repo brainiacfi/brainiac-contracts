@@ -4,7 +4,7 @@ import "../Utils/Tokenlock.sol";
 
 contract VRT is Tokenlock {
     /// @notice BEP-20 token name for this token
-    string public constant name = "Venus Reward Token";
+    string public constant name = "Brainiac Reward Token";
 
     /// @notice BEP-20 token symbol for this token
     string public constant symbol = "VRT";

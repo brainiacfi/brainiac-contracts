@@ -11,11 +11,11 @@ Macro CreateSupply user token amount
 	Supply user token amount
 	Assert Success
 
-Test "Supply BNB and Borrow OMG"
+Test "Supply CKB and Borrow OMG"
 	-- Note that borrow reduces Cash but does not reduce the Supply balance sheet.
-	CreateSupportedAsset BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	CreateSupply Geoff BNB 10.0e18
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly 10.0e18)
+	CreateSupportedAsset CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	CreateSupply Geoff CKB 10.0e18
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly 10.0e18)
 	FastForward 2 Blocks
 	CreateSupportedAsset OMG (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
 	AddCash OMG 1e20
@@ -33,11 +33,11 @@ Test "Supply BNB and Borrow OMG"
 	Assert Equal (BalanceSheetSupply OMG) (Exactly 5.0e18)
 
 
-Test "Supply BNB and attempt to Borrow more OMG than supported by collateral ratio"
+Test "Supply CKB and attempt to Borrow more OMG than supported by collateral ratio"
 	-- Note that borrow reduces Cash but does not reduce the Supply balance sheet.
-	CreateSupportedAsset BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	CreateSupply Geoff BNB 3.0e18
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly 3.0e18)
+	CreateSupportedAsset CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	CreateSupply Geoff CKB 3.0e18
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly 3.0e18)
 	Assert Equal (MaxBorrow Geoff) (Exactly 1.5e18) -- the original supply has doubled due to interest, so max borrow value has also doubled
 	FastForward 2 Blocks
 	CreateSupportedAsset OMG (FixedPrice 0.2) (FixedRate 0.5 0.75) SimplePolicyHook
@@ -57,8 +57,8 @@ Test "Supply BNB and attempt to Borrow more OMG than supported by collateral rat
 	Assert Equal (BalanceSheetSupply OMG) (Exactly 30.0e18)
 
 Test "Can't borrow an initial state asset"
-	CreateSupportedAsset BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	CreateSupply Geoff BNB 30.0e18
+	CreateSupportedAsset CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	CreateSupply Geoff CKB 30.0e18
 	FastForward 2 Blocks
 	AddToken OMG
 	AddCash OMG 1e20
@@ -66,9 +66,9 @@ Test "Can't borrow an initial state asset"
 	Assert Failure MARKET_NOT_LISTED BORROW_MARKET_NOT_LISTED
 
 Test "Can't borrow when contract is paused"
-	CreateSupportedAsset BNB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
-	CreateSupply Geoff BNB 10.0e18
-	Assert Equal (SupplyBalance Geoff BNB) (Exactly "10.0e18")
+	CreateSupportedAsset CKB (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
+	CreateSupply Geoff CKB 10.0e18
+	Assert Equal (SupplyBalance Geoff CKB) (Exactly "10.0e18")
 	FastForward 2 Blocks
 	CreateSupportedAsset OMG (FixedPrice 1.0) (FixedRate 0.5 0.75) SimplePolicyHook
 	CreateSupply Torrey OMG 5.0e18

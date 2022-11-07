@@ -11,8 +11,8 @@ const actions: string[] = [
   "From",
   "Invariant",
   "Comptroller",
-  "vToken",
-  "Bep20",
+  "brToken",
+  "Erc20",
 ];
 
 function caseInsensitiveSort(a: string, b: string): number {

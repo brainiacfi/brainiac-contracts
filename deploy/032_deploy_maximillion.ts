@@ -6,13 +6,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deploy,get} = deployments;
 return ;
   const {deployer} = await getNamedAccounts();
-  const vBnbAddress = (await get('VBNB')).address
+  const brCkbAddress = (await get('BRCKB')).address
 
   await deploy('Maximillion', {
     from: deployer,
-    args: [vBnbAddress],
+    args: [brCkbAddress],
     log: true,
   });
 };
 export default func;
-func.tags = ['Maximillion'];
+func.tags = ['Maximillion','Core'];

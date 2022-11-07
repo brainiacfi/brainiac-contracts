@@ -4,7 +4,7 @@ import "../EIP20NonStandardInterface.sol";
 
 /**
   * @title Fauceteer
-  * @author Venus
+  * @author Brainiac
   * @notice First computer program to be part of The Giving Pledge
   */
 contract Fauceteer {

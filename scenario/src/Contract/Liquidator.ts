@@ -4,10 +4,10 @@ import { encodedNumber } from '../Encoding';
 
 interface LiquidatorMethods {
   liquidateBorrow(
-    vToken: string,
+    brToken: string,
     borrower: string,
     repayAmount: encodedNumber,
-    vTokenCollateral: string
+    brTokenCollateral: string
   ): Sendable<void>
 }
 

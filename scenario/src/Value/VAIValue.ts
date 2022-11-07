@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { VAI } from '../Contract/VAI';
+import { BAI } from '../Contract/BAI';
 import {
   getAddressV,
   getNumberV
@@ -13,105 +13,105 @@ import {
   Value
 } from '../Value';
 import { Arg, Fetcher, getFetcherValue } from '../Command';
-import { getVAI } from '../ContractLookup';
+import { getBAI } from '../ContractLookup';
 
-export function vaiFetchers() {
+export function baiFetchers() {
   return [
-    new Fetcher<{ vai: VAI }, AddressV>(`
+    new Fetcher<{ bai: BAI }, AddressV>(`
         #### Address
 
-        * "<VAI> Address" - Returns the address of VAI token
-          * E.g. "VAI Address"
+        * "<BAI> Address" - Returns the address of BAI token
+          * E.g. "BAI Address"
       `,
       "Address",
       [
-        new Arg("vai", getVAI, { implicit: true })
+        new Arg("bai", getBAI, { implicit: true })
       ],
-      async (world, { vai }) => new AddressV(vai._address)
+      async (world, { bai }) => new AddressV(bai._address)
     ),
 
-    new Fetcher<{ vai: VAI }, StringV>(`
+    new Fetcher<{ bai: BAI }, StringV>(`
         #### Name
 
-        * "<VAI> Name" - Returns the name of the VAI token
-          * E.g. "VAI Name"
+        * "<BAI> Name" - Returns the name of the BAI token
+          * E.g. "BAI Name"
       `,
       "Name",
       [
-        new Arg("vai", getVAI, { implicit: true })
+        new Arg("bai", getBAI, { implicit: true })
       ],
-      async (world, { vai }) => new StringV(await vai.methods.name().call())
+      async (world, { bai }) => new StringV(await bai.methods.name().call())
     ),
 
-    new Fetcher<{ vai: VAI }, StringV>(`
+    new Fetcher<{ bai: BAI }, StringV>(`
         #### Symbol
 
-        * "<VAI> Symbol" - Returns the symbol of the VAI token
-          * E.g. "VAI Symbol"
+        * "<BAI> Symbol" - Returns the symbol of the BAI token
+          * E.g. "BAI Symbol"
       `,
       "Symbol",
       [
-        new Arg("vai", getVAI, { implicit: true })
+        new Arg("bai", getBAI, { implicit: true })
       ],
-      async (world, { vai }) => new StringV(await vai.methods.symbol().call())
+      async (world, { bai }) => new StringV(await bai.methods.symbol().call())
     ),
 
-    new Fetcher<{ vai: VAI }, NumberV>(`
+    new Fetcher<{ bai: BAI }, NumberV>(`
         #### Decimals
 
-        * "<VAI> Decimals" - Returns the number of decimals of the VAI token
-          * E.g. "VAI Decimals"
+        * "<BAI> Decimals" - Returns the number of decimals of the BAI token
+          * E.g. "BAI Decimals"
       `,
       "Decimals",
       [
-        new Arg("vai", getVAI, { implicit: true })
+        new Arg("bai", getBAI, { implicit: true })
       ],
-      async (world, { vai }) => new NumberV(await vai.methods.decimals().call())
+      async (world, { bai }) => new NumberV(await bai.methods.decimals().call())
     ),
 
-    new Fetcher<{ vai: VAI }, NumberV>(`
+    new Fetcher<{ bai: BAI }, NumberV>(`
         #### TotalSupply
 
-        * "VAI TotalSupply" - Returns VAI token's total supply
+        * "BAI TotalSupply" - Returns BAI token's total supply
       `,
       "TotalSupply",
       [
-        new Arg("vai", getVAI, { implicit: true })
+        new Arg("bai", getBAI, { implicit: true })
       ],
-      async (world, { vai }) => new NumberV(await vai.methods.totalSupply().call())
+      async (world, { bai }) => new NumberV(await bai.methods.totalSupply().call())
     ),
 
-    new Fetcher<{ vai: VAI, address: AddressV }, NumberV>(`
+    new Fetcher<{ bai: BAI, address: AddressV }, NumberV>(`
         #### TokenBalance
 
-        * "VAI TokenBalance <Address>" - Returns the VAI token balance of a given address
-          * E.g. "VAI TokenBalance Geoff" - Returns Geoff's VAI balance
+        * "BAI TokenBalance <Address>" - Returns the BAI token balance of a given address
+          * E.g. "BAI TokenBalance Geoff" - Returns Geoff's BAI balance
       `,
       "TokenBalance",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("address", getAddressV)
       ],
-      async (world, { vai, address }) => new NumberV(await vai.methods.balanceOf(address.val).call())
+      async (world, { bai, address }) => new NumberV(await bai.methods.balanceOf(address.val).call())
     ),
 
-    new Fetcher<{ vai: VAI, owner: AddressV, spender: AddressV }, NumberV>(`
+    new Fetcher<{ bai: BAI, owner: AddressV, spender: AddressV }, NumberV>(`
         #### Allowance
 
-        * "VAI Allowance owner:<Address> spender:<Address>" - Returns the VAI allowance from owner to spender
-          * E.g. "VAI Allowance Geoff Torrey" - Returns the VAI allowance of Geoff to Torrey
+        * "BAI Allowance owner:<Address> spender:<Address>" - Returns the BAI allowance from owner to spender
+          * E.g. "BAI Allowance Geoff Torrey" - Returns the BAI allowance of Geoff to Torrey
       `,
       "Allowance",
       [
-        new Arg("vai", getVAI, { implicit: true }),
+        new Arg("bai", getBAI, { implicit: true }),
         new Arg("owner", getAddressV),
         new Arg("spender", getAddressV)
       ],
-      async (world, { vai, owner, spender }) => new NumberV(await vai.methods.allowance(owner.val, spender.val).call())
+      async (world, { bai, owner, spender }) => new NumberV(await bai.methods.allowance(owner.val, spender.val).call())
     )
   ];
 }
 
-export async function getVAIValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("VAI", vaiFetchers(), world, event);
+export async function getBAIValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("BAI", baiFetchers(), world, event);
 }

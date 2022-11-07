@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { VBep20Delegate, VBep20DelegateScenario } from '../Contract/VBep20Delegate';
-import { VToken } from '../Contract/VToken';
+import { BRErc20Delegate, BRErc20DelegateScenario } from '../Contract/BRErc20Delegate';
+import { BRToken } from '../Contract/BRToken';
 import { Invokation } from '../Invokation';
 import { getStringV } from '../CoreValue';
 import { AddressV, NumberV, StringV } from '../Value';
@@ -11,29 +11,29 @@ import { getContract, getTestContract } from '../Contract';
 
 const VDaiDelegateContract = getContract('VDaiDelegate');
 const VDaiDelegateScenarioContract = getTestContract('VDaiDelegateScenario');
-const VBep20DelegateContract = getContract('VBep20Delegate');
-const VBep20DelegateScenarioContract = getTestContract('VBep20DelegateScenario');
+const BRErc20DelegateContract = getContract('BRErc20Delegate');
+const BRErc20DelegateScenarioContract = getTestContract('BRErc20DelegateScenario');
 
 
-export interface VTokenDelegateData {
-  invokation: Invokation<VBep20Delegate>;
+export interface BRTokenDelegateData {
+  invokation: Invokation<BRErc20Delegate>;
   name: string;
   contract: string;
   description?: string;
 }
 
-export async function buildVTokenDelegate(
+export async function buildBRTokenDelegate(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; vTokenDelegate: VBep20Delegate; delegateData: VTokenDelegateData }> {
+): Promise<{ world: World; brTokenDelegate: BRErc20Delegate; delegateData: BRTokenDelegateData }> {
   const fetchers = [
-    new Fetcher<{ name: StringV; }, VTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, BRTokenDelegateData>(
       `
         #### VDaiDelegate
 
         * "VDaiDelegate name:<String>"
-          * E.g. "VTokenDelegate Deploy VDaiDelegate vDAIDelegate"
+          * E.g. "BRTokenDelegate Deploy VDaiDelegate vDAIDelegate"
       `,
       'VDaiDelegate',
       [
@@ -44,7 +44,7 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await VDaiDelegateContract.deploy<VBep20Delegate>(world, from, []),
+          invokation: await VDaiDelegateContract.deploy<BRErc20Delegate>(world, from, []),
           name: name.val,
           contract: 'VDaiDelegate',
           description: 'Standard VDai Delegate'
@@ -52,12 +52,12 @@ export async function buildVTokenDelegate(
       }
     ),
 
-    new Fetcher<{ name: StringV; }, VTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, BRTokenDelegateData>(
       `
         #### VDaiDelegateScenario
 
         * "VDaiDelegateScenario name:<String>" - A VDaiDelegate Scenario for local testing
-          * E.g. "VTokenDelegate Deploy VDaiDelegateScenario vDAIDelegate"
+          * E.g. "BRTokenDelegate Deploy VDaiDelegateScenario vDAIDelegate"
       `,
       'VDaiDelegateScenario',
       [
@@ -68,7 +68,7 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await VDaiDelegateScenarioContract.deploy<VBep20DelegateScenario>(world, from, []),
+          invokation: await VDaiDelegateScenarioContract.deploy<BRErc20DelegateScenario>(world, from, []),
           name: name.val,
           contract: 'VDaiDelegateScenario',
           description: 'Scenario VDai Delegate'
@@ -76,14 +76,14 @@ export async function buildVTokenDelegate(
       }
     ),
 
-    new Fetcher<{ name: StringV; }, VTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, BRTokenDelegateData>(
       `
-        #### VBep20Delegate
+        #### BRErc20Delegate
 
-        * "VBep20Delegate name:<String>"
-          * E.g. "VTokenDelegate Deploy VBep20Delegate vDAIDelegate"
+        * "BRErc20Delegate name:<String>"
+          * E.g. "BRTokenDelegate Deploy BRErc20Delegate vDAIDelegate"
       `,
-      'VBep20Delegate',
+      'BRErc20Delegate',
       [
         new Arg('name', getStringV)
       ],
@@ -92,22 +92,22 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await VBep20DelegateContract.deploy<VBep20Delegate>(world, from, []),
+          invokation: await BRErc20DelegateContract.deploy<BRErc20Delegate>(world, from, []),
           name: name.val,
-          contract: 'VBep20Delegate',
-          description: 'Standard VBep20 Delegate'
+          contract: 'BRErc20Delegate',
+          description: 'Standard BRErc20 Delegate'
         };
       }
     ),
 
-    new Fetcher<{ name: StringV; }, VTokenDelegateData>(
+    new Fetcher<{ name: StringV; }, BRTokenDelegateData>(
       `
-        #### VBep20DelegateScenario
+        #### BRErc20DelegateScenario
 
-        * "VBep20DelegateScenario name:<String>" - A VBep20Delegate Scenario for local testing
-          * E.g. "VTokenDelegate Deploy VBep20DelegateScenario vDAIDelegate"
+        * "BRErc20DelegateScenario name:<String>" - A BRErc20Delegate Scenario for local testing
+          * E.g. "BRTokenDelegate Deploy BRErc20DelegateScenario vDAIDelegate"
       `,
-      'VBep20DelegateScenario',
+      'BRErc20DelegateScenario',
       [
         new Arg('name', getStringV),
       ],
@@ -116,16 +116,16 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await VBep20DelegateScenarioContract.deploy<VBep20DelegateScenario>(world, from, []),
+          invokation: await BRErc20DelegateScenarioContract.deploy<BRErc20DelegateScenario>(world, from, []),
           name: name.val,
-          contract: 'VBep20DelegateScenario',
-          description: 'Scenario VBep20 Delegate'
+          contract: 'BRErc20DelegateScenario',
+          description: 'Scenario BRErc20 Delegate'
         };
       }
     )
   ];
 
-  let delegateData = await getFetcherValue<any, VTokenDelegateData>("DeployVToken", fetchers, world, params);
+  let delegateData = await getFetcherValue<any, BRTokenDelegateData>("DeployBRToken", fetchers, world, params);
   let invokation = delegateData.invokation;
   delete delegateData.invokation;
 
@@ -133,18 +133,18 @@ export async function buildVTokenDelegate(
     throw invokation.error;
   }
 
-  const vTokenDelegate = invokation.value!;
+  const brTokenDelegate = invokation.value!;
 
   world = await storeAndSaveContract(
     world,
-    vTokenDelegate,
+    brTokenDelegate,
     delegateData.name,
     invokation,
     [
       {
-        index: ['VTokenDelegate', delegateData.name],
+        index: ['BRTokenDelegate', delegateData.name],
         data: {
-          address: vTokenDelegate._address,
+          address: brTokenDelegate._address,
           contract: delegateData.contract,
           description: delegateData.description
         }
@@ -152,5 +152,5 @@ export async function buildVTokenDelegate(
     ]
   );
 
-  return { world, vTokenDelegate, delegateData };
+  return { world, brTokenDelegate, delegateData };
 }

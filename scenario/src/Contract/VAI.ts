@@ -2,7 +2,7 @@ import { Contract } from '../Contract';
 import { encodedNumber } from '../Encoding';
 import { Callable, Sendable } from '../Invokation';
 
-export interface VAIMethods {
+export interface BAIMethods {
   name(): Callable<string>;
   symbol(): Callable<string>;
   decimals(): Callable<number>;
@@ -16,17 +16,17 @@ export interface VAIMethods {
   rely(address: string): Sendable<void>;
 }
 
-export interface VAIScenarioMethods extends VAIMethods {
+export interface BAIScenarioMethods extends BAIMethods {
   transferScenario(destinations: string[], amount: encodedNumber): Sendable<boolean>;
   transferFromScenario(froms: string[], amount: encodedNumber): Sendable<boolean>;
 }
 
-export interface VAI extends Contract {
-  methods: VAIMethods;
+export interface BAI extends Contract {
+  methods: BAIMethods;
   name: string;
 }
 
-export interface VAIScenario extends Contract {
-  methods: VAIScenarioMethods;
+export interface BAIScenario extends Contract {
+  methods: BAIScenarioMethods;
   name: string;
 }

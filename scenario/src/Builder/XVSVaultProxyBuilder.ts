@@ -4,67 +4,67 @@ import { Invokation } from "../Invokation";
 import { Fetcher, getFetcherValue } from "../Command";
 import { storeAndSaveContract } from "../Networks";
 import { getContract } from "../Contract";
-import { XVSVaultProxy } from "../Contract/XVSVault";
+import { BRNVaultProxy } from "../Contract/BRNVault";
 
-const XVSVaultProxyContract = getContract("XVSVaultProxy");
+const BRNVaultProxyContract = getContract("BRNVaultProxy");
 
-export interface XVSVaultProxyData {
-  invokation: Invokation<XVSVaultProxy>;
+export interface BRNVaultProxyData {
+  invokation: Invokation<BRNVaultProxy>;
   name: string;
   contract: string;
   address?: string;
 }
 
-export async function buildXVSVaultProxy(
+export async function buildBRNVaultProxy(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; xvsVaultProxy: XVSVaultProxy; xvsVaultData: XVSVaultProxyData }> {
+): Promise<{ world: World; brnVaultProxy: BRNVaultProxy; brnVaultData: BRNVaultProxyData }> {
   const fetchers = [
-    new Fetcher<{}, XVSVaultProxyData>(
+    new Fetcher<{}, BRNVaultProxyData>(
       `
-      #### XVSVaultProxy
-      * "XVSVaultProxy Deploy" - Deploys XVS Vault proxy contract
-      * E.g. "XVSVaultProxy Deploy"
+      #### BRNVaultProxy
+      * "BRNVaultProxy Deploy" - Deploys BRN Vault proxy contract
+      * E.g. "BRNVaultProxy Deploy"
       `,
-      "XVSVaultProxy",
+      "BRNVaultProxy",
       [],
       async (world, {}) => {
         return {
-          invokation: await XVSVaultProxyContract.deploy<XVSVaultProxy>(world, from, []),
-          name: "XVSVaultProxy",
-          contract: "XVSVaultProxy"
+          invokation: await BRNVaultProxyContract.deploy<BRNVaultProxy>(world, from, []),
+          name: "BRNVaultProxy",
+          contract: "BRNVaultProxy"
         };
       },
       { catchall: true }
     )
   ];
 
-  let xvsVaultData = await getFetcherValue<any, XVSVaultProxyData>(
-    "DeployXVSVaultProxy",
+  let brnVaultData = await getFetcherValue<any, BRNVaultProxyData>(
+    "DeployBRNVaultProxy",
     fetchers,
     world,
     params
   );
-  let invokation = xvsVaultData.invokation!;
-  delete xvsVaultData.invokation;
+  let invokation = brnVaultData.invokation!;
+  delete brnVaultData.invokation;
 
   if (invokation.error) {
     throw invokation.error;
   }
 
-  const xvsVaultProxy = invokation.value!;
-  xvsVaultData.address = xvsVaultProxy._address;
+  const brnVaultProxy = invokation.value!;
+  brnVaultData.address = brnVaultProxy._address;
 
   world = await storeAndSaveContract(
     world,
-    xvsVaultProxy,
-    xvsVaultData.name,
+    brnVaultProxy,
+    brnVaultData.name,
     invokation,
     [
-      { index: ["XVSVaultProxy", xvsVaultData.name], data: xvsVaultData },
+      { index: ["BRNVaultProxy", brnVaultData.name], data: brnVaultData },
     ]
   );
 
-  return { world, xvsVaultProxy, xvsVaultData };
+  return { world, brnVaultProxy, brnVaultData };
 }

@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { XVS } from '../Contract/XVS';
+import { BRN } from '../Contract/BRN';
 import {
   getAddressV,
   getNumberV
@@ -13,180 +13,180 @@ import {
   Value
 } from '../Value';
 import { Arg, Fetcher, getFetcherValue } from '../Command';
-import { getXVS } from '../ContractLookup';
+import { getBRN } from '../ContractLookup';
 
-export function xvsFetchers() {
+export function brnFetchers() {
   return [
-    new Fetcher<{ xvs: XVS }, AddressV>(`
+    new Fetcher<{ brn: BRN }, AddressV>(`
         #### Address
 
-        * "<XVS> Address" - Returns the address of XVS token
-          * E.g. "XVS Address"
+        * "<BRN> Address" - Returns the address of BRN token
+          * E.g. "BRN Address"
       `,
       "Address",
       [
-        new Arg("xvs", getXVS, { implicit: true })
+        new Arg("brn", getBRN, { implicit: true })
       ],
-      async (world, { xvs }) => new AddressV(xvs._address)
+      async (world, { brn }) => new AddressV(brn._address)
     ),
 
-    new Fetcher<{ xvs: XVS }, StringV>(`
+    new Fetcher<{ brn: BRN }, StringV>(`
         #### Name
 
-        * "<XVS> Name" - Returns the name of the XVS token
-          * E.g. "XVS Name"
+        * "<BRN> Name" - Returns the name of the BRN token
+          * E.g. "BRN Name"
       `,
       "Name",
       [
-        new Arg("xvs", getXVS, { implicit: true })
+        new Arg("brn", getBRN, { implicit: true })
       ],
-      async (world, { xvs }) => new StringV(await xvs.methods.name().call())
+      async (world, { brn }) => new StringV(await brn.methods.name().call())
     ),
 
-    new Fetcher<{ xvs: XVS }, StringV>(`
+    new Fetcher<{ brn: BRN }, StringV>(`
         #### Symbol
 
-        * "<XVS> Symbol" - Returns the symbol of the XVS token
-          * E.g. "XVS Symbol"
+        * "<BRN> Symbol" - Returns the symbol of the BRN token
+          * E.g. "BRN Symbol"
       `,
       "Symbol",
       [
-        new Arg("xvs", getXVS, { implicit: true })
+        new Arg("brn", getBRN, { implicit: true })
       ],
-      async (world, { xvs }) => new StringV(await xvs.methods.symbol().call())
+      async (world, { brn }) => new StringV(await brn.methods.symbol().call())
     ),
 
-    new Fetcher<{ xvs: XVS }, NumberV>(`
+    new Fetcher<{ brn: BRN }, NumberV>(`
         #### Decimals
 
-        * "<XVS> Decimals" - Returns the number of decimals of the XVS token
-          * E.g. "XVS Decimals"
+        * "<BRN> Decimals" - Returns the number of decimals of the BRN token
+          * E.g. "BRN Decimals"
       `,
       "Decimals",
       [
-        new Arg("xvs", getXVS, { implicit: true })
+        new Arg("brn", getBRN, { implicit: true })
       ],
-      async (world, { xvs }) => new NumberV(await xvs.methods.decimals().call())
+      async (world, { brn }) => new NumberV(await brn.methods.decimals().call())
     ),
 
-    new Fetcher<{ xvs: XVS }, NumberV>(`
+    new Fetcher<{ brn: BRN }, NumberV>(`
         #### TotalSupply
 
-        * "XVS TotalSupply" - Returns XVS token's total supply
+        * "BRN TotalSupply" - Returns BRN token's total supply
       `,
       "TotalSupply",
       [
-        new Arg("xvs", getXVS, { implicit: true })
+        new Arg("brn", getBRN, { implicit: true })
       ],
-      async (world, { xvs }) => new NumberV(await xvs.methods.totalSupply().call())
+      async (world, { brn }) => new NumberV(await brn.methods.totalSupply().call())
     ),
 
-    new Fetcher<{ xvs: XVS, address: AddressV }, NumberV>(`
+    new Fetcher<{ brn: BRN, address: AddressV }, NumberV>(`
         #### TokenBalance
 
-        * "XVS TokenBalance <Address>" - Returns the XVS token balance of a given address
-          * E.g. "XVS TokenBalance Geoff" - Returns Geoff's XVS balance
+        * "BRN TokenBalance <Address>" - Returns the BRN token balance of a given address
+          * E.g. "BRN TokenBalance Geoff" - Returns Geoff's BRN balance
       `,
       "TokenBalance",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("address", getAddressV)
       ],
-      async (world, { xvs, address }) => new NumberV(await xvs.methods.balanceOf(address.val).call())
+      async (world, { brn, address }) => new NumberV(await brn.methods.balanceOf(address.val).call())
     ),
 
-    new Fetcher<{ xvs: XVS, owner: AddressV, spender: AddressV }, NumberV>(`
+    new Fetcher<{ brn: BRN, owner: AddressV, spender: AddressV }, NumberV>(`
         #### Allowance
 
-        * "XVS Allowance owner:<Address> spender:<Address>" - Returns the XVS allowance from owner to spender
-          * E.g. "XVS Allowance Geoff Torrey" - Returns the XVS allowance of Geoff to Torrey
+        * "BRN Allowance owner:<Address> spender:<Address>" - Returns the BRN allowance from owner to spender
+          * E.g. "BRN Allowance Geoff Torrey" - Returns the BRN allowance of Geoff to Torrey
       `,
       "Allowance",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("owner", getAddressV),
         new Arg("spender", getAddressV)
       ],
-      async (world, { xvs, owner, spender }) => new NumberV(await xvs.methods.allowance(owner.val, spender.val).call())
+      async (world, { brn, owner, spender }) => new NumberV(await brn.methods.allowance(owner.val, spender.val).call())
     ),
 
-    new Fetcher<{ xvs: XVS, account: AddressV }, NumberV>(`
+    new Fetcher<{ brn: BRN, account: AddressV }, NumberV>(`
         #### GetCurrentVotes
 
-        * "XVS GetCurrentVotes account:<Address>" - Returns the current XVS votes balance for an account
-          * E.g. "XVS GetCurrentVotes Geoff" - Returns the current XVS vote balance of Geoff
+        * "BRN GetCurrentVotes account:<Address>" - Returns the current BRN votes balance for an account
+          * E.g. "BRN GetCurrentVotes Geoff" - Returns the current BRN vote balance of Geoff
       `,
       "GetCurrentVotes",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("account", getAddressV),
       ],
-      async (world, { xvs, account }) => new NumberV(await xvs.methods.getCurrentVotes(account.val).call())
+      async (world, { brn, account }) => new NumberV(await brn.methods.getCurrentVotes(account.val).call())
     ),
 
-    new Fetcher<{ xvs: XVS, account: AddressV, blockNumber: NumberV }, NumberV>(`
+    new Fetcher<{ brn: BRN, account: AddressV, blockNumber: NumberV }, NumberV>(`
         #### GetPriorVotes
 
-        * "XVS GetPriorVotes account:<Address> blockBumber:<Number>" - Returns the current XVS votes balance at given block
-          * E.g. "XVS GetPriorVotes Geoff 5" - Returns the XVS vote balance for Geoff at block 5
+        * "BRN GetPriorVotes account:<Address> blockBumber:<Number>" - Returns the current BRN votes balance at given block
+          * E.g. "BRN GetPriorVotes Geoff 5" - Returns the BRN vote balance for Geoff at block 5
       `,
       "GetPriorVotes",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("account", getAddressV),
         new Arg("blockNumber", getNumberV),
       ],
-      async (world, { xvs, account, blockNumber }) => new NumberV(await xvs.methods.getPriorVotes(account.val, blockNumber.encode()).call())
+      async (world, { brn, account, blockNumber }) => new NumberV(await brn.methods.getPriorVotes(account.val, blockNumber.encode()).call())
     ),
 
-    new Fetcher<{ xvs: XVS, account: AddressV }, NumberV>(`
+    new Fetcher<{ brn: BRN, account: AddressV }, NumberV>(`
         #### GetCurrentVotesBlock
 
-        * "XVS GetCurrentVotesBlock account:<Address>" - Returns the current XVS votes checkpoint block for an account
-          * E.g. "XVS GetCurrentVotesBlock Geoff" - Returns the current XVS votes checkpoint block for Geoff
+        * "BRN GetCurrentVotesBlock account:<Address>" - Returns the current BRN votes checkpoint block for an account
+          * E.g. "BRN GetCurrentVotesBlock Geoff" - Returns the current BRN votes checkpoint block for Geoff
       `,
       "GetCurrentVotesBlock",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("account", getAddressV),
       ],
-      async (world, { xvs, account }) => {
-        const numCheckpoints = Number(await xvs.methods.numCheckpoints(account.val).call());
-        const checkpoint = await xvs.methods.checkpoints(account.val, numCheckpoints - 1).call();
+      async (world, { brn, account }) => {
+        const numCheckpoints = Number(await brn.methods.numCheckpoints(account.val).call());
+        const checkpoint = await brn.methods.checkpoints(account.val, numCheckpoints - 1).call();
 
         return new NumberV(checkpoint.fromBlock);
       }
     ),
 
-    new Fetcher<{ xvs: XVS, account: AddressV }, NumberV>(`
+    new Fetcher<{ brn: BRN, account: AddressV }, NumberV>(`
         #### VotesLength
 
-        * "XVS VotesLength account:<Address>" - Returns the XVS vote checkpoint array length
-          * E.g. "XVS VotesLength Geoff" - Returns the XVS vote checkpoint array length of Geoff
+        * "BRN VotesLength account:<Address>" - Returns the BRN vote checkpoint array length
+          * E.g. "BRN VotesLength Geoff" - Returns the BRN vote checkpoint array length of Geoff
       `,
       "VotesLength",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("account", getAddressV),
       ],
-      async (world, { xvs, account }) => new NumberV(await xvs.methods.numCheckpoints(account.val).call())
+      async (world, { brn, account }) => new NumberV(await brn.methods.numCheckpoints(account.val).call())
     ),
 
-    new Fetcher<{ xvs: XVS, account: AddressV }, ListV>(`
+    new Fetcher<{ brn: BRN, account: AddressV }, ListV>(`
         #### AllVotes
 
-        * "XVS AllVotes account:<Address>" - Returns information about all votes an account has had
-          * E.g. "XVS AllVotes Geoff" - Returns the XVS vote checkpoint array
+        * "BRN AllVotes account:<Address>" - Returns information about all votes an account has had
+          * E.g. "BRN AllVotes Geoff" - Returns the BRN vote checkpoint array
       `,
       "AllVotes",
       [
-        new Arg("xvs", getXVS, { implicit: true }),
+        new Arg("brn", getBRN, { implicit: true }),
         new Arg("account", getAddressV),
       ],
-      async (world, { xvs, account }) => {
-        const numCheckpoints = Number(await xvs.methods.numCheckpoints(account.val).call());
+      async (world, { brn, account }) => {
+        const numCheckpoints = Number(await brn.methods.numCheckpoints(account.val).call());
         const checkpoints = await Promise.all(new Array(numCheckpoints).fill(undefined).map(async (_, i) => {
-          const {fromBlock, votes} = await xvs.methods.checkpoints(account.val, i).call();
+          const {fromBlock, votes} = await brn.methods.checkpoints(account.val, i).call();
 
           return new StringV(`Block ${fromBlock}: ${votes} vote${votes !== 1 ? "s" : ""}`);
         }));
@@ -197,6 +197,6 @@ export function xvsFetchers() {
   ];
 }
 
-export async function getXVSValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("XVS", xvsFetchers(), world, event);
+export async function getBRNValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("BRN", brnFetchers(), world, event);
 }

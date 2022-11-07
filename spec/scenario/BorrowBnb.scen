@@ -1,49 +1,49 @@
 
-Test "Borrow some BNB enters BNB and succeeds when BNB not entered"
+Test "Borrow some CKB enters CKB and succeeds when CKB not entered"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
-    Donate vBNB 0.003e18
+    SetCollateralFactor brCKB collateralFactor:0.5
+    Donate brCKB 0.003e18
     Prep Geoff Some ZRX vZRX
     Mint Geoff 1e18 vZRX
     EnterMarkets Geoff vZRX
-    Expect Changes (BNBBalance Geoff) +0.001e18
-    BorrowBnb Geoff 0.001e18 vBNB
-    Assert Equal (BNBBalance vBNB) 0.002e18
+    Expect Changes (CKBBalance Geoff) +0.001e18
+    BorrowCkb Geoff 0.001e18 brCKB
+    Assert Equal (CKBBalance brCKB) 0.002e18
     Assert Equal (Comptroller Liquidity Geoff) 4.99e17
     Assert Equal (Comptroller MembershipLength Geoff) (Exactly 2)
-    Assert True (Comptroller CheckMembership Geoff vBNB)
+    Assert True (Comptroller CheckMembership Geoff brCKB)
 
-Test "Borrow some BNB fails when no BNB available"
+Test "Borrow some CKB fails when no CKB available"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
+    SetCollateralFactor brCKB collateralFactor:0.5
     Prep Geoff Some ZRX vZRX
     Mint Geoff 100e18 vZRX
-    EnterMarkets Geoff vZRX vBNB
+    EnterMarkets Geoff vZRX brCKB
     AllowFailures
-    Invariant Static (VToken vZRX ExchangeRateStored)
-    Invariant Static (VToken vBNB ExchangeRateStored)
+    Invariant Static (BRToken vZRX ExchangeRateStored)
+    Invariant Static (BRToken brCKB ExchangeRateStored)
     Invariant Static (Comptroller Liquidity Geoff)
-    Invariant Static (BNBBalance Geoff)
-    BorrowBnb Geoff 1e18 vBNB
-    Assert Failure TOKEN_INSUFFICIENT_CASH BORROW_CASH_NOT_AVAILABLE
+    Invariant Static (CKBBalance Geoff)
+    BorrowCkb Geoff 1e18 brCKB
+    Assert Failure TOKEN_INSUFFICIENT_CASH BORROW_CASH_NOT_ABAILABLE
 
-Test "Borrow some BNB from excess cash"
+Test "Borrow some CKB from excess cash"
     NewComptroller price:1.0
-    ListedVToken ZRX vZRX
-    ListedBNBToken vBNB initialExchangeRate:0.005e9
+    ListedBRToken ZRX vZRX
+    ListedCKBToken brCKB initialExchangeRate:0.005e9
     SetCollateralFactor vZRX collateralFactor:0.5
-    SetCollateralFactor vBNB collateralFactor:0.5
-    Donate vBNB 0.003e18
+    SetCollateralFactor brCKB collateralFactor:0.5
+    Donate brCKB 0.003e18
     Prep Geoff Some ZRX vZRX
     Mint Geoff 1e18 vZRX
-    EnterMarkets Geoff vZRX vBNB
-    Expect Changes (BNBBalance Geoff) +0.001e18
-    BorrowBnb Geoff 0.001e18 vBNB
-    Assert Equal (BNBBalance vBNB) 0.002e18
+    EnterMarkets Geoff vZRX brCKB
+    Expect Changes (CKBBalance Geoff) +0.001e18
+    BorrowCkb Geoff 0.001e18 brCKB
+    Assert Equal (CKBBalance brCKB) 0.002e18
     Assert Equal (Comptroller Liquidity Geoff) 4.99e17

@@ -14,7 +14,7 @@ Macro PricedComptroller closeFactor=0.1 maxAssets=20
     ComptrollerImpl ScenComptroller Become
     ComptrollerLens Deploy
     Comptroller SetComptrollerLens (Address ComptrollerLens)
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vBnb use ListedBNBToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing brCkb use ListedCKBToken to replace proxy
     Comptroller SetPriceOracle (PriceOracleProxy Address)
     Comptroller SetCloseFactor closeFactor
 
@@ -23,13 +23,13 @@ Macro PricedComptrollerWithLiquidator treasury closeFactor=0.1 maxAssets=20
     Liquidator Deploy Admin Admin (Comptroller Address) Admin treasury 5e16  -- treasury percent = 5%
     Comptroller SetLiquidatorContract (Address Liquidator)
 
-Macro PricedComptrollerWithVAIController closeFactor=0.1 maxAssets=20
+Macro PricedComptrollerWithBAIController closeFactor=0.1 maxAssets=20
     PricedComptroller closeFactor maxAssets
-    NewVAIController
-    Comptroller SetVAIController (Address VAIUnitroller)
-    VAIController SetComptroller (Address Unitroller)
-    Comptroller SetVAIMintRate 5e3
-    NewVAI
+    NewBAIController
+    Comptroller SetBAIController (Address BAIUnitroller)
+    BAIController SetComptroller (Address Unitroller)
+    Comptroller SetBAIMintRate 5e3
+    NewBAI
 
 Macro NewComptroller price=1.0 closeFactor=0.1 maxAssets=20
     Unitroller Deploy
@@ -39,7 +39,7 @@ Macro NewComptroller price=1.0 closeFactor=0.1 maxAssets=20
     ComptrollerImpl ScenComptroller Become
     ComptrollerLens Deploy
     Comptroller SetComptrollerLens (Address ComptrollerLens)
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vBnb use ListedBNBToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing brCkb use ListedCKBToken to replace proxy
     Comptroller SetPriceOracle (PriceOracleProxy Address)
     Comptroller SetCloseFactor closeFactor
 
@@ -51,182 +51,182 @@ Macro NewFeeComptroller price=1.0 closeFactor=0.1 maxAssets=20
     ComptrollerImpl ScenComptroller Become
     ComptrollerLens Deploy
     Comptroller SetComptrollerLens (Address ComptrollerLens)
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vBnb use ListedBNBToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing brCkb use ListedCKBToken to replace proxy
     Comptroller SetPriceOracle (PriceOracleProxy Address)
     Comptroller SetCloseFactor closeFactor
     Comptroller SetTreasuryData Guardian Jared 1e14
 
-Macro NewComptrollerWithVAIController price=1.0 closeFactor=0.1 maxAssets=20
+Macro NewComptrollerWithBAIController price=1.0 closeFactor=0.1 maxAssets=20
     NewComptroller price closeFactor maxAssets
-    NewVAIController
-    Comptroller SetVAIController (Address VAIUnitroller)
-    VAIController SetComptroller (Address Unitroller)
-    Comptroller SetVAIMintRate 5e3
+    NewBAIController
+    Comptroller SetBAIController (Address BAIUnitroller)
+    BAIController SetComptroller (Address Unitroller)
+    Comptroller SetBAIMintRate 5e3
 
-Macro NewVAIController
-    VAIUnitroller Deploy
+Macro NewBAIController
+    BAIUnitroller Deploy
     --current
-    VAIControllerImpl Deploy Scenario ScenVAIController
-    VAIUnitroller SetPendingImpl ScenVAIController
-    VAIControllerImpl ScenVAIController Become
-    VAIController Initialize
+    BAIControllerImpl Deploy Scenario ScenBAIController
+    BAIUnitroller SetPendingImpl ScenBAIController
+    BAIControllerImpl ScenBAIController Become
+    BAIController Initialize
 
-Macro NewVAI
-    VAI Deploy Admin
-    VAI Rely (Address VAIUnitroller)
-    VAIController Send "setVAIAddress(address)" (Address VAI)
+Macro NewBAI
+    BAI Deploy Admin
+    BAI Rely (Address BAIUnitroller)
+    BAIController Send "setBAIAddress(address)" (Address BAI)
 
-Macro NewVToken bep20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=VBep20DelegatorScenario vTokenType=VBep20DelegateScenario admin=Admin becomeImplementationData="0x0"
-    Bep20 Deploy tokenType bep20 bep20
+Macro NewBRToken erc20 brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=BRErc20DelegatorScenario brTokenType=BRErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
+    Erc20 Deploy tokenType erc20 erc20
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VTokenDelegate Deploy vTokenType vBep20Delegate
-    VToken Deploy delegatorType vToken vToken (Bep20 bep20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate vBep20Delegate Address) becomeImplementationData
+    BRTokenDelegate Deploy brTokenType brErc20Delegate
+    BRToken Deploy delegatorType brToken brToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (BRTokenDelegate brErc20Delegate Address) becomeImplementationData
 
--- Same as NewVToken but does not deploy an BEP20. Used for special BEP20s that are initialized differently
-Macro NewVTokenBringBEP20 bep20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=VBep20DelegatorScenario vTokenType=VBep20DelegateScenario admin=Admin becomeImplementationData="0x0"
+-- Same as NewBRToken but does not deploy an ERC20. Used for special ERC20s that are initialized differently
+Macro NewBRTokenBringERC20 erc20 brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=BRErc20DelegatorScenario brTokenType=BRErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VTokenDelegate Deploy vTokenType vBep20Delegate
-    VToken Deploy delegatorType vToken vToken (Bep20 bep20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate vBep20Delegate Address) becomeImplementationData
+    BRTokenDelegate Deploy brTokenType brErc20Delegate
+    BRToken Deploy delegatorType brToken brToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (BRTokenDelegate brErc20Delegate Address) becomeImplementationData
 
-Macro NewVTokenImmutable bep20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard vTokenType=Scenario admin=Admin
-    Bep20 Deploy tokenType bep20 bep20
+Macro NewBRTokenImmutable erc20 brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard brTokenType=Scenario admin=Admin
+    Erc20 Deploy tokenType erc20 erc20
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VToken Deploy vTokenType vToken vToken (Bep20 bep20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
+    BRToken Deploy brTokenType brToken brToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
 
-Macro NewBNBToken vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
+Macro NewCKBToken brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VToken Deploy VBNBScenario vToken vToken (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
+    BRToken Deploy BRCKBScenario brToken brToken (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
 
-Macro ListedVToken bep20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=VBep20DelegatorScenario vTokenType=VBep20DelegateScenario admin=Admin
-    NewVToken bep20 vToken borrowRate initialExchangeRate decimals tokenType delegatorType vTokenType admin
-    Comptroller SupportMarket vToken
+Macro ListedBRToken erc20 brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=BRErc20DelegatorScenario brTokenType=BRErc20DelegateScenario admin=Admin
+    NewBRToken erc20 brToken borrowRate initialExchangeRate decimals tokenType delegatorType brTokenType admin
+    Comptroller SupportMarket brToken
 
-Macro ListedVTokenImmutable bep20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard vTokenType=Scenario admin=Admin
-    NewVTokenImmutable bep20 vToken borrowRate initialExchangeRate decimals tokenType vTokenType admin
-    Comptroller SupportMarket vToken
+Macro ListedBRTokenImmutable erc20 brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard brTokenType=Scenario admin=Admin
+    NewBRTokenImmutable erc20 brToken borrowRate initialExchangeRate decimals tokenType brTokenType admin
+    Comptroller SupportMarket brToken
 
-Macro ListedBNBToken vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
-    NewBNBToken vToken borrowRate initialExchangeRate decimals admin
-    Comptroller SupportMarket vToken
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address vBNB) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
+Macro ListedCKBToken brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
+    NewCKBToken brToken borrowRate initialExchangeRate decimals admin
+    Comptroller SupportMarket brToken
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address brCKB) (Address Zero) (Address Zero) (Address Zero) (Address Zero)
     Comptroller SetPriceOracle (PriceOracleProxy Address)
 
-Macro ListedBNBTokenMinted vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
-    NewBNBToken vToken borrowRate initialExchangeRate decimals admin
-    Comptroller SupportMarket vToken
-    CallMintBnb Root 1e18 vToken
+Macro ListedCKBTokenMinted brToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
+    NewCKBToken brToken borrowRate initialExchangeRate decimals admin
+    Comptroller SupportMarket brToken
+    CallMintCkb Root 1e18 brToken
 
-Macro SetPriceCF vToken price collateralFactor
-    PriceOracle SetPrice vToken price
-    Comptroller SetCollateralFactor vToken collateralFactor
+Macro SetPriceCF brToken price collateralFactor
+    PriceOracle SetPrice brToken price
+    Comptroller SetCollateralFactor brToken collateralFactor
 
-Macro Give user amount bep20
-    Bep20 bep20 Faucet user amount
+Macro Give user amount erc20
+    Erc20 erc20 Faucet user amount
 
-Macro GiveVAI user amount
-    VAI Faucet user amount
+Macro GiveBAI user amount
+    BAI Faucet user amount
 
-Macro PrepVAI user amount token allowanceAmount=Nothing
-    GiveVAI user amount
-    From user (VAI Approve token (Default allowanceAmount amount))
+Macro PrepBAI user amount token allowanceAmount=Nothing
+    GiveBAI user amount
+    From user (BAI Approve token (Default allowanceAmount amount))
 
 Macro Donate token amount
-    (Trx Value amount (VToken token Donate))
+    (Trx Value amount (BRToken token Donate))
 
-Macro Prep user amount bep20 token allowanceAmount=Nothing
-    Bep20 bep20 Faucet user amount
-    From user (Bep20 bep20 Approve token (Default allowanceAmount amount))
+Macro Prep user amount erc20 token allowanceAmount=Nothing
+    Erc20 erc20 Faucet user amount
+    From user (Erc20 erc20 Approve token (Default allowanceAmount amount))
 
 Macro Allow user token
-    From user (Bep20 (VToken token Underlying) Approve token UInt256Max)
+    From user (Erc20 (BRToken token Underlying) Approve token UInt256Max)
 
 Macro AccrueInterest token
-    VToken token AccrueInterest
+    BRToken token AccrueInterest
 
 Macro Mint user amount token
-    From user (VToken token Mint amount)
+    From user (BRToken token Mint amount)
 
 Macro MintBehalf payer receiver amount token
-    From payer (VToken token MintBehalf receiver amount)
+    From payer (BRToken token MintBehalf receiver amount)
 
-Macro SendMintBnb user amount token
+Macro SendMintCkb user amount token
     From user (Trx GasPrice 0 (Trx Value amount (Send token amount)))
 
-Macro CallMintBnb user amount token
-    From user (Trx GasPrice 0 (Trx Value amount (VToken token Mint)))
+Macro CallMintCkb user amount token
+    From user (Trx GasPrice 0 (Trx Value amount (BRToken token Mint)))
 
 Macro Redeem user amount token
-    From user (VToken token Redeem amount)
+    From user (BRToken token Redeem amount)
 
-Macro RedeemBnb user amount token
-    Trx GasPrice 0 (From user (VToken token Redeem amount))
+Macro RedeemCkb user amount token
+    Trx GasPrice 0 (From user (BRToken token Redeem amount))
 
 Macro RedeemUnderlying user amount token
-    From user (VToken token RedeemUnderlying amount)
+    From user (BRToken token RedeemUnderlying amount)
 
-Macro RedeemUnderlyingBnb user amount token
-    Trx GasPrice 0 (From user (VToken token RedeemUnderlying amount))
+Macro RedeemUnderlyingCkb user amount token
+    Trx GasPrice 0 (From user (BRToken token RedeemUnderlying amount))
 
-Macro BorrowBnb user amount token
-    Trx GasPrice 0 (From user (VToken token Borrow amount))
+Macro BorrowCkb user amount token
+    Trx GasPrice 0 (From user (BRToken token Borrow amount))
 
 Macro Borrow user amount token
-    From user (VToken token Borrow amount)
+    From user (BRToken token Borrow amount)
 
 Macro RepayBorrow user amount token
-    From user (VToken token RepayBorrow amount)
+    From user (BRToken token RepayBorrow amount)
 
-Macro MintVAI user amount
-    From user (VAIController Mint amount)
+Macro MintBAI user amount
+    From user (BAIController Mint amount)
 
-Macro RepayVAI user amount
-    From user (VAIController Repay amount)
+Macro RepayBAI user amount
+    From user (BAIController Repay amount)
 
-Macro RepayBorrowBnb user amount token
-    From user (Trx GasPrice 0 (Trx Value amount (VToken token RepayBorrow)))
+Macro RepayBorrowCkb user amount token
+    From user (Trx GasPrice 0 (Trx Value amount (BRToken token RepayBorrow)))
 
-Macro RepayBorrowBnbMax user amount token
+Macro RepayBorrowCkbMax user amount token
     From user (Trx GasPrice 0 (Trx Value amount (Maximillion RepayBehalf user)))
 
 Macro RepayBorrowBehalf user behalf amount token
-    From user (VToken token RepayBorrowBehalf behalf amount)
+    From user (BRToken token RepayBorrowBehalf behalf amount)
 
-Macro RepayBorrowBnbBehalf user behalf amount token
-    From user (Trx GasPrice 0 (Trx Value amount (VToken token RepayBorrowBehalf behalf)))
+Macro RepayBorrowCkbBehalf user behalf amount token
+    From user (Trx GasPrice 0 (Trx Value amount (BRToken token RepayBorrowBehalf behalf)))
 
 Macro ApproveLiquidation liquidator token amount
-    From liquidator (Bep20 (VToken token Underlying) Approve (Address Liquidator) amount)
+    From liquidator (Erc20 (BRToken token Underlying) Approve (Address Liquidator) amount)
 
 Macro Liquidate liquidator _ borrower amount token _ collateral
     From liquidator (Liquidator LiquidateBorrow (Address token) borrower amount (Address collateral))
 
-Macro LiquidateVAI liquidator _ borrower amount _ collateral
-    From liquidator (Liquidator LiquidateBorrow (Address VAIController) borrower amount (Address collateral))
+Macro LiquidateBAI liquidator _ borrower amount _ collateral
+    From liquidator (Liquidator LiquidateBorrow (Address BAIController) borrower amount (Address collateral))
 
-Macro LiquidateBnbColl liquidator _ borrower amount token _ collateral
+Macro LiquidateCkbColl liquidator _ borrower amount token _ collateral
     From liquidator (Trx GasPrice 0 (Liquidator LiquidateBorrow (Address token) Liquidate borrower amount (Address collateral)))
 
-Macro LiquidateBnbBorrow liquidator _ borrower amount token _ collateral
+Macro LiquidateCkbBorrow liquidator _ borrower amount token _ collateral
     From liquidator (Trx GasPrice 0 (Trx Value amount (Liquidator LiquidateBorrow (Address token) Liquidate borrower amount (Address collateral))))
 
 Macro Seize amount token caller liquidator borrower
-    From caller (VToken token Seize liquidator borrower amount)
+    From caller (BRToken token Seize liquidator borrower amount)
 
 Macro EvilSeize token amount treasure seizer seizee
-    VToken token EvilSeize treasure seizer seizee amount
+    BRToken token EvilSeize treasure seizer seizee amount
 
-Macro Support vToken collateralFactor=0.5
-    Comptroller SupportMarket vToken
-    Comptroller SetCollateralFactor vToken collateralFactor
+Macro Support brToken collateralFactor=0.5
+    Comptroller SupportMarket brToken
+    Comptroller SetCollateralFactor brToken collateralFactor
 
-Macro SetCollateralFactor vToken collateralFactor=0.5
-    Comptroller SetCollateralFactor vToken collateralFactor
+Macro SetCollateralFactor brToken collateralFactor=0.5
+    Comptroller SetCollateralFactor brToken collateralFactor
 
 Macro AddReserves amount token user=Root
-    From user (VToken token AddReserves amount)
+    From user (BRToken token AddReserves amount)
 
 Macro ReduceReserves amount token
-    VToken token ReduceReserves amount
+    BRToken token ReduceReserves amount
 
 Macro FastForward n blocks
     Comptroller FastForward n blocks
@@ -238,76 +238,76 @@ Macro ExitMarket user market
     From user (Comptroller ExitMarket market)
 
 Macro Transfer from to amount token
-    From from (Bep20 token Transfer to amount)
+    From from (Erc20 token Transfer to amount)
 
-Macro Cash vToken
-    Read Bep20 (VToken vToken Underlying) TokenBalance vToken
+Macro Cash brToken
+    Read Erc20 (BRToken brToken Underlying) TokenBalance brToken
 
-Macro QuickMint amount vToken from=Me
-    Give from amount (VToken vToken Underlying)
-    Allow from vToken
-    From from (VToken vToken Mint amount)
+Macro QuickMint amount brToken from=Me
+    Give from amount (BRToken brToken Underlying)
+    Allow from brToken
+    From from (BRToken brToken Mint amount)
 
-Macro QuickBorrow amount vToken ...collateral
+Macro QuickBorrow amount brToken ...collateral
     From Me (Comptroller EnterMarkets collateral)
-    From Me (Comptroller EnterMarkets (vToken))
-    From Me (VToken vToken Borrow amount)
+    From Me (Comptroller EnterMarkets (brToken))
+    From Me (BRToken brToken Borrow amount)
 
 -- Macro for performing a borrow with the sole
--- purpose of adding interest to the bep20 market
-Macro BorrowAndRepayWithInterest bep20 vToken amount interestAmount interestRate blocks reserveRate=0
+-- purpose of adding interest to the erc20 market
+Macro BorrowAndRepayWithInterest erc20 brToken amount interestAmount interestRate blocks reserveRate=0
     -- TODO: Make invariant success for these?
     -- TODO: Named args as macros
     InterestRateModel Deploy Fixed Std interestRate
-    VToken vToken SetInterestRateModel (InterestRateModel Std Address)
-    VToken vToken SetReserveFactor reserveRate
-    ListedVToken COLLAT cCOLLAT
+    BRToken brToken SetInterestRateModel (InterestRateModel Std Address)
+    BRToken brToken SetReserveFactor reserveRate
+    ListedBRToken COLLAT cCOLLAT
     Comptroller SetCollateralFactor cCOLLAT 0.9
     Prep Torrey 1e30 COLLAT cCOLLAT
     Mint Torrey 1e30 cCOLLAT
-    EnterMarkets Torrey cCOLLAT vToken
+    EnterMarkets Torrey cCOLLAT brToken
     Assert True (Comptroller CheckMembership Torrey cCOLLAT)
-    Assert True (Comptroller CheckMembership Torrey vToken)
-    Borrow Torrey amount vToken
+    Assert True (Comptroller CheckMembership Torrey brToken)
+    Borrow Torrey amount brToken
     -- Cool, we've borrowed, now let's accrue interest then repay all
     FastForward blocks Blocks
-    -- RepayBorrow Torrey (VToken BorrowBalance Torrey) vToken
-    From Torrey (Bep20 bep20 Approve vToken amount)
-    RepayBorrow Torrey amount vToken
-    From Torrey (Bep20 bep20 Approve vToken interestAmount)
-    Give Torrey interestAmount bep20
-    RepayBorrow Torrey interestAmount vToken
-    Assert Equal (VToken vToken BorrowBalance Torrey) Zero
+    -- RepayBorrow Torrey (BRToken BorrowBalance Torrey) brToken
+    From Torrey (Erc20 erc20 Approve brToken amount)
+    RepayBorrow Torrey amount brToken
+    From Torrey (Erc20 erc20 Approve brToken interestAmount)
+    Give Torrey interestAmount erc20
+    RepayBorrow Torrey interestAmount brToken
+    Assert Equal (BRToken brToken BorrowBalance Torrey) Zero
 
 -- Macro for performing a borrow with the sole
--- purpose of adding interest to the bnb market
-Macro BorrowAndRepayBnbWithInterest vBnb amount interestAmount interestRate blocks reserveRate=0
+-- purpose of adding interest to the ckb market
+Macro BorrowAndRepayCkbWithInterest brCkb amount interestAmount interestRate blocks reserveRate=0
     -- TODO: Make invariant success for these?
     -- TODO: Named args as macros
     InterestRateModel Deploy Fixed Std interestRate
-    VToken vBnb SetInterestRateModel (InterestRateModel Std Address)
-    VToken vBnb SetReserveFactor reserveRate
-    ListedVToken COLLAT cCOLLAT
+    BRToken brCkb SetInterestRateModel (InterestRateModel Std Address)
+    BRToken brCkb SetReserveFactor reserveRate
+    ListedBRToken COLLAT cCOLLAT
     Comptroller SetCollateralFactor cCOLLAT 0.9
     Prep Torrey 1e30 COLLAT cCOLLAT
     Mint Torrey 1e30 cCOLLAT
-    EnterMarkets Torrey cCOLLAT vBnb
+    EnterMarkets Torrey cCOLLAT brCkb
     Assert True (Comptroller CheckMembership Torrey cCOLLAT)
-    Assert True (Comptroller CheckMembership Torrey vBnb)
-    Borrow Torrey amount vBnb
+    Assert True (Comptroller CheckMembership Torrey brCkb)
+    Borrow Torrey amount brCkb
     -- Cool, we've borrowed, now let's accrue interest then repay all
     FastForward blocks Blocks
-    -- RepayBorrow Torrey (VToken BorrowBalance Torrey) vBnb
-    RepayBorrowBnb Torrey amount vBnb
-    RepayBorrowBnb Torrey interestAmount vBnb
-    Assert Equal (VToken vBnb BorrowBalance Torrey) Zero
+    -- RepayBorrow Torrey (BRToken BorrowBalance Torrey) brCkb
+    RepayBorrowCkb Torrey amount brCkb
+    RepayBorrowCkb Torrey interestAmount brCkb
+    Assert Equal (BRToken brCkb BorrowBalance Torrey) Zero
 
-Macro DeployVault xvs
-    XVSVaultImpl Deploy VaultImpl
-    XVSVaultProxy Deploy
-    XVSVaultProxy SetPendingImplementation VaultImpl
-    XVSVaultImpl VaultImpl Become
-    XVSStore Deploy
-    XVSStore SetNewOwner (Address XVSVault)
-    XVSVault SetXvsStore (Address xvs) (Address XVSStore)
-    XVSVault Add (Address xvs) 1000 (Address xvs) 300 12345
+Macro DeployVault brn
+    BRNVaultImpl Deploy VaultImpl
+    BRNVaultProxy Deploy
+    BRNVaultProxy SetPendingImplementation VaultImpl
+    BRNVaultImpl VaultImpl Become
+    BRNStore Deploy
+    BRNStore SetNewOwner (Address BRNVault)
+    BRNVault SetBrnStore (Address brn) (Address BRNStore)
+    BRNVault Add (Address brn) 1000 (Address brn) 300 12345

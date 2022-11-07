@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "../Utils/SafeBEP20.sol";
-import "../Utils/IBEP20.sol";
+import "../Utils/SafeERC20.sol";
+import "../Utils/IERC20.sol";
 import "./VRTVaultProxy.sol";
 import "./VRTVaultStorage.sol";
 
 contract VRTVault is VRTVaultStorage {
     using SafeMath for uint256;
-    using SafeBEP20 for IBEP20;
+    using SafeERC20 for IERC20;
 
     /// @notice Event emitted when admin changed
     event AdminTransfered(address indexed oldAdmin, address indexed newAdmin);
@@ -24,7 +24,7 @@ contract VRTVault is VRTVaultStorage {
     /// @notice Event emitted when accruedInterest and VRT PrincipalAmount is withrawn
     event Withdraw(address indexed user, uint256 withdrawnAmount, uint256 totalPrincipalAmount, uint256 accruedInterest);
 
-    /// @notice Event emitted when Admin withdraw BEP20 token from contract
+    /// @notice Event emitted when Admin withdraw ERC20 token from contract
     event WithdrawToken(address indexed tokenAddress, address indexed receiver, uint256 amount);
 
     /// @notice Event emitted when accruedInterest is claimed
@@ -49,7 +49,7 @@ contract VRTVault is VRTVaultStorage {
         require(interestRatePerBlock > 0, "interestRate Per Block must be greater than zero.");
 
         // Set the VRT
-        vrt = IBEP20(_vrtAddress);
+        vrt = IERC20(_vrtAddress);
         _notEntered = true;
     }
 
@@ -198,14 +198,14 @@ contract VRTVault is VRTVaultStorage {
     }
 
     /**
-     * @notice withdraw BEP20 tokens from the contract to a recipient address.
-     * @param tokenAddress address of the BEP20 token
-     * @param receiver recipient of the BEP20 token
+     * @notice withdraw ERC20 tokens from the contract to a recipient address.
+     * @param tokenAddress address of the ERC20 token
+     * @param receiver recipient of the ERC20 token
      * @param amount tokenAmount
      */
-    function withdrawBep20(address tokenAddress, address receiver, uint256 amount) onlyAdmin isInitialized nonZeroAddress(tokenAddress) nonZeroAddress(receiver) external {
+    function withdrawErc20(address tokenAddress, address receiver, uint256 amount) onlyAdmin isInitialized nonZeroAddress(tokenAddress) nonZeroAddress(receiver) external {
         require(amount > 0 , "amount is invalid");
-        IBEP20 token = IBEP20(tokenAddress);
+        IERC20 token = IERC20(tokenAddress);
         require(amount <= token.balanceOf(address(this)), "Insufficient amount in Vault");
         emit WithdrawToken(tokenAddress, receiver, amount);
         token.safeTransfer(receiver, amount);

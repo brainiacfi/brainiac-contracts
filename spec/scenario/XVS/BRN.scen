@@ -1,0 +1,300 @@
+
+Test "Check Name"
+    BRN Deploy Geoff
+    Assert Equal (BRN Name) "Brainiac"
+
+Test "Check Symbol"
+    BRN Deploy Geoff
+    Assert Equal (BRN Symbol) "BRN"
+
+Test "Check Decimals"
+    BRN Deploy Geoff
+    Assert Equal (BRN Decimals) 18
+
+Test "Check Total Supply"
+    BRN Deploy Geoff
+    Assert Equal (BRN TotalSupply) 30000000e18
+
+Test "Check account receives Total Supply after deploy and emits Transfer event"
+    BRN Deploy Geoff
+    Assert Equal (BRN TokenBalance Geoff) 30000000e18
+    Assert Log Transfer (from (Address Zero)) (to (Address Geoff)) (amount "30000000000000000000000000")
+
+Test "Check approve sets correct approval and emits Approval event"
+    BRN Deploy Geoff
+    From Geoff (BRN Approve Jared 10)
+    Assert Equal (BRN Allowance Geoff Jared) 10
+    Assert Log Approval (owner (Address Geoff)) (spender (Address Jared)) (amount "10")
+
+Test "Check approve with bad allowance reverts"
+    BRN Deploy Geoff
+    AllowFailures
+    From Geoff (BRN Approve Jared 1e70)
+    Assert Revert "revert BRN::approve: amount exceeds 96 bits"
+
+Test "Check transfer updates balances correctly, emits Transfer event, and returns true"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    Assert Equal (BRN TokenBalance Geoff) 29999999999999999999999990
+    Assert Equal (BRN TokenBalance Jared) 10
+    Assert Log Transfer (from (Address Geoff)) (to (Address Jared)) (amount "10")
+
+Test "Check self-transfer updates balances correctly, emits Transfer event, and returns true"
+    BRN Deploy Geoff
+    Expect Changes (BRN VotesLength Geoff) Zero
+    Expect Changes (BRN TokenBalance Geoff) Zero
+    From Geoff (BRN Transfer Geoff 10)
+    Assert Log Transfer (from (Address Geoff)) (to (Address Geoff)) (amount "10")
+    Expect Changes (BRN VotesLength Geoff) Zero
+    Expect Changes (BRN TokenBalance Geoff) Zero
+    From Geoff (BRN Transfer Geoff 0)
+    Assert Log Transfer (from (Address Geoff)) (to (Address Geoff)) (amount "0")
+
+Test "Check transferFrom with unlimited allowance updates balances correctly, emits Transfer event, and returns true"
+    BRN Deploy Geoff
+    From Geoff (BRN Approve Jared UInt256Max)
+    From Jared (BRN TransferFrom Geoff Jared 10)
+    Assert Equal (BRN TokenBalance Geoff) 29999999999999999999999990
+    Assert Equal (BRN TokenBalance Jared) 10
+    Assert Equal (BRN Allowance Geoff Jared) UInt96Max
+    Assert Log Transfer (from (Address Geoff)) (to (Address Jared)) (amount "10")
+
+Test "Check transferFrom with unlimited allowance updates balances correctly, emits Transfer event, and returns true"
+    BRN Deploy Geoff
+    From Geoff (BRN Approve Jared UInt96Max)
+    From Jared (BRN TransferFrom Geoff Jared 10)
+    Assert Equal (BRN TokenBalance Geoff) 29999999999999999999999990
+    Assert Equal (BRN TokenBalance Jared) 10
+    Assert Equal (BRN Allowance Geoff Jared) UInt96Max
+    Assert Log Transfer (from (Address Geoff)) (to (Address Jared)) (amount "10")
+
+Test "Check transferFrom with allowance updates balances correctly, emits Transfer event, and returns true"
+    BRN Deploy Geoff
+    From Geoff (BRN Approve Jared 10)
+    From Jared (BRN TransferFrom Geoff Jared 9)
+    Assert Equal (BRN TokenBalance Geoff) 29999999999999999999999991
+    Assert Equal (BRN TokenBalance Jared) 9
+    Assert Equal (BRN Allowance Geoff Jared) 1
+    Assert Log Transfer (from (Address Geoff)) (to (Address Jared)) (amount "9")
+    Assert Log Approval (owner (Address Geoff)) (spender (Address Jared)) (amount "1")
+
+Test "Check transferFrom reverts with not sufficient allowance"
+    BRN Deploy Geoff
+    From Geoff (BRN Approve Jared 10)
+    AllowFailures
+    From Jared (BRN TransferFrom Geoff Jared 11)
+    Assert Revert "revert BRN::transferFrom: transfer amount exceeds spender allowance"
+
+Test "Check transfer reverts when transferring too much"
+    BRN Deploy Geoff
+    AllowFailures
+    From Geoff (BRN Transfer Jared 30000001e18)
+    Assert Revert "revert BRN::_transferTokens: transfer amount exceeds balance"
+
+Test "Check transfer reverts when transferring to address 0"
+    BRN Deploy Geoff
+    AllowFailures
+    From Geoff (BRN Transfer (Address Zero) 30000000e18)
+    Assert Revert "revert BRN::_transferTokens: cannot transfer to the zero address"
+
+Test "Delegate with zero balance doesn't change votes checkpoints"
+    BRN Deploy Geoff
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 0
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+
+Test "Delegate from address(0) to account with zero checkpoints"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Zero) 0
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+
+Test "Delegate from address(0) to account with existing checkpoints"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 14)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 24
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Zero) 0
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "24")
+
+Test "Delegate to address(0)"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 14)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 24
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "24")
+    From Torrey (BRN Delegate Zero)
+    Assert Equal (BRN VotesLength Geoff) 3
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Geoff)) (toDelegate (Address Zero))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "24") (newBalance "10")
+    Assert Equal (BRN VotesLength Zero) 0
+
+Test "Delegate from one account to another account with zero checkpoints"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 14)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 24
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Coburn) 0
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "24")
+    From Torrey (BRN Delegate Coburn)
+    Assert Equal (BRN VotesLength Coburn) 1
+    Assert Equal (BRN GetCurrentVotes Coburn) 14
+    Assert Equal (BRN GetCurrentVotesBlock Coburn) LastBlock
+    Assert Equal (BRN VotesLength Geoff) 3
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Geoff)) (toDelegate (Address Coburn))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "24") (newBalance "10")
+    Assert Log DelegateVotesChanged (delegate (Address Coburn)) (previousBalance "0") (newBalance "14")
+
+Test "Delegate from one account to another account with multiple checkpoints"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 14)
+    From Geoff (BRN Transfer Coburn 2)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 24
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Coburn) 0
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "24")
+    From Coburn (BRN Delegate Coburn)
+    Assert Equal (BRN VotesLength Coburn) 1
+    Assert Equal (BRN GetCurrentVotes Coburn) 2
+    Assert Equal (BRN GetCurrentVotesBlock Coburn) LastBlock
+    Assert Log DelegateChanged (delegator (Address Coburn)) (fromDelegate (Address Zero)) (toDelegate (Address Coburn))
+    Assert Log DelegateVotesChanged (delegate (Address Coburn)) (previousBalance "0") (newBalance "2")
+    From Torrey (BRN Delegate Coburn)
+    Assert Equal (BRN VotesLength Coburn) 2
+    Assert Equal (BRN GetCurrentVotes Coburn) 16
+    Assert Equal (BRN GetCurrentVotesBlock Coburn) LastBlock
+    Assert Equal (BRN VotesLength Geoff) 3
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Geoff)) (toDelegate (Address Coburn))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "24") (newBalance "10")
+    Assert Log DelegateVotesChanged (delegate (Address Coburn)) (previousBalance "2") (newBalance "16")
+
+Test "Vote checkpoints don't change on transfer when to and from accounts delegate to same account"
+    BRN Deploy Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 14)
+    Assert Equal (BRN VotesLength Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 24
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "24")
+    Invariant Static (BRN VotesLength Geoff)
+    Invariant Static (BRN GetCurrentVotes Geoff)
+    Invariant Static (BRN GetCurrentVotesBlock Geoff)
+    From Torrey (BRN Transfer Jared 14)
+
+Test "Only one checkpoint is added per block for multiple increased balance updates"
+    BRN Deploy Scenario Geoff
+    Assert Equal (BRN VotesLength Geoff) 0
+    Assert Equal (BRN GetCurrentVotes Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    From Torrey (BRN Delegate Geoff)
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    From Geoff (BRN TransferScenario (Jared Torrey) 10)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 20
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Zero) 0
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "20")
+
+Test "Only one checkpoint is added per block for multiple decreased balance updates"
+    BRN Deploy Scenario Geoff
+    From Geoff (BRN Transfer Jared 10)
+    From Geoff (BRN Transfer Torrey 10)
+    Assert Equal (BRN VotesLength Geoff) 0
+    Assert Equal (BRN GetCurrentVotes Geoff) 0
+    From Jared (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 1
+    Assert Equal (BRN GetCurrentVotes Geoff) 10
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Jared)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "0") (newBalance "10")
+    From Torrey (BRN Delegate Geoff)
+    Assert Equal (BRN VotesLength Geoff) 2
+    Assert Equal (BRN GetCurrentVotes Geoff) 20
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Log DelegateChanged (delegator (Address Torrey)) (fromDelegate (Address Zero)) (toDelegate (Address Geoff))
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "20")
+    From Jared (BRN Approve Geoff 10)
+    From Torrey (BRN Approve Geoff 10)
+    From Geoff (BRN TransferFromScenario (Jared Torrey) 10)
+    Assert Equal (BRN VotesLength Geoff) 3
+    Assert Equal (BRN GetCurrentVotes Geoff) 0
+    Assert Equal (BRN GetCurrentVotesBlock Geoff) LastBlock
+    Assert Equal (BRN VotesLength Zero) 0
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "20") (newBalance "10")
+    Assert Log DelegateVotesChanged (delegate (Address Geoff)) (previousBalance "10") (newBalance "0")
+
+Test "Check transfer reverts when block number exceeds 32 bits"
+    BRN Deploy Geoff
+    From Jared (BRN Delegate Geoff)
+    AllowFailures
+    SetBlockNumber 5000000000
+    From Geoff (BRN Transfer Jared 30000000e18)
+    Assert Revert "revert BRN::_writeCheckpoint: block number exceeds 32 bits"

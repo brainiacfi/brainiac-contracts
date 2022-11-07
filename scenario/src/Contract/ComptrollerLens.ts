@@ -5,21 +5,21 @@ import { Callable } from '../Invokation';
 export interface ComptrollerLensMethods {
   liquidateCalculateSeizeTokens(
     comptroller: string,
-    vTokenBorrowed: string,
-    vTokenCollateral: string,
+    brTokenBorrowed: string,
+    brTokenCollateral: string,
     actualRepayAmount: encodedNumber
   ): Callable<{0: number, 1: number}>
 
-  liquidateVAICalculateSeizeTokens(
+  liquidateBAICalculateSeizeTokens(
     comptroller: string,
-    vTokenCollateral: string,
+    brTokenCollateral: string,
     actualRepayAmount: encodedNumber
   ): Callable<{0: number, 1: number}>
 
   getHypotheticalAccountLiquidity(
     comptroller: string,
     account: string, 
-    vTokenModify: string, 
+    brTokenModify: string, 
     redeemTokens: encodedNumber, 
     borrowAmount: encodedNumber
   ): Callable<{0: number, 1: number, 2: number}>

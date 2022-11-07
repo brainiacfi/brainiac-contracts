@@ -1,8 +1,8 @@
 import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
-import { VToken, VTokenScenario } from '../Contract/VToken';
-import { VBep20Delegate } from '../Contract/VBep20Delegate'
+import { BRToken, BRTokenScenario } from '../Contract/BRToken';
+import { BRErc20Delegate } from '../Contract/BRErc20Delegate'
 import { invoke, Sendable } from '../Invokation';
 import {
   getAddressV,
@@ -21,66 +21,66 @@ import {
   StringV
 } from '../Value';
 import { Arg, Command, View, processCommandEvent } from '../Command';
-import { getVTokenDelegateData } from '../ContractLookup';
-import { buildVTokenDelegate } from '../Builder/VTokenDelegateBuilder';
+import { getBRTokenDelegateData } from '../ContractLookup';
+import { buildBRTokenDelegate } from '../Builder/BRTokenDelegateBuilder';
 import { verify } from '../Verify';
 
-async function genVTokenDelegate(world: World, from: string, event: Event): Promise<World> {
-  let { world: nextWorld, vTokenDelegate, delegateData } = await buildVTokenDelegate(world, from, event);
+async function genBRTokenDelegate(world: World, from: string, event: Event): Promise<World> {
+  let { world: nextWorld, brTokenDelegate, delegateData } = await buildBRTokenDelegate(world, from, event);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Added vToken ${delegateData.name} (${delegateData.contract}) at address ${vTokenDelegate._address}`,
+    `Added brToken ${delegateData.name} (${delegateData.contract}) at address ${brTokenDelegate._address}`,
     delegateData.invokation
   );
 
   return world;
 }
 
-async function verifyVTokenDelegate(world: World, vTokenDelegate: VBep20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
+async function verifyBRTokenDelegate(world: World, brTokenDelegate: BRErc20Delegate, name: string, contract: string, apiKey: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {
-    await verify(world, apiKey, name, contract, vTokenDelegate._address);
+    await verify(world, apiKey, name, contract, brTokenDelegate._address);
   }
 
   return world;
 }
 
-export function vTokenDelegateCommands() {
+export function brTokenDelegateCommands() {
   return [
-    new Command<{ vTokenDelegateParams: EventV }>(`
+    new Command<{ brTokenDelegateParams: EventV }>(`
         #### Deploy
 
-        * "VTokenDelegate Deploy ...vTokenDelegateParams" - Generates a new VTokenDelegate
-          * E.g. "VTokenDelegate Deploy VDaiDelegate vDAIDelegate"
+        * "BRTokenDelegate Deploy ...brTokenDelegateParams" - Generates a new BRTokenDelegate
+          * E.g. "BRTokenDelegate Deploy VDaiDelegate vDAIDelegate"
       `,
       "Deploy",
-      [new Arg("vTokenDelegateParams", getEventV, { variadic: true })],
-      (world, from, { vTokenDelegateParams }) => genVTokenDelegate(world, from, vTokenDelegateParams.val)
+      [new Arg("brTokenDelegateParams", getEventV, { variadic: true })],
+      (world, from, { brTokenDelegateParams }) => genBRTokenDelegate(world, from, brTokenDelegateParams.val)
     ),
-    new View<{ vTokenDelegateArg: StringV, apiKey: StringV }>(`
+    new View<{ brTokenDelegateArg: StringV, apiKey: StringV }>(`
         #### Verify
 
-        * "VTokenDelegate <vTokenDelegate> Verify apiKey:<String>" - Verifies VTokenDelegate in BscScan
-          * E.g. "VTokenDelegate vDaiDelegate Verify "myApiKey"
+        * "BRTokenDelegate <brTokenDelegate> Verify apiKey:<String>" - Verifies BRTokenDelegate in BscScan
+          * E.g. "BRTokenDelegate vDaiDelegate Verify "myApiKey"
       `,
       "Verify",
       [
-        new Arg("vTokenDelegateArg", getStringV),
+        new Arg("brTokenDelegateArg", getStringV),
         new Arg("apiKey", getStringV)
       ],
-      async (world, { vTokenDelegateArg, apiKey }) => {
-        let [vToken, name, data] = await getVTokenDelegateData(world, vTokenDelegateArg.val);
+      async (world, { brTokenDelegateArg, apiKey }) => {
+        let [brToken, name, data] = await getBRTokenDelegateData(world, brTokenDelegateArg.val);
 
-        return await verifyVTokenDelegate(world, vToken, name, data.get('contract')!, apiKey.val);
+        return await verifyBRTokenDelegate(world, brToken, name, data.get('contract')!, apiKey.val);
       },
       { namePos: 1 }
     ),
   ];
 }
 
-export async function processVTokenDelegateEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("VTokenDelegate", vTokenDelegateCommands(), world, event, from);
+export async function processBRTokenDelegateEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("BRTokenDelegate", brTokenDelegateCommands(), world, event, from);
 }

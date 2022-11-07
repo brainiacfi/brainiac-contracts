@@ -1,8 +1,8 @@
 pragma solidity ^0.5.16;
 
 import "../Utils/SafeMath.sol";
-import "../Utils/IBEP20.sol";
-import "./IXVSVesting.sol";
+import "../Utils/IERC20.sol";
+import "./IBRNVesting.sol";
 
 contract VRTConverterAdminStorage {
     /**
@@ -35,18 +35,18 @@ contract VRTConverterStorage is VRTConverterAdminStorage {
     bool public initialized;
 
     /// @notice The VRT TOKEN!
-    IBEP20 public vrt;
+    IERC20 public vrt;
 
-    /// @notice The XVS TOKEN!
-    IBEP20 public xvs;
+    /// @notice The BRN TOKEN!
+    IERC20 public brn;
 
-    /// @notice XVSVesting Contract reference
-    IXVSVesting public xvsVesting;
+    /// @notice BRNVesting Contract reference
+    IBRNVesting public brnVesting;
 
-    /// @notice Conversion ratio from VRT to XVS with decimal 18
+    /// @notice Conversion ratio from VRT to BRN with decimal 18
     uint256 public conversionRatio;
 
-    /// @notice total VRT converted to XVS
+    /// @notice total VRT converted to BRN
     uint256 public totalVrtConverted;
 
     /// @notice Conversion Start time in EpochSeconds

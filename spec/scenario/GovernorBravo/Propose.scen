@@ -1,19 +1,19 @@
 Macro DeployGov
-    Xvs Deploy Bank
-    DeployVault Xvs
+    Brn Deploy Bank
+    DeployVault Brn
     Timelock Deploy Jared 604800
     GovernorBravo Deploy BravoDelegateHarness BravoDelegateHarness
-    GovernorBravo Deploy BravoDelegator LegitGov (Address Timelock) (Address XVSVault) (Address Root) (Address BravoDelegateHarness) 86400 1 300000e18 Guardian
+    GovernorBravo Deploy BravoDelegator LegitGov (Address Timelock) (Address BRNVault) (Address Root) (Address BravoDelegateHarness) 86400 1 300000e18 Guardian
     GovernorBravo LegitGov MergeABI BravoDelegateHarness
     GovernorBravo LegitGov HarnessInitiate
     Timelock SetAdmin (Address LegitGov)
     Enfranchise Root 300001e18
 
 Macro Enfranchise user amount
-    From Bank (Xvs Transfer user amount)
-    From user (Xvs Approve (Address XVSVault) amount)
-    From user (XVSVault Deposit (Address Xvs) 0 amount)
-    From user (XVSVault Delegate user)
+    From Bank (Brn Transfer user amount)
+    From user (Brn Approve (Address BRNVault) amount)
+    From user (BRNVault Deposit (Address Brn) 0 amount)
+    From user (BRNVault Delegate user)
 
 Test "Propose 💍 [1 Action]"
     DeployGov
@@ -107,8 +107,8 @@ Test "Can re-propose after vote is canceled"
     Counter Deploy
     GovernorBravo LegitGov Propose "Add 5" [(Address Counter)] [1] ["increment(uint256)"] [["5"]]
     Assert Equal (GovernorBravo LegitGov Proposal (ActiveProposal Root) Id) 2
-    From Root (XVSVault Delegate Geoff)
+    From Root (BRNVault Delegate Geoff)
     From Jared (GovernorBravo LegitGov Proposal (ActiveProposal Root) Cancel)
-    From Root (XVSVault Delegate Root)
+    From Root (BRNVault Delegate Root)
     GovernorBravo LegitGov Propose "Add 7" [(Address Counter)] [1] ["increment(uint256)"] [["7"]]
     Assert Equal (GovernorBravo LegitGov Proposal (ActiveProposal Root) Id) 3

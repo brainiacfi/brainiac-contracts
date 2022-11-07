@@ -7,7 +7,7 @@ contract GovernorBravoImmutable is GovernorBravoDelegate {
 
      constructor(
         address timelock_,
-        address xvsVault_,
+        address brnVault_,
         address admin_,
         uint votingPeriod_,
         uint votingDelay_,
@@ -17,7 +17,7 @@ contract GovernorBravoImmutable is GovernorBravoDelegate {
         public
     {
         admin = msg.sender;
-        initialize(timelock_, xvsVault_, votingPeriod_, votingDelay_, proposalThreshold_, guardian_);
+        initialize(timelock_, brnVault_, votingPeriod_, votingDelay_, proposalThreshold_, guardian_);
 
         admin = admin_;
     }
@@ -25,7 +25,7 @@ contract GovernorBravoImmutable is GovernorBravoDelegate {
 
     function initialize(
         address timelock_,
-        address xvsVault_,
+        address brnVault_,
         uint votingPeriod_,
         uint votingDelay_,
         uint proposalThreshold_,
@@ -37,7 +37,7 @@ contract GovernorBravoImmutable is GovernorBravoDelegate {
         require(address(timelock) == address(0), "GovernorBravo::initialize: can only initialize once");
 
         timelock = TimelockInterface(timelock_);
-        xvsVault = XvsVaultInterface(xvsVault_);
+        brnVault = BrnVaultInterface(brnVault_);
         votingPeriod = votingPeriod_;
         votingDelay = votingDelay_;
         proposalThreshold = proposalThreshold_;

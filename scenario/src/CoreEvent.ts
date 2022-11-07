@@ -13,14 +13,14 @@ import { AddressV, EventV, NothingV, NumberV, StringV, Value } from './Value';
 import { Arg, Command, processCommandEvent, View } from './Command';
 import { assertionCommands, processAssertionEvent } from './Event/AssertionEvent';
 import { comptrollerCommands, processComptrollerEvent } from './Event/ComptrollerEvent';
-import { vaicontrollerCommands, processVAIControllerEvent } from './Event/VAIControllerEvent';
+import { baicontrollerCommands, processBAIControllerEvent } from './Event/BAIControllerEvent';
 import { processUnitrollerEvent, unitrollerCommands } from './Event/UnitrollerEvent';
-import { processVAIUnitrollerEvent, vaiunitrollerCommands } from './Event/VAIUnitrollerEvent';
+import { processBAIUnitrollerEvent, baiunitrollerCommands } from './Event/BAIUnitrollerEvent';
 import { comptrollerImplCommands, processComptrollerImplEvent } from './Event/ComptrollerImplEvent';
-import { vaicontrollerImplCommands, processVAIControllerImplEvent } from './Event/VAIControllerImplEvent';
-import { vTokenCommands, processVTokenEvent } from './Event/VTokenEvent';
-import { vTokenDelegateCommands, processVTokenDelegateEvent } from './Event/VTokenDelegateEvent';
-import { bep20Commands, processBep20Event } from './Event/Bep20Event';
+import { baicontrollerImplCommands, processBAIControllerImplEvent } from './Event/BAIControllerImplEvent';
+import { brTokenCommands, processBRTokenEvent } from './Event/BRTokenEvent';
+import { brTokenDelegateCommands, processBRTokenDelegateEvent } from './Event/BRTokenDelegateEvent';
+import { erc20Commands, processErc20Event } from './Event/Erc20Event';
 import { interestRateModelCommands, processInterestRateModelEvent } from './Event/InterestRateModelEvent';
 import { priceOracleCommands, processPriceOracleEvent } from './Event/PriceOracleEvent';
 import { priceOracleProxyCommands, processPriceOracleProxyEvent } from './Event/PriceOracleProxyEvent';
@@ -29,12 +29,12 @@ import { liquidatorCommands, processLiquidatorEvent } from './Event/LiquidatorEv
 import { invariantCommands, processInvariantEvent } from './Event/InvariantEvent';
 import { expectationCommands, processExpectationEvent } from './Event/ExpectationEvent';
 import { timelockCommands, processTimelockEvent } from './Event/TimelockEvent';
-import { xvsCommands, processXVSEvent } from './Event/XVSEvent';
-import { xvsVaultCommands, processXVSVaultEvent } from './Event/XVSVaultEvent';
-import { xvsVaultImplCommands, processXVSVaultImplEvent } from './Event/XVSVaultImplEvent';
-import { xvsVaultProxyCommands, processXVSVaultProxyEvent } from './Event/XVSVaultProxyEvent';
+import { brnCommands, processBRNEvent } from './Event/BRNEvent';
+import { brnVaultCommands, processBRNVaultEvent } from './Event/BRNVaultEvent';
+import { brnVaultImplCommands, processBRNVaultImplEvent } from './Event/BRNVaultImplEvent';
+import { brnVaultProxyCommands, processBRNVaultProxyEvent } from './Event/BRNVaultProxyEvent';
 import { sxpCommands, processSXPEvent } from './Event/SXPEvent';
-import { vaiCommands, processVAIEvent } from './Event/VAIEvent';
+import { baiCommands, processBAIEvent } from './Event/BAIEvent';
 import { governorCommands, processGovernorEvent } from './Event/GovernorEvent';
 import { governorBravoCommands, processGovernorBravoEvent } from './Event/GovernorBravoEvent';
 import { processTrxEvent, trxCommands } from './Event/TrxEvent';
@@ -49,9 +49,9 @@ import { loadContracts } from './Networks';
 import { fork } from './Hypothetical';
 import { buildContractEvent } from './EventBuilder';
 import { Counter } from './Contract/Counter';
-import { VenusLens } from './Contract/VenusLens';
+import { BrainiacLens } from './Contract/BrainiacLens';
 import { Reservoir } from './Contract/Reservoir';
-import { XVSStore } from './Contract/XVSVault';
+import { BRNStore } from './Contract/BRNVault';
 import { Liquidator } from './Contract/Liquidator';
 import { ComptrollerLens } from './Contract/ComptrollerLens';
 
@@ -120,7 +120,7 @@ async function inspect(world: World, string: string | null): Promise<World> {
   return world;
 }
 
-async function sendBNB(world: World, from: string, to: string, amount: encodedNumber): Promise<World> {
+async function sendCKB(world: World, from: string, to: string, amount: encodedNumber): Promise<World> {
   let invokation = await fallback(world, from, to, amount);
 
   world = addAction(world, `Send ${amount} from ${from} to ${to}`, invokation);
@@ -233,7 +233,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
         #### Read
 
         * "Read ..." - Reads given value and prints result
-          * E.g. "Read VToken vBAT ExchangeRateStored" - Returns exchange rate of vBAT
+          * E.g. "Read BRToken vBAT ExchangeRateStored" - Returns exchange rate of vBAT
       `,
       'Read',
       [new Arg('res', getCoreValue, { variadic: true })],
@@ -447,7 +447,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Block
 
       * "Block 10 (...event)" - Set block to block N and run event
-        * E.g. "Block 10 (XVS Deploy Admin)"
+        * E.g. "Block 10 (BRN Deploy Admin)"
     `,
     'Block',
     [
@@ -503,7 +503,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### From
 
       * "From <User> <Event>" - Runs event as the given user
-        * E.g. "From Geoff (VToken vZRX Mint 5e18)"
+        * E.g. "From Geoff (BRToken vZRX Mint 5e18)"
     `,
     'From',
     [new Arg('account', getAddressV), new Arg('event', getEventV)],
@@ -515,7 +515,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Trx
 
       * "Trx ...trxEvent" - Handles event to set details of next transaction
-        * E.g. "Trx Value 1.0e18 (VToken vBnb Mint 1.0e18)"
+        * E.g. "Trx Value 1.0e18 (BRToken brCkb Mint 1.0e18)"
     `,
     'Trx',
     [new Arg('event', getEventV, { variadic: true })],
@@ -528,7 +528,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Invariant
 
       * "Invariant ...invariant" - Adds a new invariant to the world which is checked after each transaction
-        * E.g. "Invariant Static (VToken vZRX TotalSupply)"
+        * E.g. "Invariant Static (BRToken vZRX TotalSupply)"
     `,
     'Invariant',
     [new Arg('event', getEventV, { variadic: true })],
@@ -541,7 +541,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Expect
 
       * "Expect ...expectation" - Adds an expectation to hold after the next transaction
-        * E.g. "Expect Changes (VToken vZRX TotalSupply) +10.0e18"
+        * E.g. "Expect Changes (BRToken vZRX TotalSupply) +10.0e18"
     `,
     'Expect',
     [new Arg('event', getEventV, { variadic: true })],
@@ -586,7 +586,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Assert
 
       * "Assert ...event" - Validates given assertion, raising an exception if assertion fails
-        * E.g. "Assert Equal (Bep20 BAT TokenBalance Geoff) (Exactly 5.0)"
+        * E.g. "Assert Equal (Erc20 BAT TokenBalance Geoff) (Exactly 5.0)"
     `,
     'Assert',
     [new Arg('event', getEventV, { variadic: true })],
@@ -599,7 +599,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Gate
 
       * "Gate value event" - Runs event only if value is falsey. Thus, gate can be used to build idempotency.
-        * E.g. "Gate (Bep20 ZRX Address) (Bep20 Deploy BAT)"
+        * E.g. "Gate (Erc20 ZRX Address) (Erc20 Deploy BAT)"
     `,
     'Gate',
     [new Arg('gate', getCoreValue, { rescue: new NothingV() }), new Arg('event', getEventV)],
@@ -634,12 +634,12 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
     `
       #### Send
 
-      * "Send <Address> <Amount>" - Sends a given amount of bnb to given address
-        * E.g. "Send vBNB 0.5e18"
+      * "Send <Address> <Amount>" - Sends a given amount of ckb to given address
+        * E.g. "Send brCKB 0.5e18"
     `,
     'Send',
     [new Arg('address', getAddressV), new Arg('amount', getNumberV)],
-    (world, from, { address, amount }) => sendBNB(world, from, address.val, amount.encode())
+    (world, from, { address, amount }) => sendCKB(world, from, address.val, amount.encode())
   ),
 
   new Command<{ event: EventV }>(
@@ -683,80 +683,80 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### VAIUnitroller
+      #### BAIUnitroller
 
-      * "VAIUnitroller ...event" - Runs given VAIUnitroller event
-        * E.g. "VAIUnitroller SetPendingImpl MyVAIControllerImpl"
+      * "BAIUnitroller ...event" - Runs given BAIUnitroller event
+        * E.g. "BAIUnitroller SetPendingImpl MyBAIControllerImpl"
     `,
-    'VAIUnitroller',
+    'BAIUnitroller',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processVAIUnitrollerEvent(world, event.val, from),
-    { subExpressions: vaiunitrollerCommands() }
+    (world, from, { event }) => processBAIUnitrollerEvent(world, event.val, from),
+    { subExpressions: baiunitrollerCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### VAIController
+      #### BAIController
 
-      * "VAIController ...event" - Runs given VAIController event
-        * E.g. "VAIController mint 0.5"
+      * "BAIController ...event" - Runs given BAIController event
+        * E.g. "BAIController mint 0.5"
     `,
-    'VAIController',
+    'BAIController',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processVAIControllerEvent(world, event.val, from),
-    { subExpressions: vaicontrollerCommands() }
+    (world, from, { event }) => processBAIControllerEvent(world, event.val, from),
+    { subExpressions: baicontrollerCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### VAIControllerImpl
+      #### BAIControllerImpl
 
-      * "VAIControllerImpl ...event" - Runs given VAIControllerImpl event
-        * E.g. "VAIControllerImpl MyImpl Become"
+      * "BAIControllerImpl ...event" - Runs given BAIControllerImpl event
+        * E.g. "BAIControllerImpl MyImpl Become"
     `,
-    'VAIControllerImpl',
+    'BAIControllerImpl',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processVAIControllerImplEvent(world, event.val, from),
-    { subExpressions: vaicontrollerImplCommands() }
+    (world, from, { event }) => processBAIControllerImplEvent(world, event.val, from),
+    { subExpressions: baicontrollerImplCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### VToken
+      #### BRToken
 
-      * "VToken ...event" - Runs given VToken event
-        * E.g. "VToken vZRX Mint 5e18"
+      * "BRToken ...event" - Runs given BRToken event
+        * E.g. "BRToken vZRX Mint 5e18"
     `,
-    'VToken',
+    'BRToken',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processVTokenEvent(world, event.val, from),
-    { subExpressions: vTokenCommands() }
+    (world, from, { event }) => processBRTokenEvent(world, event.val, from),
+    { subExpressions: brTokenCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### VTokenDelegate
+      #### BRTokenDelegate
 
-      * "VTokenDelegate ...event" - Runs given VTokenDelegate event
-        * E.g. "VTokenDelegate Deploy VDaiDelegate vDaiDelegate"
+      * "BRTokenDelegate ...event" - Runs given BRTokenDelegate event
+        * E.g. "BRTokenDelegate Deploy VDaiDelegate vDaiDelegate"
     `,
-    'VTokenDelegate',
+    'BRTokenDelegate',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processVTokenDelegateEvent(world, event.val, from),
-    { subExpressions: vTokenDelegateCommands() }
+    (world, from, { event }) => processBRTokenDelegateEvent(world, event.val, from),
+    { subExpressions: brTokenDelegateCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### Bep20
+      #### Erc20
 
-      * "Bep20 ...event" - Runs given Bep20 event
-        * E.g. "Bep20 ZRX Facuet Geoff 5e18"
+      * "Erc20 ...event" - Runs given Erc20 event
+        * E.g. "Erc20 ZRX Facuet Geoff 5e18"
     `,
-    'Bep20',
+    'Erc20',
     [new Arg('event', getEventV, { variadic: true })],
-    (world, from, { event }) => processBep20Event(world, event.val, from),
-    { subExpressions: bep20Commands() }
+    (world, from, { event }) => processErc20Event(world, event.val, from),
+    { subExpressions: erc20Commands() }
   ),
 
   new Command<{ event: EventV }>(
@@ -790,7 +790,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### PriceOracleProxy
 
       * "PriceOracleProxy ...event" - Runs given Price Oracle event
-      * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (VToken vBNB Address)"
+      * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (BRToken brCKB Address)"
     `,
     'PriceOracleProxy',
     [new Arg('event', getEventV, { variadic: true })],
@@ -805,7 +805,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Maximillion
 
       * "Maximillion ...event" - Runs given Maximillion event
-      * E.g. "Maximillion Deploy (VToken vBNB Address)"
+      * E.g. "Maximillion Deploy (BRToken brCKB Address)"
     `,
     'Maximillion',
     [new Arg('event', getEventV, { variadic: true })],
@@ -819,7 +819,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
     `
       #### Liquidator
 
-      * "Liquidator ...event" - Venus v3 liquidation interface
+      * "Liquidator ...event" - Brainiac v3 liquidation interface
       * E.g. "Liquidator Deploy Admin (Address Zero) (Comptroller Address) (Address Zero) Admin 5e16"
     `,
     'Liquidator',
@@ -847,62 +847,62 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### XVS
+      #### BRN
 
-      * "XVS ...event" - Runs given xvs event
-      * E.g. "XVS Deploy"
+      * "BRN ...event" - Runs given brn event
+      * E.g. "BRN Deploy"
     `,
-    'XVS',
+    'BRN',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processXVSEvent(world, event.val, from);
+      return processBRNEvent(world, event.val, from);
     },
-    { subExpressions: xvsCommands() }
+    { subExpressions: brnCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### XVSVault
+      #### BRNVault
 
-      * "XVSVault ...event" - Runs given XVS Vault event
-      * E.g. "XVSVault Deploy"
+      * "BRNVault ...event" - Runs given BRN Vault event
+      * E.g. "BRNVault Deploy"
     `,
-    'XVSVault',
+    'BRNVault',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processXVSVaultEvent(world, event.val, from);
+      return processBRNVaultEvent(world, event.val, from);
     },
-    { subExpressions: xvsVaultCommands() }
+    { subExpressions: brnVaultCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### XVSVaultImpl
+      #### BRNVaultImpl
 
-      * "XVSVaultImpl ...event" - Runs given XVS Vault implementation event
-      * E.g. "XVSVaultImpl Deploy MyVaultImpl"
+      * "BRNVaultImpl ...event" - Runs given BRN Vault implementation event
+      * E.g. "BRNVaultImpl Deploy MyVaultImpl"
     `,
-    'XVSVaultImpl',
+    'BRNVaultImpl',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processXVSVaultImplEvent(world, event.val, from);
+      return processBRNVaultImplEvent(world, event.val, from);
     },
-    { subExpressions: xvsVaultImplCommands() }
+    { subExpressions: brnVaultImplCommands() }
   ),
 
   new Command<{ event: EventV }>(
     `
-      #### XVSVaultProxy
+      #### BRNVaultProxy
 
-      * "XVSVaultProxy ...event" - Runs given XVS Vault proxy event
-      * E.g. "XVSVaultProxy Deploy"
+      * "BRNVaultProxy ...event" - Runs given BRN Vault proxy event
+      * E.g. "BRNVaultProxy Deploy"
     `,
-    'XVSVaultProxy',
+    'BRNVaultProxy',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processXVSVaultProxyEvent(world, event.val, from);
+      return processBRNVaultProxyEvent(world, event.val, from);
     },
-    { subExpressions: xvsVaultProxyCommands() }
+    { subExpressions: brnVaultProxyCommands() }
   ),
 
   new Command<{ event: EventV }>(
@@ -922,17 +922,17 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### VAI
+      #### BAI
 
-      * "VAI ...event" - Runs given xvs event
-      * E.g. "VAI Deploy"
+      * "BAI ...event" - Runs given brn event
+      * E.g. "BAI Deploy"
     `,
-    'VAI',
+    'BAI',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processVAIEvent(world, event.val, from);
+      return processBAIEvent(world, event.val, from);
     },
-    { subExpressions: vaiCommands() }
+    { subExpressions: baiCommands() }
   ),
 
   new Command<{ event: EventV }>(
@@ -965,9 +965,9 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
   ),
 
   buildContractEvent<Counter>("Counter", false),
-  buildContractEvent<VenusLens>("VenusLens", false),
+  buildContractEvent<BrainiacLens>("BrainiacLens", false),
   buildContractEvent<Reservoir>("Reservoir", true),
-  buildContractEvent<XVSStore>("XVSStore", true),
+  buildContractEvent<BRNStore>("BRNStore", true),
   buildContractEvent<ComptrollerLens>("ComptrollerLens", true),
 
   new View<{ event: EventV }>(

@@ -1,11 +1,11 @@
-// import acceptVAIControllerImplementation from "./accept_vaicontroller";
+// import acceptBAIControllerImplementation from "./accept_baicontroller";
 // import acceptVRTConvertImplementation from "./accept_vrtconverter";
 // import acceptVRTVaultImplementation from "./accept_vrtvaultproxy";
-// import acceptXVSVaultImplementation from "./accept_xvsvaultproxy";
-// // import acceptVAIVaultImplementation from "./accept_vaivaultproxy";
+// import acceptBRNVaultImplementation from "./accept_brnvaultproxy";
+// // import acceptBAIVaultImplementation from "./accept_baivaultproxy";
 
 // const main = async () => {
-//   // await acceptXVSVaultImplementation()
+//   // await acceptBRNVaultImplementation()
 //   //   .then(() => {
 //   //     console.log("success");
 //   //   })
@@ -20,7 +20,7 @@
 //   //     console.error(error);
 //   //   });
 
-//   // await acceptVAIControllerImplementation()
+//   // await acceptBAIControllerImplementation()
 //   //   .then(() => {
 //   //     console.log("success");
 //   //   })

@@ -5,22 +5,22 @@ import { World } from './World';
 import { Contract } from './Contract';
 import { mustString } from './Utils';
 
-import { VBep20Delegate } from './Contract/VBep20Delegate';
-import { XVS } from './Contract/XVS';
+import { BRErc20Delegate } from './Contract/BRErc20Delegate';
+import { BRN } from './Contract/BRN';
 import { SXP } from './Contract/SXP';
-import { VAI } from './Contract/VAI';
+import { BAI } from './Contract/BAI';
 import { Comptroller } from './Contract/Comptroller';
 import { ComptrollerImpl } from './Contract/ComptrollerImpl';
-import { VAIController } from './Contract/VAIController';
-import { VAIControllerImpl } from './Contract/VAIControllerImpl';
-import { VToken } from './Contract/VToken';
+import { BAIController } from './Contract/BAIController';
+import { BAIControllerImpl } from './Contract/BAIControllerImpl';
+import { BRToken } from './Contract/BRToken';
 import { Governor } from './Contract/Governor';
 import { GovernorBravo } from './Contract/GovernorBravo'
-import { Bep20 } from './Contract/Bep20';
+import { Erc20 } from './Contract/Erc20';
 import { InterestRateModel } from './Contract/InterestRateModel';
 import { PriceOracle } from './Contract/PriceOracle';
 import { Timelock } from './Contract/Timelock';
-import { XVSVaultImpl, XVSVaultProxy, XVSVault } from './Contract/XVSVault';
+import { BRNVaultImpl, BRNVaultProxy, BRNVault } from './Contract/BRNVault';
 
 type ContractDataEl = string | Map<string, object> | undefined;
 
@@ -86,8 +86,8 @@ export async function getUnitroller(world: World): Promise<Comptroller> {
   return getWorldContract(world, [['Contracts', 'Unitroller']]);
 }
 
-export async function getVAIUnitroller(world: World): Promise<VAIController> {
-  return getWorldContract(world, [['Contracts', 'VAIUnitroller']]);
+export async function getBAIUnitroller(world: World): Promise<BAIController> {
+  return getWorldContract(world, [['Contracts', 'BAIUnitroller']]);
 }
 
 export async function getMaximillion(world: World): Promise<Comptroller> {
@@ -106,24 +106,24 @@ export async function getComptrollerImpl(world: World, comptrollerImplArg: Event
   return getWorldContract(world, [['Comptroller', mustString(comptrollerImplArg), 'address']]);
 }
 
-export async function getVAIController(world: World): Promise<VAIController> {
-  return getWorldContract(world, [['Contracts', 'VAIController']]);
+export async function getBAIController(world: World): Promise<BAIController> {
+  return getWorldContract(world, [['Contracts', 'BAIController']]);
 }
 
-export async function getVAIControllerImpl(world: World, vaicontrollerImplArg: Event): Promise<VAIControllerImpl> {
-  return getWorldContract(world, [['VAIController', mustString(vaicontrollerImplArg), 'address']]);
+export async function getBAIControllerImpl(world: World, baicontrollerImplArg: Event): Promise<BAIControllerImpl> {
+  return getWorldContract(world, [['BAIController', mustString(baicontrollerImplArg), 'address']]);
 }
 
-export function getVTokenAddress(world: World, vTokenArg: string): string {
-  return getContractDataString(world, [['vTokens', vTokenArg, 'address']]);
+export function getBRTokenAddress(world: World, brTokenArg: string): string {
+  return getContractDataString(world, [['brTokens', brTokenArg, 'address']]);
 }
 
-export function getVTokenDelegateAddress(world: World, vTokenDelegateArg: string): string {
-  return getContractDataString(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
+export function getBRTokenDelegateAddress(world: World, brTokenDelegateArg: string): string {
+  return getContractDataString(world, [['BRTokenDelegate', brTokenDelegateArg, 'address']]);
 }
 
-export function getBep20Address(world: World, bep20Arg: string): string {
-  return getContractDataString(world, [['Tokens', bep20Arg, 'address']]);
+export function getErc20Address(world: World, erc20Arg: string): string {
+  return getContractDataString(world, [['Tokens', erc20Arg, 'address']]);
 }
 
 export function getGovernorAddress(world: World, governorArg: string): string {
@@ -134,16 +134,16 @@ export function getGovernorBravo(world: World, governoBravoArg: string): Promise
   return getWorldContract(world, [['Contracts', 'GovernorBravo']])
 }
 
-export function getXVSVault(world: World): Promise<XVSVault> {
-  return getWorldContract(world, [['Contracts', 'XVSVault']])
+export function getBRNVault(world: World): Promise<BRNVault> {
+  return getWorldContract(world, [['Contracts', 'BRNVault']])
 }
 
-export function getXVSVaultProxy(world: World): Promise<XVSVaultProxy> {
-  return getWorldContract(world, [['Contracts', 'XVSVaultProxy']])
+export function getBRNVaultProxy(world: World): Promise<BRNVaultProxy> {
+  return getWorldContract(world, [['Contracts', 'BRNVaultProxy']])
 }
 
-export async function getXVSVaultImpl(world: World, xvsVaultImplArg: Event): Promise<XVSVaultImpl> {
-  return getWorldContract(world, [['XVSVault', mustString(xvsVaultImplArg), 'address']]);
+export async function getBRNVaultImpl(world: World, brnVaultImplArg: Event): Promise<BRNVaultImpl> {
+  return getWorldContract(world, [['BRNVault', mustString(brnVaultImplArg), 'address']]);
 }
 
 export async function getPriceOracleProxy(world: World): Promise<PriceOracle> {
@@ -154,55 +154,55 @@ export async function getPriceOracle(world: World): Promise<PriceOracle> {
   return getWorldContract(world, [['Contracts', 'PriceOracle']]);
 }
 
-export async function getXVS(
+export async function getBRN(
   world: World,
-  venusArg: Event
-): Promise<XVS> {
-  return getWorldContract(world, [['XVS', 'address']]);
+  brainiacArg: Event
+): Promise<BRN> {
+  return getWorldContract(world, [['BRN', 'address']]);
 }
 
-export async function getXVSData(
+export async function getBRNData(
   world: World,
-  venusArg: string
-): Promise<[XVS, string, Map<string, string>]> {
-  let contract = await getXVS(world, <Event>(<any>venusArg));
-  let data = getContractData(world, [['XVS', venusArg]]);
+  brainiacArg: string
+): Promise<[BRN, string, Map<string, string>]> {
+  let contract = await getBRN(world, <Event>(<any>brainiacArg));
+  let data = getContractData(world, [['BRN', brainiacArg]]);
 
-  return [contract, venusArg, <Map<string, string>>(<any>data)];
+  return [contract, brainiacArg, <Map<string, string>>(<any>data)];
 }
 
 export async function getSXP(
   world: World,
-  venusArg: Event
+  brainiacArg: Event
 ): Promise<SXP> {
   return getWorldContract(world, [['SXP', 'address']]);
 }
 
 export async function getSXPData(
   world: World,
-  venusArg: string
+  brainiacArg: string
 ): Promise<[SXP, string, Map<string, string>]> {
-  let contract = await getSXP(world, <Event>(<any>venusArg));
-  let data = getContractData(world, [['SXP', venusArg]]);
+  let contract = await getSXP(world, <Event>(<any>brainiacArg));
+  let data = getContractData(world, [['SXP', brainiacArg]]);
 
-  return [contract, venusArg, <Map<string, string>>(<any>data)];
+  return [contract, brainiacArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getVAI(
+export async function getBAI(
   world: World,
-  venusArg: Event
-): Promise<VAI> {
-  return getWorldContract(world, [['VAI', 'address']]);
+  brainiacArg: Event
+): Promise<BAI> {
+  return getWorldContract(world, [['BAI', 'address']]);
 }
 
-export async function getVAIData(
+export async function getBAIData(
   world: World,
-  venusArg: string
-): Promise<[VAI, string, Map<string, string>]> {
-  let contract = await getVAI(world, <Event>(<any>venusArg));
-  let data = getContractData(world, [['VAI', venusArg]]);
+  brainiacArg: string
+): Promise<[BAI, string, Map<string, string>]> {
+  let contract = await getBAI(world, <Event>(<any>brainiacArg));
+  let data = getContractData(world, [['BAI', brainiacArg]]);
 
-  return [contract, venusArg, <Map<string, string>>(<any>data)];
+  return [contract, brainiacArg, <Map<string, string>>(<any>data)];
 }
 
 export async function getGovernorData(
@@ -232,34 +232,34 @@ export async function getInterestRateModelData(
   return [contract, interestRateModelArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getBep20Data(
+export async function getErc20Data(
   world: World,
-  bep20Arg: string
-): Promise<[Bep20, string, Map<string, string>]> {
-  let contract = getWorldContract<Bep20>(world, [['Tokens', bep20Arg, 'address']]);
-  let data = getContractData(world, [['Tokens', bep20Arg]]);
+  erc20Arg: string
+): Promise<[Erc20, string, Map<string, string>]> {
+  let contract = getWorldContract<Erc20>(world, [['Tokens', erc20Arg, 'address']]);
+  let data = getContractData(world, [['Tokens', erc20Arg]]);
 
-  return [contract, bep20Arg, <Map<string, string>>(<any>data)];
+  return [contract, erc20Arg, <Map<string, string>>(<any>data)];
 }
 
-export async function getVTokenData(
+export async function getBRTokenData(
   world: World,
-  vTokenArg: string
-): Promise<[VToken, string, Map<string, string>]> {
-  let contract = getWorldContract<VToken>(world, [['vTokens', vTokenArg, 'address']]);
-  let data = getContractData(world, [['VTokens', vTokenArg]]);
+  brTokenArg: string
+): Promise<[BRToken, string, Map<string, string>]> {
+  let contract = getWorldContract<BRToken>(world, [['brTokens', brTokenArg, 'address']]);
+  let data = getContractData(world, [['BRTokens', brTokenArg]]);
 
-  return [contract, vTokenArg, <Map<string, string>>(<any>data)];
+  return [contract, brTokenArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getVTokenDelegateData(
+export async function getBRTokenDelegateData(
   world: World,
-  vTokenDelegateArg: string
-): Promise<[VBep20Delegate, string, Map<string, string>]> {
-  let contract = getWorldContract<VBep20Delegate>(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
-  let data = getContractData(world, [['VTokenDelegate', vTokenDelegateArg]]);
+  brTokenDelegateArg: string
+): Promise<[BRErc20Delegate, string, Map<string, string>]> {
+  let contract = getWorldContract<BRErc20Delegate>(world, [['BRTokenDelegate', brTokenDelegateArg, 'address']]);
+  let data = getContractData(world, [['BRTokenDelegate', brTokenDelegateArg]]);
 
-  return [contract, vTokenDelegateArg, <Map<string, string>>(<any>data)];
+  return [contract, brTokenDelegateArg, <Map<string, string>>(<any>data)];
 }
 
 export async function getComptrollerImplData(
@@ -272,14 +272,14 @@ export async function getComptrollerImplData(
   return [contract, comptrollerImplArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getVAIControllerImplData(
+export async function getBAIControllerImplData(
   world: World,
-  vaicontrollerImplArg: string
-): Promise<[VAIControllerImpl, string, Map<string, string>]> {
-  let contract = await getComptrollerImpl(world, <Event>(<any>vaicontrollerImplArg));
-  let data = getContractData(world, [['VAIController', vaicontrollerImplArg]]);
+  baicontrollerImplArg: string
+): Promise<[BAIControllerImpl, string, Map<string, string>]> {
+  let contract = await getComptrollerImpl(world, <Event>(<any>baicontrollerImplArg));
+  let data = getContractData(world, [['BAIController', baicontrollerImplArg]]);
 
-  return [contract, vaicontrollerImplArg, <Map<string, string>>(<any>data)];
+  return [contract, baicontrollerImplArg, <Map<string, string>>(<any>data)];
 }
 
 export function getAddress(world: World, addressArg: string): string {
@@ -305,8 +305,8 @@ export function getAddress(world: World, addressArg: string): string {
 
   return getContractDataString(world, [
     ['Contracts', addressArg],
-    ['vTokens', addressArg, 'address'],
-    ['VTokenDelegate', addressArg, 'address'],
+    ['brTokens', addressArg, 'address'],
+    ['BRTokenDelegate', addressArg, 'address'],
     ['Tokens', addressArg, 'address'],
     ['Comptroller', addressArg, 'address']
   ]);

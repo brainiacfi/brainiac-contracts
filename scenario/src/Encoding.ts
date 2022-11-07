@@ -22,10 +22,10 @@ export function toEncodableNum(amountArgRaw: string | encodedNumber): encodedNum
   }
 
   if (bigNumber.lt(smallEnoughNumber)) {
-    // The BNBs abi encoder can handle regular numbers (including with fractional part)
+    // The CKBs abi encoder can handle regular numbers (including with fractional part)
     // and its own internal big number class which is different from BigNumber.js published on npm (and can't accept
     // fractional parts.)
-    // If the input is not huge, we just use a number, otherwise we try to use the BNBs class.
+    // If the input is not huge, we just use a number, otherwise we try to use the CKBs class.
 
     return Number(amountArgRaw);
   } else {

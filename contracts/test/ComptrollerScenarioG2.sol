@@ -16,15 +16,15 @@ contract ComptrollerScenarioG2 is ComptrollerG2 {
         blockNumber = number;
     }
 
-    function membershipLength(VToken vToken) public view returns (uint) {
-        return accountAssets[address(vToken)].length;
+    function membershipLength(BRToken brToken) public view returns (uint) {
+        return accountAssets[address(brToken)].length;
     }
 
-    function unlist(VToken vToken) public {
-        markets[address(vToken)].isListed = false;
+    function unlist(BRToken brToken) public {
+        markets[address(brToken)].isListed = false;
     }
 
-    function setVenusSpeed(address vToken, uint venusSpeed) public {
-        venusSpeeds[vToken] = venusSpeed;
+    function setBrainiacSpeed(address brToken, uint brainiacSpeed) public {
+        brainiacSpeeds[brToken] = brainiacSpeed;
     }
 }

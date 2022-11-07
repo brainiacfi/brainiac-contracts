@@ -59,7 +59,7 @@ export function priceOracleProxyCommands() {
         #### Deploy
 
         * "Deploy ...params" - Generates a new price oracle proxy
-          * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (vBnb Address)"
+          * E.g. "PriceOracleProxy Deploy (Unitroller Address) (PriceOracle Address) (brCkb Address)"
       `,
       "Deploy",
       [
@@ -86,7 +86,7 @@ export function priceOracleProxyCommands() {
     new Command<{priceOracleProxy: PriceOracleProxy, amount: NumberV}>(`
         #### SetSaiPrice
 
-        * "SetSaiPrice <Amount>" - Sets the per-bnb price for SAI
+        * "SetSaiPrice <Amount>" - Sets the per-ckb price for SAI
           * E.g. "PriceOracleProxy SetSaiPrice 1.0"
       `,
       "SetSaiPrice",

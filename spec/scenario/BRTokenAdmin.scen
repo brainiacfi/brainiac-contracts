@@ -1,0 +1,43 @@
+
+Test "Set admin"
+    NewComptroller
+    NewBRToken ZRX vZRX
+    Assert Equal (BRToken vZRX Admin) (Address Root)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Zero)
+    From Root (BRToken vZRX SetPendingAdmin Geoff)
+    Assert Equal (BRToken vZRX Admin) (Address Root)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Geoff)
+    From Geoff (BRToken vZRX AcceptAdmin)
+    Assert Equal (BRToken vZRX Admin) (Address Geoff)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Zero)
+
+Test "Set admin to contructor argument"
+    NewComptroller
+    NewBRToken ZRX vZRX admin:Torrey
+    Assert Equal (BRToken vZRX Admin) (Address Torrey)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Zero)
+    From Torrey (BRToken vZRX SetPendingAdmin Geoff)
+    Assert Equal (BRToken vZRX Admin) (Address Torrey)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Geoff)
+    From Geoff (BRToken vZRX AcceptAdmin)
+    Assert Equal (BRToken vZRX Admin) (Address Geoff)
+    Assert Equal (BRToken vZRX PendingAdmin) (Address Zero)
+
+
+Test "Fail to set pending admin"
+    NewComptroller
+    NewBRToken ZRX vZRX
+    Invariant Remains (BRToken vZRX Admin) (Address Root)
+    Invariant Remains (BRToken vZRX PendingAdmin) (Address Zero)
+    AllowFailures
+    From Geoff (BRToken vZRX SetPendingAdmin Geoff)
+    Assert Failure UNAUTHORIZED SET_PENDING_ADMIN_OWNER_CHECK
+
+Test "Fail to accept admin"
+    NewComptroller
+    NewBRToken ZRX vZRX
+    Invariant Remains (BRToken vZRX Admin) (Address Root)
+    Invariant Remains (BRToken vZRX PendingAdmin) (Address Zero)
+    AllowFailures
+    From Geoff (BRToken vZRX AcceptAdmin)
+    Assert Failure UNAUTHORIZED ACCEPT_ADMIN_PENDING_ADMIN_CHECK

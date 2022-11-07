@@ -1,34 +1,34 @@
 pragma solidity ^0.5.16;
 
-import "./VToken.sol";
+import "./BRToken.sol";
 import "./ErrorReporter.sol";
 import "./Exponential.sol";
 import "./PriceOracle.sol";
 import "./ComptrollerInterface.sol";
 import "./ComptrollerStorage.sol";
 import "./Unitroller.sol";
-import "./Governance/XVS.sol";
-import "./VAI/VAI.sol";
+import "./Governance/BRN.sol";
+import "./BAI/BAI.sol";
 
 /**
- * @title Venus's Comptroller Contract
- * @author Venus
+ * @title Brainiac's Comptroller Contract
+ * @author Brainiac
  */
 contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, ComptrollerErrorReporter, Exponential {
     /// @notice Emitted when an admin supports a market
-    event MarketListed(VToken vToken);
+    event MarketListed(BRToken brToken);
 
     /// @notice Emitted when an account enters a market
-    event MarketEntered(VToken vToken, address account);
+    event MarketEntered(BRToken brToken, address account);
 
     /// @notice Emitted when an account exits a market
-    event MarketExited(VToken vToken, address account);
+    event MarketExited(BRToken brToken, address account);
 
     /// @notice Emitted when close factor is changed by admin
     event NewCloseFactor(uint oldCloseFactorMantissa, uint newCloseFactorMantissa);
 
     /// @notice Emitted when a collateral factor is changed by admin
-    event NewCollateralFactor(VToken vToken, uint oldCollateralFactorMantissa, uint newCollateralFactorMantissa);
+    event NewCollateralFactor(BRToken brToken, uint oldCollateralFactorMantissa, uint newCollateralFactorMantissa);
 
     /// @notice Emitted when liquidation incentive is changed by admin
     event NewLiquidationIncentive(uint oldLiquidationIncentiveMantissa, uint newLiquidationIncentiveMantissa);
@@ -46,43 +46,43 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     event ActionPaused(string action, bool pauseState);
 
     /// @notice Emitted when an action is paused on a market
-    event ActionPaused(VToken vToken, string action, bool pauseState);
+    event ActionPaused(BRToken brToken, string action, bool pauseState);
 
-    /// @notice Emitted when market venus status is changed
-    event MarketVenus(VToken vToken, bool isVenus);
+    /// @notice Emitted when market brainiac status is changed
+    event MarketBrainiac(BRToken brToken, bool isBrainiac);
 
-    /// @notice Emitted when Venus rate is changed
-    event NewVenusRate(uint oldVenusRate, uint newVenusRate);
+    /// @notice Emitted when Brainiac rate is changed
+    event NewBrainiacRate(uint oldBrainiacRate, uint newBrainiacRate);
 
-    /// @notice Emitted when Venus VAI rate is changed
-    event NewVenusVAIRate(uint oldVenusVAIRate, uint newVenusVAIRate);
+    /// @notice Emitted when Brainiac BAI rate is changed
+    event NewBrainiacBAIRate(uint oldBrainiacBAIRate, uint newBrainiacBAIRate);
 
-    /// @notice Emitted when a new Venus speed is calculated for a market
-    event VenusSpeedUpdated(VToken indexed vToken, uint newSpeed);
+    /// @notice Emitted when a new Brainiac speed is calculated for a market
+    event BrainiacSpeedUpdated(BRToken indexed brToken, uint newSpeed);
 
-    /// @notice Emitted when XVS is distributed to a supplier
-    event DistributedSupplierVenus(VToken indexed vToken, address indexed supplier, uint venusDelta, uint venusSupplyIndex);
+    /// @notice Emitted when BRN is distributed to a supplier
+    event DistributedSupplierBrainiac(BRToken indexed brToken, address indexed supplier, uint brainiacDelta, uint brainiacSupplyIndex);
 
-    /// @notice Emitted when XVS is distributed to a borrower
-    event DistributedBorrowerVenus(VToken indexed vToken, address indexed borrower, uint venusDelta, uint venusBorrowIndex);
+    /// @notice Emitted when BRN is distributed to a borrower
+    event DistributedBorrowerBrainiac(BRToken indexed brToken, address indexed borrower, uint brainiacDelta, uint brainiacBorrowIndex);
 
-    /// @notice Emitted when XVS is distributed to a VAI minter
-    event DistributedVAIMinterVenus(address indexed vaiMinter, uint venusDelta, uint venusVAIMintIndex);
+    /// @notice Emitted when BRN is distributed to a BAI minter
+    event DistributedBAIMinterBrainiac(address indexed baiMinter, uint brainiacDelta, uint brainiacBAIMintIndex);
 
-    /// @notice Emitted when VAIController is changed
-    event NewVAIController(VAIControllerInterface oldVAIController, VAIControllerInterface newVAIController);
+    /// @notice Emitted when BAIController is changed
+    event NewBAIController(BAIControllerInterface oldBAIController, BAIControllerInterface newBAIController);
 
-    /// @notice Emitted when VAI mint rate is changed by admin
-    event NewVAIMintRate(uint oldVAIMintRate, uint newVAIMintRate);
+    /// @notice Emitted when BAI mint rate is changed by admin
+    event NewBAIMintRate(uint oldBAIMintRate, uint newBAIMintRate);
 
     /// @notice Emitted when protocol state is changed by admin
     event ActionProtocolPaused(bool state);
 
-    /// @notice The threshold above which the flywheel transfers XVS, in wei
-    uint public constant venusClaimThreshold = 0.001e18;
+    /// @notice The threshold above which the flywheel transfers BRN, in wei
+    uint public constant brainiacClaimThreshold = 0.001e18;
 
-    /// @notice The initial Venus index for a market
-    uint224 public constant venusInitialIndex = 1e36;
+    /// @notice The initial Brainiac index for a market
+    uint224 public constant brainiacInitialIndex = 1e36;
 
     // closeFactorMantissa must be strictly greater than this value
     uint internal constant closeFactorMinMantissa = 0.05e18; // 0.05
@@ -113,8 +113,8 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         _;
     }
 
-    modifier onlyListedMarket(VToken vToken) {
-        require(markets[address(vToken)].isListed, "venus market is not listed");
+    modifier onlyListedMarket(BRToken brToken) {
+        require(markets[address(brToken)].isListed, "brainiac market is not listed");
         _;
     }
 
@@ -131,31 +131,31 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      * @param account The address of the account to pull assets for
      * @return A dynamic list with the assets the account has entered
      */
-    function getAssetsIn(address account) external view returns (VToken[] memory) {
+    function getAssetsIn(address account) external view returns (BRToken[] memory) {
         return accountAssets[account];
     }
 
     /**
      * @notice Returns whether the given account is entered in the given asset
      * @param account The address of the account to check
-     * @param vToken The vToken to check
+     * @param brToken The brToken to check
      * @return True if the account is in the asset, otherwise false.
      */
-    function checkMembership(address account, VToken vToken) external view returns (bool) {
-        return markets[address(vToken)].accountMembership[account];
+    function checkMembership(address account, BRToken brToken) external view returns (bool) {
+        return markets[address(brToken)].accountMembership[account];
     }
 
     /**
      * @notice Add assets to be included in account liquidity calculation
-     * @param vTokens The list of addresses of the vToken markets to be enabled
+     * @param brTokens The list of addresses of the brToken markets to be enabled
      * @return Success indicator for whether each corresponding market was entered
      */
-    function enterMarkets(address[] calldata vTokens) external returns (uint[] memory) {
-        uint len = vTokens.length;
+    function enterMarkets(address[] calldata brTokens) external returns (uint[] memory) {
+        uint len = brTokens.length;
 
         uint[] memory results = new uint[](len);
         for (uint i = 0; i < len; i++) {
-            results[i] = uint(addToMarketInternal(VToken(vTokens[i]), msg.sender));
+            results[i] = uint(addToMarketInternal(BRToken(brTokens[i]), msg.sender));
         }
 
         return results;
@@ -163,12 +163,12 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Add the market to the borrower's "assets in" for liquidity calculations
-     * @param vToken The market to enter
+     * @param brToken The market to enter
      * @param borrower The address of the account to modify
      * @return Success indicator for whether the market was entered
      */
-    function addToMarketInternal(VToken vToken, address borrower) internal returns (Error) {
-        Market storage marketToJoin = markets[address(vToken)];
+    function addToMarketInternal(BRToken brToken, address borrower) internal returns (Error) {
+        Market storage marketToJoin = markets[address(brToken)];
 
         if (!marketToJoin.isListed) {
             // market is not listed, cannot join
@@ -191,9 +191,9 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         //  that is, only when we need to perform liquidity checks
         //  and not whenever we want to check if an account is in a particular market
         marketToJoin.accountMembership[borrower] = true;
-        accountAssets[borrower].push(vToken);
+        accountAssets[borrower].push(brToken);
 
-        emit MarketEntered(vToken, borrower);
+        emit MarketEntered(brToken, borrower);
 
         return Error.NO_ERROR;
     }
@@ -202,13 +202,13 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      * @notice Removes asset from sender's account liquidity calculation
      * @dev Sender must not have an outstanding borrow balance in the asset,
      *  or be providing necessary collateral for an outstanding borrow.
-     * @param vTokenAddress The address of the asset to be removed
+     * @param brTokenAddress The address of the asset to be removed
      * @return Whether or not the account successfully exited the market
      */
-    function exitMarket(address vTokenAddress) external returns (uint) {
-        VToken vToken = VToken(vTokenAddress);
-        /* Get sender tokensHeld and amountOwed underlying from the vToken */
-        (uint oErr, uint tokensHeld, uint amountOwed, ) = vToken.getAccountSnapshot(msg.sender);
+    function exitMarket(address brTokenAddress) external returns (uint) {
+        BRToken brToken = BRToken(brTokenAddress);
+        /* Get sender tokensHeld and amountOwed underlying from the brToken */
+        (uint oErr, uint tokensHeld, uint amountOwed, ) = brToken.getAccountSnapshot(msg.sender);
         require(oErr == 0, "getAccountSnapshot failed"); // semi-opaque error code
 
         /* Fail if the sender has a borrow balance */
@@ -217,28 +217,28 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         }
 
         /* Fail if the sender is not permitted to redeem all of their tokens */
-        uint allowed = redeemAllowedInternal(vTokenAddress, msg.sender, tokensHeld);
+        uint allowed = redeemAllowedInternal(brTokenAddress, msg.sender, tokensHeld);
         if (allowed != 0) {
             return failOpaque(Error.REJECTION, FailureInfo.EXIT_MARKET_REJECTION, allowed);
         }
 
-        Market storage marketToExit = markets[address(vToken)];
+        Market storage marketToExit = markets[address(brToken)];
 
         /* Return true if the sender is not already ‘in’ the market */
         if (!marketToExit.accountMembership[msg.sender]) {
             return uint(Error.NO_ERROR);
         }
 
-        /* Set vToken account membership to false */
+        /* Set brToken account membership to false */
         delete marketToExit.accountMembership[msg.sender];
 
-        /* Delete vToken from the account’s list of assets */
-        // In order to delete vToken, copy last item in list to location of item to be removed, reduce length by 1
-        VToken[] storage userAssetList = accountAssets[msg.sender];
+        /* Delete brToken from the account’s list of assets */
+        // In order to delete brToken, copy last item in list to location of item to be removed, reduce length by 1
+        BRToken[] storage userAssetList = accountAssets[msg.sender];
         uint len = userAssetList.length;
         uint i;
         for (; i < len; i++) {
-            if (userAssetList[i] == vToken) {
+            if (userAssetList[i] == brToken) {
                 userAssetList[i] = userAssetList[len - 1];
                 userAssetList.length--;
                 break;
@@ -248,7 +248,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         // We *must* have found the asset in the list or our redundant data structure is broken
         assert(i < len);
 
-        emit MarketExited(vToken, msg.sender);
+        emit MarketExited(brToken, msg.sender);
 
         return uint(Error.NO_ERROR);
     }
@@ -257,39 +257,39 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the account should be allowed to mint tokens in the given market
-     * @param vToken The market to verify the mint against
+     * @param brToken The market to verify the mint against
      * @param minter The account which would get the minted tokens
      * @param mintAmount The amount of underlying being supplied to the market in exchange for tokens
      * @return 0 if the mint is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function mintAllowed(address vToken, address minter, uint mintAmount) external onlyProtocolAllowed returns (uint) {
+    function mintAllowed(address brToken, address minter, uint mintAmount) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!mintGuardianPaused[vToken], "mint is paused");
+        require(!mintGuardianPaused[brToken], "mint is paused");
 
         // Shh - currently unused
         mintAmount;
 
-        if (!markets[vToken].isListed) {
+        if (!markets[brToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         // Keep the flywheel moving
-        updateVenusSupplyIndex(vToken);
-        distributeSupplierVenus(vToken, minter, false);
+        updateBrainiacSupplyIndex(brToken);
+        distributeSupplierBrainiac(brToken, minter, false);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates mint and reverts on rejection. May emit logs.
-     * @param vToken Asset being minted
+     * @param brToken Asset being minted
      * @param minter The address minting the tokens
      * @param actualMintAmount The amount of the underlying asset being minted
      * @param mintTokens The number of tokens being minted
      */
-    function mintVerify(address vToken, address minter, uint actualMintAmount, uint mintTokens) external {
+    function mintVerify(address brToken, address minter, uint actualMintAmount, uint mintTokens) external {
         // Shh - currently unused
-        vToken;
+        brToken;
         minter;
         actualMintAmount;
         mintTokens;
@@ -297,36 +297,36 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the account should be allowed to redeem tokens in the given market
-     * @param vToken The market to verify the redeem against
+     * @param brToken The market to verify the redeem against
      * @param redeemer The account which would redeem the tokens
-     * @param redeemTokens The number of vTokens to exchange for the underlying asset in the market
+     * @param redeemTokens The number of brTokens to exchange for the underlying asset in the market
      * @return 0 if the redeem is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function redeemAllowed(address vToken, address redeemer, uint redeemTokens) external onlyProtocolAllowed returns (uint) {
-        uint allowed = redeemAllowedInternal(vToken, redeemer, redeemTokens);
+    function redeemAllowed(address brToken, address redeemer, uint redeemTokens) external onlyProtocolAllowed returns (uint) {
+        uint allowed = redeemAllowedInternal(brToken, redeemer, redeemTokens);
         if (allowed != uint(Error.NO_ERROR)) {
             return allowed;
         }
 
         // Keep the flywheel moving
-        updateVenusSupplyIndex(vToken);
-        distributeSupplierVenus(vToken, redeemer, false);
+        updateBrainiacSupplyIndex(brToken);
+        distributeSupplierBrainiac(brToken, redeemer, false);
 
         return uint(Error.NO_ERROR);
     }
 
-    function redeemAllowedInternal(address vToken, address redeemer, uint redeemTokens) internal view returns (uint) {
-        if (!markets[vToken].isListed) {
+    function redeemAllowedInternal(address brToken, address redeemer, uint redeemTokens) internal view returns (uint) {
+        if (!markets[brToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         /* If the redeemer is not 'in' the market, then we can bypass the liquidity check */
-        if (!markets[vToken].accountMembership[redeemer]) {
+        if (!markets[brToken].accountMembership[redeemer]) {
             return uint(Error.NO_ERROR);
         }
 
         /* Otherwise, perform a hypothetical liquidity check to guard against shortfall */
-        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(redeemer, VToken(vToken), redeemTokens, 0);
+        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(redeemer, BRToken(brToken), redeemTokens, 0);
         if (err != Error.NO_ERROR) {
             return uint(err);
         }
@@ -339,14 +339,14 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Validates redeem and reverts on rejection. May emit logs.
-     * @param vToken Asset being redeemed
+     * @param brToken Asset being redeemed
      * @param redeemer The address redeeming the tokens
      * @param redeemAmount The amount of the underlying asset being redeemed
      * @param redeemTokens The number of tokens being redeemed
      */
-    function redeemVerify(address vToken, address redeemer, uint redeemAmount, uint redeemTokens) external {
+    function redeemVerify(address brToken, address redeemer, uint redeemAmount, uint redeemTokens) external {
         // Shh - currently unused
-        vToken;
+        brToken;
         redeemer;
 
         // Require tokens is zero or amount is also zero
@@ -355,35 +355,35 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the account should be allowed to borrow the underlying asset of the given market
-     * @param vToken The market to verify the borrow against
+     * @param brToken The market to verify the borrow against
      * @param borrower The account which would borrow the asset
      * @param borrowAmount The amount of underlying the account would borrow
      * @return 0 if the borrow is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function borrowAllowed(address vToken, address borrower, uint borrowAmount) external onlyProtocolAllowed returns (uint) {
+    function borrowAllowed(address brToken, address borrower, uint borrowAmount) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!borrowGuardianPaused[vToken], "borrow is paused");
+        require(!borrowGuardianPaused[brToken], "borrow is paused");
 
-        if (!markets[vToken].isListed) {
+        if (!markets[brToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
-        if (!markets[vToken].accountMembership[borrower]) {
-            // only vTokens may call borrowAllowed if borrower not in market
-            require(msg.sender == vToken, "sender must be vToken");
+        if (!markets[brToken].accountMembership[borrower]) {
+            // only brTokens may call borrowAllowed if borrower not in market
+            require(msg.sender == brToken, "sender must be brToken");
 
             // attempt to add borrower to the market
-            Error err = addToMarketInternal(VToken(vToken), borrower);
+            Error err = addToMarketInternal(BRToken(brToken), borrower);
             if (err != Error.NO_ERROR) {
                 return uint(err);
             }
         }
 
-        if (oracle.getUnderlyingPrice(VToken(vToken)) == 0) {
+        if (oracle.getUnderlyingPrice(BRToken(brToken)) == 0) {
             return uint(Error.PRICE_ERROR);
         }
 
-        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, VToken(vToken), 0, borrowAmount);
+        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, BRToken(brToken), 0, borrowAmount);
         if (err != Error.NO_ERROR) {
             return uint(err);
         }
@@ -392,22 +392,22 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
-        updateVenusBorrowIndex(vToken, borrowIndex);
-        distributeBorrowerVenus(vToken, borrower, borrowIndex, false);
+        Exp memory borrowIndex = Exp({mantissa: BRToken(brToken).borrowIndex()});
+        updateBrainiacBorrowIndex(brToken, borrowIndex);
+        distributeBorrowerBrainiac(brToken, borrower, borrowIndex, false);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates borrow and reverts on rejection. May emit logs.
-     * @param vToken Asset whose underlying is being borrowed
+     * @param brToken Asset whose underlying is being borrowed
      * @param borrower The address borrowing the underlying
      * @param borrowAmount The amount of the underlying asset requested to borrow
      */
-    function borrowVerify(address vToken, address borrower, uint borrowAmount) external {
+    function borrowVerify(address brToken, address borrower, uint borrowAmount) external {
         // Shh - currently unused
-        vToken;
+        brToken;
         borrower;
         borrowAmount;
 
@@ -419,14 +419,14 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the account should be allowed to repay a borrow in the given market
-     * @param vToken The market to verify the repay against
+     * @param brToken The market to verify the repay against
      * @param payer The account which would repay the asset
      * @param borrower The account which would repay the asset
      * @param repayAmount The amount of the underlying asset the account would repay
      * @return 0 if the repay is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
     function repayBorrowAllowed(
-        address vToken,
+        address brToken,
         address payer,
         address borrower,
         uint repayAmount) external onlyProtocolAllowed returns (uint) {
@@ -435,33 +435,33 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         borrower;
         repayAmount;
 
-        if (!markets[vToken].isListed) {
+        if (!markets[brToken].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
-        updateVenusBorrowIndex(vToken, borrowIndex);
-        distributeBorrowerVenus(vToken, borrower, borrowIndex, false);
+        Exp memory borrowIndex = Exp({mantissa: BRToken(brToken).borrowIndex()});
+        updateBrainiacBorrowIndex(brToken, borrowIndex);
+        distributeBorrowerBrainiac(brToken, borrower, borrowIndex, false);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates repayBorrow and reverts on rejection. May emit logs.
-     * @param vToken Asset being repaid
+     * @param brToken Asset being repaid
      * @param payer The address repaying the borrow
      * @param borrower The address of the borrower
      * @param actualRepayAmount The amount of underlying being repaid
      */
     function repayBorrowVerify(
-        address vToken,
+        address brToken,
         address payer,
         address borrower,
         uint actualRepayAmount,
         uint borrowerIndex) external {
         // Shh - currently unused
-        vToken;
+        brToken;
         payer;
         borrower;
         actualRepayAmount;
@@ -475,27 +475,27 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the liquidation should be allowed to occur
-     * @param vTokenBorrowed Asset which was borrowed by the borrower
-     * @param vTokenCollateral Asset which was used as collateral and will be seized
+     * @param brTokenBorrowed Asset which was borrowed by the borrower
+     * @param brTokenCollateral Asset which was used as collateral and will be seized
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param repayAmount The amount of underlying being repaid
      */
     function liquidateBorrowAllowed(
-        address vTokenBorrowed,
-        address vTokenCollateral,
+        address brTokenBorrowed,
+        address brTokenCollateral,
         address liquidator,
         address borrower,
         uint repayAmount) external onlyProtocolAllowed returns (uint) {
         // Shh - currently unused
         liquidator;
 
-        if (!markets[vTokenBorrowed].isListed || !markets[vTokenCollateral].isListed) {
+        if (!markets[brTokenBorrowed].isListed || !markets[brTokenCollateral].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
         /* The borrower must have shortfall in order to be liquidatable */
-        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, VToken(0), 0, 0);
+        (Error err, , uint shortfall) = getHypotheticalAccountLiquidityInternal(borrower, BRToken(0), 0, 0);
         if (err != Error.NO_ERROR) {
             return uint(err);
         }
@@ -504,7 +504,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         }
 
         /* The liquidator may not repay more than what is allowed by the closeFactor */
-        uint borrowBalance = VToken(vTokenBorrowed).borrowBalanceStored(borrower);
+        uint borrowBalance = BRToken(brTokenBorrowed).borrowBalanceStored(borrower);
         (MathError mathErr, uint maxClose) = mulScalarTruncate(Exp({mantissa: closeFactorMantissa}), borrowBalance);
         if (mathErr != MathError.NO_ERROR) {
             return uint(Error.MATH_ERROR);
@@ -518,22 +518,22 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Validates liquidateBorrow and reverts on rejection. May emit logs.
-     * @param vTokenBorrowed Asset which was borrowed by the borrower
-     * @param vTokenCollateral Asset which was used as collateral and will be seized
+     * @param brTokenBorrowed Asset which was borrowed by the borrower
+     * @param brTokenCollateral Asset which was used as collateral and will be seized
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param actualRepayAmount The amount of underlying being repaid
      */
     function liquidateBorrowVerify(
-        address vTokenBorrowed,
-        address vTokenCollateral,
+        address brTokenBorrowed,
+        address brTokenCollateral,
         address liquidator,
         address borrower,
         uint actualRepayAmount,
         uint seizeTokens) external {
         // Shh - currently unused
-        vTokenBorrowed;
-        vTokenCollateral;
+        brTokenBorrowed;
+        brTokenCollateral;
         liquidator;
         borrower;
         actualRepayAmount;
@@ -547,15 +547,15 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the seizing of assets should be allowed to occur
-     * @param vTokenCollateral Asset which was used as collateral and will be seized
-     * @param vTokenBorrowed Asset which was borrowed by the borrower
+     * @param brTokenCollateral Asset which was used as collateral and will be seized
+     * @param brTokenBorrowed Asset which was borrowed by the borrower
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param seizeTokens The number of collateral tokens to seize
      */
     function seizeAllowed(
-        address vTokenCollateral,
-        address vTokenBorrowed,
+        address brTokenCollateral,
+        address brTokenBorrowed,
         address liquidator,
         address borrower,
         uint seizeTokens) external onlyProtocolAllowed returns (uint) {
@@ -565,39 +565,39 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         // Shh - currently unused
         seizeTokens;
 
-        if (!markets[vTokenCollateral].isListed || !markets[vTokenBorrowed].isListed) {
+        if (!markets[brTokenCollateral].isListed || !markets[brTokenBorrowed].isListed) {
             return uint(Error.MARKET_NOT_LISTED);
         }
 
-        if (VToken(vTokenCollateral).comptroller() != VToken(vTokenBorrowed).comptroller()) {
+        if (BRToken(brTokenCollateral).comptroller() != BRToken(brTokenBorrowed).comptroller()) {
             return uint(Error.COMPTROLLER_MISMATCH);
         }
 
         // Keep the flywheel moving
-        updateVenusSupplyIndex(vTokenCollateral);
-        distributeSupplierVenus(vTokenCollateral, borrower, false);
-        distributeSupplierVenus(vTokenCollateral, liquidator, false);
+        updateBrainiacSupplyIndex(brTokenCollateral);
+        distributeSupplierBrainiac(brTokenCollateral, borrower, false);
+        distributeSupplierBrainiac(brTokenCollateral, liquidator, false);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates seize and reverts on rejection. May emit logs.
-     * @param vTokenCollateral Asset which was used as collateral and will be seized
-     * @param vTokenBorrowed Asset which was borrowed by the borrower
+     * @param brTokenCollateral Asset which was used as collateral and will be seized
+     * @param brTokenBorrowed Asset which was borrowed by the borrower
      * @param liquidator The address repaying the borrow and seizing the collateral
      * @param borrower The address of the borrower
      * @param seizeTokens The number of collateral tokens to seize
      */
     function seizeVerify(
-        address vTokenCollateral,
-        address vTokenBorrowed,
+        address brTokenCollateral,
+        address brTokenBorrowed,
         address liquidator,
         address borrower,
         uint seizeTokens) external {
         // Shh - currently unused
-        vTokenCollateral;
-        vTokenBorrowed;
+        brTokenCollateral;
+        brTokenBorrowed;
         liquidator;
         borrower;
         seizeTokens;
@@ -610,41 +610,41 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Checks if the account should be allowed to transfer tokens in the given market
-     * @param vToken The market to verify the transfer against
+     * @param brToken The market to verify the transfer against
      * @param src The account which sources the tokens
      * @param dst The account which receives the tokens
-     * @param transferTokens The number of vTokens to transfer
+     * @param transferTokens The number of brTokens to transfer
      * @return 0 if the transfer is allowed, otherwise a semi-opaque error code (See ErrorReporter.sol)
      */
-    function transferAllowed(address vToken, address src, address dst, uint transferTokens) external onlyProtocolAllowed returns (uint) {
+    function transferAllowed(address brToken, address src, address dst, uint transferTokens) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
         require(!transferGuardianPaused, "transfer is paused");
 
         // Currently the only consideration is whether or not
         //  the src is allowed to redeem this many tokens
-        uint allowed = redeemAllowedInternal(vToken, src, transferTokens);
+        uint allowed = redeemAllowedInternal(brToken, src, transferTokens);
         if (allowed != uint(Error.NO_ERROR)) {
             return allowed;
         }
 
         // Keep the flywheel moving
-        updateVenusSupplyIndex(vToken);
-        distributeSupplierVenus(vToken, src, false);
-        distributeSupplierVenus(vToken, dst, false);
+        updateBrainiacSupplyIndex(brToken);
+        distributeSupplierBrainiac(brToken, src, false);
+        distributeSupplierBrainiac(brToken, dst, false);
 
         return uint(Error.NO_ERROR);
     }
 
     /**
      * @notice Validates transfer and reverts on rejection. May emit logs.
-     * @param vToken Asset being transferred
+     * @param brToken Asset being transferred
      * @param src The account which sources the tokens
      * @param dst The account which receives the tokens
-     * @param transferTokens The number of vTokens to transfer
+     * @param transferTokens The number of brTokens to transfer
      */
-    function transferVerify(address vToken, address src, address dst, uint transferTokens) external {
+    function transferVerify(address brToken, address src, address dst, uint transferTokens) external {
         // Shh - currently unused
-        vToken;
+        brToken;
         src;
         dst;
         transferTokens;
@@ -659,13 +659,13 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @dev Local vars for avoiding stack-depth limits in calculating account liquidity.
-     *  Note that `vTokenBalance` is the number of vTokens the account owns in the market,
+     *  Note that `brTokenBalance` is the number of brTokens the account owns in the market,
      *  whereas `borrowBalance` is the amount of underlying that the account has borrowed.
      */
     struct AccountLiquidityLocalVars {
         uint sumCollateral;
         uint sumBorrowPlusEffects;
-        uint vTokenBalance;
+        uint brTokenBalance;
         uint borrowBalance;
         uint exchangeRateMantissa;
         uint oraclePriceMantissa;
@@ -682,14 +682,14 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      *          account shortfall below collateral requirements)
      */
     function getAccountLiquidity(address account) public view returns (uint, uint, uint) {
-        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, VToken(0), 0, 0);
+        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, BRToken(0), 0, 0);
 
         return (uint(err), liquidity, shortfall);
     }
 
     /**
      * @notice Determine what the account liquidity would be if the given amounts were redeemed/borrowed
-     * @param vTokenModify The market to hypothetically redeem/borrow in
+     * @param brTokenModify The market to hypothetically redeem/borrow in
      * @param account The account to determine liquidity for
      * @param redeemTokens The number of tokens to hypothetically redeem
      * @param borrowAmount The amount of underlying to hypothetically borrow
@@ -699,20 +699,20 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      */
     function getHypotheticalAccountLiquidity(
         address account,
-        address vTokenModify,
+        address brTokenModify,
         uint redeemTokens,
         uint borrowAmount) public view returns (uint, uint, uint) {
-        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, VToken(vTokenModify), redeemTokens, borrowAmount);
+        (Error err, uint liquidity, uint shortfall) = getHypotheticalAccountLiquidityInternal(account, BRToken(brTokenModify), redeemTokens, borrowAmount);
         return (uint(err), liquidity, shortfall);
     }
 
     /**
      * @notice Determine what the account liquidity would be if the given amounts were redeemed/borrowed
-     * @param vTokenModify The market to hypothetically redeem/borrow in
+     * @param brTokenModify The market to hypothetically redeem/borrow in
      * @param account The account to determine liquidity for
      * @param redeemTokens The number of tokens to hypothetically redeem
      * @param borrowAmount The amount of underlying to hypothetically borrow
-     * @dev Note that we calculate the exchangeRateStored for each collateral vToken using stored data,
+     * @dev Note that we calculate the exchangeRateStored for each collateral brToken using stored data,
      *  without calculating accumulated interest.
      * @return (possible error code,
                 hypothetical account liquidity in excess of collateral requirements,
@@ -720,7 +720,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      */
     function getHypotheticalAccountLiquidityInternal(
         address account,
-        VToken vTokenModify,
+        BRToken brTokenModify,
         uint redeemTokens,
         uint borrowAmount) internal view returns (Error, uint, uint) {
 
@@ -729,12 +729,12 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         MathError mErr;
 
         // For each asset the account is in
-        VToken[] memory assets = accountAssets[account];
+        BRToken[] memory assets = accountAssets[account];
         for (uint i = 0; i < assets.length; i++) {
-            VToken asset = assets[i];
+            BRToken asset = assets[i];
 
-            // Read the balances and exchange rate from the vToken
-            (oErr, vars.vTokenBalance, vars.borrowBalance, vars.exchangeRateMantissa) = asset.getAccountSnapshot(account);
+            // Read the balances and exchange rate from the brToken
+            (oErr, vars.brTokenBalance, vars.borrowBalance, vars.exchangeRateMantissa) = asset.getAccountSnapshot(account);
             if (oErr != 0) { // semi-opaque error code, we assume NO_ERROR == 0 is invariant between upgrades
                 return (Error.SNAPSHOT_ERROR, 0, 0);
             }
@@ -748,14 +748,14 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
             }
             vars.oraclePrice = Exp({mantissa: vars.oraclePriceMantissa});
 
-            // Pre-compute a conversion factor from tokens -> bnb (normalized price value)
+            // Pre-compute a conversion factor from tokens -> ckb (normalized price value)
             (mErr, vars.tokensToDenom) = mulExp3(vars.collateralFactor, vars.exchangeRate, vars.oraclePrice);
             if (mErr != MathError.NO_ERROR) {
                 return (Error.MATH_ERROR, 0, 0);
             }
 
-            // sumCollateral += tokensToDenom * vTokenBalance
-            (mErr, vars.sumCollateral) = mulScalarTruncateAddUInt(vars.tokensToDenom, vars.vTokenBalance, vars.sumCollateral);
+            // sumCollateral += tokensToDenom * brTokenBalance
+            (mErr, vars.sumCollateral) = mulScalarTruncateAddUInt(vars.tokensToDenom, vars.brTokenBalance, vars.sumCollateral);
             if (mErr != MathError.NO_ERROR) {
                 return (Error.MATH_ERROR, 0, 0);
             }
@@ -766,8 +766,8 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
                 return (Error.MATH_ERROR, 0, 0);
             }
 
-            // Calculate effects of interacting with vTokenModify
-            if (asset == vTokenModify) {
+            // Calculate effects of interacting with brTokenModify
+            if (asset == brTokenModify) {
                 // redeem effect
                 // sumBorrowPlusEffects += tokensToDenom * redeemTokens
                 (mErr, vars.sumBorrowPlusEffects) = mulScalarTruncateAddUInt(vars.tokensToDenom, redeemTokens, vars.sumBorrowPlusEffects);
@@ -784,12 +784,12 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
             }
         }
 
-        /// @dev VAI Integration^
-        (mErr, vars.sumBorrowPlusEffects) = addUInt(vars.sumBorrowPlusEffects, mintedVAIs[account]);
+        /// @dev BAI Integration^
+        (mErr, vars.sumBorrowPlusEffects) = addUInt(vars.sumBorrowPlusEffects, mintedBAIs[account]);
         if (mErr != MathError.NO_ERROR) {
             return (Error.MATH_ERROR, 0, 0);
         }
-        /// @dev VAI Integration$
+        /// @dev BAI Integration$
 
         // These are safe, as the underflow condition is checked first
         if (vars.sumCollateral > vars.sumBorrowPlusEffects) {
@@ -801,16 +801,16 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
 
     /**
      * @notice Calculate number of tokens of collateral asset to seize given an underlying amount
-     * @dev Used in liquidation (called in vToken.liquidateBorrowFresh)
-     * @param vTokenBorrowed The address of the borrowed vToken
-     * @param vTokenCollateral The address of the collateral vToken
-     * @param actualRepayAmount The amount of vTokenBorrowed underlying to convert into vTokenCollateral tokens
-     * @return (errorCode, number of vTokenCollateral tokens to be seized in a liquidation)
+     * @dev Used in liquidation (called in brToken.liquidateBorrowFresh)
+     * @param brTokenBorrowed The address of the borrowed brToken
+     * @param brTokenCollateral The address of the collateral brToken
+     * @param actualRepayAmount The amount of brTokenBorrowed underlying to convert into brTokenCollateral tokens
+     * @return (errorCode, number of brTokenCollateral tokens to be seized in a liquidation)
      */
-    function liquidateCalculateSeizeTokens(address vTokenBorrowed, address vTokenCollateral, uint actualRepayAmount) external view returns (uint, uint) {
+    function liquidateCalculateSeizeTokens(address brTokenBorrowed, address brTokenCollateral, uint actualRepayAmount) external view returns (uint, uint) {
         /* Read oracle prices for borrowed and collateral markets */
-        uint priceBorrowedMantissa = oracle.getUnderlyingPrice(VToken(vTokenBorrowed));
-        uint priceCollateralMantissa = oracle.getUnderlyingPrice(VToken(vTokenCollateral));
+        uint priceBorrowedMantissa = oracle.getUnderlyingPrice(BRToken(brTokenBorrowed));
+        uint priceCollateralMantissa = oracle.getUnderlyingPrice(BRToken(brTokenCollateral));
         if (priceBorrowedMantissa == 0 || priceCollateralMantissa == 0) {
             return (uint(Error.PRICE_ERROR), 0);
         }
@@ -821,7 +821,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
          *  seizeTokens = seizeAmount / exchangeRate
          *   = actualRepayAmount * (liquidationIncentive * priceBorrowed) / (priceCollateral * exchangeRate)
          */
-        uint exchangeRateMantissa = VToken(vTokenCollateral).exchangeRateStored(); // Note: reverts on error
+        uint exchangeRateMantissa = BRToken(brTokenCollateral).exchangeRateStored(); // Note: reverts on error
         uint seizeTokens;
         Exp memory numerator;
         Exp memory denominator;
@@ -909,18 +909,18 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     /**
       * @notice Sets the collateralFactor for a market
       * @dev Admin function to set per-market collateralFactor
-      * @param vToken The market to set the factor on
+      * @param brToken The market to set the factor on
       * @param newCollateralFactorMantissa The new collateral factor, scaled by 1e18
       * @return uint 0=success, otherwise a failure. (See ErrorReporter for details)
       */
-    function _setCollateralFactor(VToken vToken, uint newCollateralFactorMantissa) external returns (uint) {
+    function _setCollateralFactor(BRToken brToken, uint newCollateralFactorMantissa) external returns (uint) {
         // Check caller is admin
         if (msg.sender != admin) {
             return fail(Error.UNAUTHORIZED, FailureInfo.SET_COLLATERAL_FACTOR_OWNER_CHECK);
         }
 
         // Verify market is listed
-        Market storage market = markets[address(vToken)];
+        Market storage market = markets[address(brToken)];
         if (!market.isListed) {
             return fail(Error.MARKET_NOT_LISTED, FailureInfo.SET_COLLATERAL_FACTOR_NO_EXISTS);
         }
@@ -934,7 +934,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         }
 
         // If collateral factor != 0, fail if price == 0
-        if (newCollateralFactorMantissa != 0 && oracle.getUnderlyingPrice(vToken) == 0) {
+        if (newCollateralFactorMantissa != 0 && oracle.getUnderlyingPrice(brToken) == 0) {
             return fail(Error.PRICE_ERROR, FailureInfo.SET_COLLATERAL_FACTOR_WITHOUT_PRICE);
         }
 
@@ -943,7 +943,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         market.collateralFactorMantissa = newCollateralFactorMantissa;
 
         // Emit event with asset, old collateral factor, and new collateral factor
-        emit NewCollateralFactor(vToken, oldCollateralFactorMantissa, newCollateralFactorMantissa);
+        emit NewCollateralFactor(brToken, oldCollateralFactorMantissa, newCollateralFactorMantissa);
 
         return uint(Error.NO_ERROR);
     }
@@ -1006,34 +1006,34 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     /**
       * @notice Add the market to the markets mapping and set it as listed
       * @dev Admin function to set isListed and add support for the market
-      * @param vToken The address of the market (token) to list
+      * @param brToken The address of the market (token) to list
       * @return uint 0=success, otherwise a failure. (See enum Error for details)
       */
-    function _supportMarket(VToken vToken) external returns (uint) {
+    function _supportMarket(BRToken brToken) external returns (uint) {
         if (msg.sender != admin) {
             return fail(Error.UNAUTHORIZED, FailureInfo.SUPPORT_MARKET_OWNER_CHECK);
         }
 
-        if (markets[address(vToken)].isListed) {
+        if (markets[address(brToken)].isListed) {
             return fail(Error.MARKET_ALREADY_LISTED, FailureInfo.SUPPORT_MARKET_EXISTS);
         }
 
-        vToken.isVToken(); // Sanity check to make sure its really a VToken
+        brToken.isBRToken(); // Sanity check to make sure its really a BRToken
 
-        markets[address(vToken)] = Market({isListed: true, isVenus: false, collateralFactorMantissa: 0});
+        markets[address(brToken)] = Market({isListed: true, isBrainiac: false, collateralFactorMantissa: 0});
 
-        _addMarketInternal(vToken);
+        _addMarketInternal(brToken);
 
-        emit MarketListed(vToken);
+        emit MarketListed(brToken);
 
         return uint(Error.NO_ERROR);
     }
 
-    function _addMarketInternal(VToken vToken) internal {
+    function _addMarketInternal(BRToken brToken) internal {
         for (uint i = 0; i < allMarkets.length; i ++) {
-            require(allMarkets[i] != vToken, "market already added");
+            require(allMarkets[i] != brToken, "market already added");
         }
-        allMarkets.push(vToken);
+        allMarkets.push(brToken);
     }
 
     /**
@@ -1058,15 +1058,15 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         return uint(Error.NO_ERROR);
     }
 
-    function _setMintPaused(VToken vToken, bool state) public onlyListedMarket(vToken) validPauseState(state) returns (bool) {
-        mintGuardianPaused[address(vToken)] = state;
-        emit ActionPaused(vToken, "Mint", state);
+    function _setMintPaused(BRToken brToken, bool state) public onlyListedMarket(brToken) validPauseState(state) returns (bool) {
+        mintGuardianPaused[address(brToken)] = state;
+        emit ActionPaused(brToken, "Mint", state);
         return state;
     }
 
-    function _setBorrowPaused(VToken vToken, bool state) public onlyListedMarket(vToken) validPauseState(state) returns (bool) {
-        borrowGuardianPaused[address(vToken)] = state;
-        emit ActionPaused(vToken, "Borrow", state);
+    function _setBorrowPaused(BRToken brToken, bool state) public onlyListedMarket(brToken) validPauseState(state) returns (bool) {
+        borrowGuardianPaused[address(brToken)] = state;
+        emit ActionPaused(brToken, "Borrow", state);
         return state;
     }
 
@@ -1082,15 +1082,15 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         return state;
     }
 
-    function _setMintVAIPaused(bool state) public validPauseState(state) returns (bool) {
-        mintVAIGuardianPaused = state;
-        emit ActionPaused("MintVAI", state);
+    function _setMintBAIPaused(bool state) public validPauseState(state) returns (bool) {
+        mintBAIGuardianPaused = state;
+        emit ActionPaused("MintBAI", state);
         return state;
     }
 
-    function _setRepayVAIPaused(bool state) public validPauseState(state) returns (bool) {
-        repayVAIGuardianPaused = state;
-        emit ActionPaused("RepayVAI", state);
+    function _setRepayBAIPaused(bool state) public validPauseState(state) returns (bool) {
+        repayBAIGuardianPaused = state;
+        emit ActionPaused("RepayBAI", state);
         return state;
     }
     /**
@@ -1103,30 +1103,30 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     }
 
     /**
-      * @notice Sets a new VAI controller
-      * @dev Admin function to set a new VAI controller
+      * @notice Sets a new BAI controller
+      * @dev Admin function to set a new BAI controller
       * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
       */
-    function _setVAIController(VAIControllerInterface vaiController_) external returns (uint) {
+    function _setBAIController(BAIControllerInterface baiController_) external returns (uint) {
         // Check caller is admin
         if (msg.sender != admin) {
-            return fail(Error.UNAUTHORIZED, FailureInfo.SET_VAICONTROLLER_OWNER_CHECK);
+            return fail(Error.UNAUTHORIZED, FailureInfo.SET_BAICONTROLLER_OWNER_CHECK);
         }
 
-        VAIControllerInterface oldRate = vaiController;
-        vaiController = vaiController_;
-        emit NewVAIController(oldRate, vaiController_);
+        BAIControllerInterface oldRate = baiController;
+        baiController = baiController_;
+        emit NewBAIController(oldRate, baiController_);
     }
 
-    function _setVAIMintRate(uint newVAIMintRate) external returns (uint) {
+    function _setBAIMintRate(uint newBAIMintRate) external returns (uint) {
         // Check caller is admin
         if (msg.sender != admin) {
-            return fail(Error.UNAUTHORIZED, FailureInfo.SET_VAI_MINT_RATE_CHECK);
+            return fail(Error.UNAUTHORIZED, FailureInfo.SET_BAI_MINT_RATE_CHECK);
         }
 
-        uint oldVAIMintRate = vaiMintRate;
-        vaiMintRate = newVAIMintRate;
-        emit NewVAIMintRate(oldVAIMintRate, newVAIMintRate);
+        uint oldBAIMintRate = baiMintRate;
+        baiMintRate = newBAIMintRate;
+        emit NewBAIMintRate(oldBAIMintRate, newBAIMintRate);
 
         return uint(Error.NO_ERROR);
     }
@@ -1136,62 +1136,62 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
         require(unitroller._acceptImplementation() == 0, "not authorized");
     }
 
-    /*** Venus Distribution ***/
+    /*** Brainiac Distribution ***/
 
     /**
-     * @notice Recalculate and update Venus speeds for all Venus markets
+     * @notice Recalculate and update Brainiac speeds for all Brainiac markets
      */
-    function refreshVenusSpeeds() public {
+    function refreshBrainiacSpeeds() public {
         require(msg.sender == tx.origin, "only externally owned accounts can");
-        refreshVenusSpeedsInternal();
+        refreshBrainiacSpeedsInternal();
     }
 
-    function refreshVenusSpeedsInternal() internal {
+    function refreshBrainiacSpeedsInternal() internal {
         uint i;
-        VToken vToken;
+        BRToken brToken;
 
         for (i = 0; i < allMarkets.length; i++) {
-            vToken = allMarkets[i];
-            Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-            updateVenusSupplyIndex(address(vToken));
-            updateVenusBorrowIndex(address(vToken), borrowIndex);
+            brToken = allMarkets[i];
+            Exp memory borrowIndex = Exp({mantissa: brToken.borrowIndex()});
+            updateBrainiacSupplyIndex(address(brToken));
+            updateBrainiacBorrowIndex(address(brToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets.length);
         for (i = 0; i < allMarkets.length; i++) {
-            vToken = allMarkets[i];
-            if (markets[address(vToken)].isVenus) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(vToken)});
-                Exp memory utility = mul_(assetPrice, vToken.totalBorrows());
+            brToken = allMarkets[i];
+            if (markets[address(brToken)].isBrainiac) {
+                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(brToken)});
+                Exp memory utility = mul_(assetPrice, brToken.totalBorrows());
                 utilities[i] = utility;
                 totalUtility = add_(totalUtility, utility);
             }
         }
 
         for (i = 0; i < allMarkets.length; i++) {
-            vToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(venusRate, div_(utilities[i], totalUtility)) : 0;
-            venusSpeeds[address(vToken)] = newSpeed;
-            emit VenusSpeedUpdated(vToken, newSpeed);
+            brToken = allMarkets[i];
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(brainiacRate, div_(utilities[i], totalUtility)) : 0;
+            brainiacSpeeds[address(brToken)] = newSpeed;
+            emit BrainiacSpeedUpdated(brToken, newSpeed);
         }
     }
 
     /**
-     * @notice Accrue XVS to the market by updating the supply index
-     * @param vToken The market whose supply index to update
+     * @notice Accrue BRN to the market by updating the supply index
+     * @param brToken The market whose supply index to update
      */
-    function updateVenusSupplyIndex(address vToken) internal {
-        VenusMarketState storage supplyState = venusSupplyState[vToken];
-        uint supplySpeed = venusSpeeds[vToken];
+    function updateBrainiacSupplyIndex(address brToken) internal {
+        BrainiacMarketState storage supplyState = brainiacSupplyState[brToken];
+        uint supplySpeed = brainiacSpeeds[brToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(supplyState.block));
         if (deltaBlocks > 0 && supplySpeed > 0) {
-            uint supplyTokens = VToken(vToken).totalSupply();
-            uint venusAccrued = mul_(deltaBlocks, supplySpeed);
-            Double memory ratio = supplyTokens > 0 ? fraction(venusAccrued, supplyTokens) : Double({mantissa: 0});
+            uint supplyTokens = BRToken(brToken).totalSupply();
+            uint brainiacAccrued = mul_(deltaBlocks, supplySpeed);
+            Double memory ratio = supplyTokens > 0 ? fraction(brainiacAccrued, supplyTokens) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: supplyState.index}), ratio);
-            venusSupplyState[vToken] = VenusMarketState({
+            brainiacSupplyState[brToken] = BrainiacMarketState({
                 index: safe224(index.mantissa, "new index overflows"),
                 block: safe32(blockNumber, "block number overflows")
             });
@@ -1201,20 +1201,20 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     }
 
     /**
-     * @notice Accrue XVS to the market by updating the borrow index
-     * @param vToken The market whose borrow index to update
+     * @notice Accrue BRN to the market by updating the borrow index
+     * @param brToken The market whose borrow index to update
      */
-    function updateVenusBorrowIndex(address vToken, Exp memory marketBorrowIndex) internal {
-        VenusMarketState storage borrowState = venusBorrowState[vToken];
-        uint borrowSpeed = venusSpeeds[vToken];
+    function updateBrainiacBorrowIndex(address brToken, Exp memory marketBorrowIndex) internal {
+        BrainiacMarketState storage borrowState = brainiacBorrowState[brToken];
+        uint borrowSpeed = brainiacSpeeds[brToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(borrowState.block));
         if (deltaBlocks > 0 && borrowSpeed > 0) {
-            uint borrowAmount = div_(VToken(vToken).totalBorrows(), marketBorrowIndex);
-            uint venusAccrued = mul_(deltaBlocks, borrowSpeed);
-            Double memory ratio = borrowAmount > 0 ? fraction(venusAccrued, borrowAmount) : Double({mantissa: 0});
+            uint borrowAmount = div_(BRToken(brToken).totalBorrows(), marketBorrowIndex);
+            uint brainiacAccrued = mul_(deltaBlocks, borrowSpeed);
+            Double memory ratio = borrowAmount > 0 ? fraction(brainiacAccrued, borrowAmount) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: borrowState.index}), ratio);
-            venusBorrowState[vToken] = VenusMarketState({
+            brainiacBorrowState[brToken] = BrainiacMarketState({
                 index: safe224(index.mantissa, "new index overflows"),
                 block: safe32(blockNumber, "block number overflows")
             });
@@ -1224,91 +1224,91 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     }
 
     /**
-     * @notice Accrue XVS to by updating the VAI minter index
+     * @notice Accrue BRN to by updating the BAI minter index
      */
-    function updateVenusVAIMintIndex() internal {
-        if (address(vaiController) != address(0)) {
-            vaiController.updateVenusVAIMintIndex();
+    function updateBrainiacBAIMintIndex() internal {
+        if (address(baiController) != address(0)) {
+            baiController.updateBrainiacBAIMintIndex();
         }
     }
 
     /**
-     * @notice Calculate XVS accrued by a supplier and possibly transfer it to them
-     * @param vToken The market in which the supplier is interacting
-     * @param supplier The address of the supplier to distribute XVS to
+     * @notice Calculate BRN accrued by a supplier and possibly transfer it to them
+     * @param brToken The market in which the supplier is interacting
+     * @param supplier The address of the supplier to distribute BRN to
      */
-    function distributeSupplierVenus(address vToken, address supplier, bool distributeAll) internal {
-        VenusMarketState storage supplyState = venusSupplyState[vToken];
+    function distributeSupplierBrainiac(address brToken, address supplier, bool distributeAll) internal {
+        BrainiacMarketState storage supplyState = brainiacSupplyState[brToken];
         Double memory supplyIndex = Double({mantissa: supplyState.index});
-        Double memory supplierIndex = Double({mantissa: venusSupplierIndex[vToken][supplier]});
-        venusSupplierIndex[vToken][supplier] = supplyIndex.mantissa;
+        Double memory supplierIndex = Double({mantissa: brainiacSupplierIndex[brToken][supplier]});
+        brainiacSupplierIndex[brToken][supplier] = supplyIndex.mantissa;
 
         if (supplierIndex.mantissa == 0 && supplyIndex.mantissa > 0) {
-            supplierIndex.mantissa = venusInitialIndex;
+            supplierIndex.mantissa = brainiacInitialIndex;
         }
 
         Double memory deltaIndex = sub_(supplyIndex, supplierIndex);
-        uint supplierTokens = VToken(vToken).balanceOf(supplier);
+        uint supplierTokens = BRToken(brToken).balanceOf(supplier);
         uint supplierDelta = mul_(supplierTokens, deltaIndex);
-        uint supplierAccrued = add_(venusAccrued[supplier], supplierDelta);
-        venusAccrued[supplier] = transferXVS(supplier, supplierAccrued, distributeAll ? 0 : venusClaimThreshold);
-        emit DistributedSupplierVenus(VToken(vToken), supplier, supplierDelta, supplyIndex.mantissa);
+        uint supplierAccrued = add_(brainiacAccrued[supplier], supplierDelta);
+        brainiacAccrued[supplier] = transferBRN(supplier, supplierAccrued, distributeAll ? 0 : brainiacClaimThreshold);
+        emit DistributedSupplierBrainiac(BRToken(brToken), supplier, supplierDelta, supplyIndex.mantissa);
     }
 
     /**
-     * @notice Calculate XVS accrued by a borrower and possibly transfer it to them
+     * @notice Calculate BRN accrued by a borrower and possibly transfer it to them
      * @dev Borrowers will not begin to accrue until after the first interaction with the protocol.
-     * @param vToken The market in which the borrower is interacting
-     * @param borrower The address of the borrower to distribute XVS to
+     * @param brToken The market in which the borrower is interacting
+     * @param borrower The address of the borrower to distribute BRN to
      */
-    function distributeBorrowerVenus(address vToken, address borrower, Exp memory marketBorrowIndex, bool distributeAll) internal {
-        VenusMarketState storage borrowState = venusBorrowState[vToken];
+    function distributeBorrowerBrainiac(address brToken, address borrower, Exp memory marketBorrowIndex, bool distributeAll) internal {
+        BrainiacMarketState storage borrowState = brainiacBorrowState[brToken];
         Double memory borrowIndex = Double({mantissa: borrowState.index});
-        Double memory borrowerIndex = Double({mantissa: venusBorrowerIndex[vToken][borrower]});
-        venusBorrowerIndex[vToken][borrower] = borrowIndex.mantissa;
+        Double memory borrowerIndex = Double({mantissa: brainiacBorrowerIndex[brToken][borrower]});
+        brainiacBorrowerIndex[brToken][borrower] = borrowIndex.mantissa;
 
         if (borrowerIndex.mantissa > 0) {
             Double memory deltaIndex = sub_(borrowIndex, borrowerIndex);
-            uint borrowerAmount = div_(VToken(vToken).borrowBalanceStored(borrower), marketBorrowIndex);
+            uint borrowerAmount = div_(BRToken(brToken).borrowBalanceStored(borrower), marketBorrowIndex);
             uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
-            uint borrowerAccrued = add_(venusAccrued[borrower], borrowerDelta);
-            venusAccrued[borrower] = transferXVS(borrower, borrowerAccrued, distributeAll ? 0 : venusClaimThreshold);
-            emit DistributedBorrowerVenus(VToken(vToken), borrower, borrowerDelta, borrowIndex.mantissa);
+            uint borrowerAccrued = add_(brainiacAccrued[borrower], borrowerDelta);
+            brainiacAccrued[borrower] = transferBRN(borrower, borrowerAccrued, distributeAll ? 0 : brainiacClaimThreshold);
+            emit DistributedBorrowerBrainiac(BRToken(brToken), borrower, borrowerDelta, borrowIndex.mantissa);
         }
     }
 
     /**
-     * @notice Calculate XVS accrued by a VAI minter and possibly transfer it to them
-     * @dev VAI minters will not begin to accrue until after the first interaction with the protocol.
-     * @param vaiMinter The address of the VAI minter to distribute XVS to
+     * @notice Calculate BRN accrued by a BAI minter and possibly transfer it to them
+     * @dev BAI minters will not begin to accrue until after the first interaction with the protocol.
+     * @param baiMinter The address of the BAI minter to distribute BRN to
      */
-    function distributeVAIMinterVenus(address vaiMinter, bool distributeAll) internal {
-        if (address(vaiController) != address(0)) {
-            uint vaiMinterAccrued;
-            uint vaiMinterDelta;
-            uint vaiMintIndexMantissa;
+    function distributeBAIMinterBrainiac(address baiMinter, bool distributeAll) internal {
+        if (address(baiController) != address(0)) {
+            uint baiMinterAccrued;
+            uint baiMinterDelta;
+            uint baiMintIndexMantissa;
             uint err;
-            (err, vaiMinterAccrued, vaiMinterDelta, vaiMintIndexMantissa) = vaiController.calcDistributeVAIMinterVenus(vaiMinter);
+            (err, baiMinterAccrued, baiMinterDelta, baiMintIndexMantissa) = baiController.calcDistributeBAIMinterBrainiac(baiMinter);
             if (err == uint(Error.NO_ERROR)) {
-                venusAccrued[vaiMinter] = transferXVS(vaiMinter, vaiMinterAccrued, distributeAll ? 0 : venusClaimThreshold);
-                emit DistributedVAIMinterVenus(vaiMinter, vaiMinterDelta, vaiMintIndexMantissa);
+                brainiacAccrued[baiMinter] = transferBRN(baiMinter, baiMinterAccrued, distributeAll ? 0 : brainiacClaimThreshold);
+                emit DistributedBAIMinterBrainiac(baiMinter, baiMinterDelta, baiMintIndexMantissa);
             }
         }
     }
 
     /**
-     * @notice Transfer XVS to the user, if they are above the threshold
-     * @dev Note: If there is not enough XVS, we do not perform the transfer all.
-     * @param user The address of the user to transfer XVS to
-     * @param userAccrued The amount of XVS to (possibly) transfer
-     * @return The amount of XVS which was NOT transferred to the user
+     * @notice Transfer BRN to the user, if they are above the threshold
+     * @dev Note: If there is not enough BRN, we do not perform the transfer all.
+     * @param user The address of the user to transfer BRN to
+     * @param userAccrued The amount of BRN to (possibly) transfer
+     * @return The amount of BRN which was NOT transferred to the user
      */
-    function transferXVS(address user, uint userAccrued, uint threshold) internal returns (uint) {
+    function transferBRN(address user, uint userAccrued, uint threshold) internal returns (uint) {
         if (userAccrued >= threshold && userAccrued > 0) {
-            XVS xvs = XVS(getXVSAddress());
-            uint xvsRemaining = xvs.balanceOf(address(this));
-            if (userAccrued <= xvsRemaining) {
-                xvs.transfer(user, userAccrued);
+            BRN brn = BRN(getBRNAddress());
+            uint brnRemaining = brn.balanceOf(address(this));
+            if (userAccrued <= brnRemaining) {
+                brn.transfer(user, userAccrued);
                 return 0;
             }
         }
@@ -1316,136 +1316,136 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     }
 
     /**
-     * @notice Claim all the xvs accrued by holder in all markets and VAI
-     * @param holder The address to claim XVS for
+     * @notice Claim all the brn accrued by holder in all markets and BAI
+     * @param holder The address to claim BRN for
      */
-    function claimVenus(address holder) public {
-        return claimVenus(holder, allMarkets);
+    function claimBrainiac(address holder) public {
+        return claimBrainiac(holder, allMarkets);
     }
 
     /**
-     * @notice Claim all the xvs accrued by holder in the specified markets
-     * @param holder The address to claim XVS for
-     * @param vTokens The list of markets to claim XVS in
+     * @notice Claim all the brn accrued by holder in the specified markets
+     * @param holder The address to claim BRN for
+     * @param brTokens The list of markets to claim BRN in
      */
-    function claimVenus(address holder, VToken[] memory vTokens) public {
+    function claimBrainiac(address holder, BRToken[] memory brTokens) public {
         address[] memory holders = new address[](1);
         holders[0] = holder;
-        claimVenus(holders, vTokens, true, true);
+        claimBrainiac(holders, brTokens, true, true);
     }
 
     /**
-     * @notice Claim all xvs accrued by the holders
-     * @param holders The addresses to claim XVS for
-     * @param vTokens The list of markets to claim XVS in
-     * @param borrowers Whether or not to claim XVS earned by borrowing
-     * @param suppliers Whether or not to claim XVS earned by supplying
+     * @notice Claim all brn accrued by the holders
+     * @param holders The addresses to claim BRN for
+     * @param brTokens The list of markets to claim BRN in
+     * @param borrowers Whether or not to claim BRN earned by borrowing
+     * @param suppliers Whether or not to claim BRN earned by supplying
      */
-    function claimVenus(address[] memory holders, VToken[] memory vTokens, bool borrowers, bool suppliers) public {
+    function claimBrainiac(address[] memory holders, BRToken[] memory brTokens, bool borrowers, bool suppliers) public {
         uint j;
-        updateVenusVAIMintIndex();
+        updateBrainiacBAIMintIndex();
         for (j = 0; j < holders.length; j++) {
-            distributeVAIMinterVenus(holders[j], true);
+            distributeBAIMinterBrainiac(holders[j], true);
         }
-        for (uint i = 0; i < vTokens.length; i++) {
-            VToken vToken = vTokens[i];
-            require(markets[address(vToken)].isListed, "not listed market");
+        for (uint i = 0; i < brTokens.length; i++) {
+            BRToken brToken = brTokens[i];
+            require(markets[address(brToken)].isListed, "not listed market");
             if (borrowers) {
-                Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-                updateVenusBorrowIndex(address(vToken), borrowIndex);
+                Exp memory borrowIndex = Exp({mantissa: brToken.borrowIndex()});
+                updateBrainiacBorrowIndex(address(brToken), borrowIndex);
                 for (j = 0; j < holders.length; j++) {
-                    distributeBorrowerVenus(address(vToken), holders[j], borrowIndex, true);
+                    distributeBorrowerBrainiac(address(brToken), holders[j], borrowIndex, true);
                 }
             }
             if (suppliers) {
-                updateVenusSupplyIndex(address(vToken));
+                updateBrainiacSupplyIndex(address(brToken));
                 for (j = 0; j < holders.length; j++) {
-                    distributeSupplierVenus(address(vToken), holders[j], true);
+                    distributeSupplierBrainiac(address(brToken), holders[j], true);
                 }
             }
         }
     }
 
-    /*** Venus Distribution Admin ***/
+    /*** Brainiac Distribution Admin ***/
 
     /**
-     * @notice Set the amount of XVS distributed per block
-     * @param venusRate_ The amount of XVS wei per block to distribute
+     * @notice Set the amount of BRN distributed per block
+     * @param brainiacRate_ The amount of BRN wei per block to distribute
      */
-    function _setVenusRate(uint venusRate_) public onlyAdmin {
-        uint oldRate = venusRate;
-        venusRate = venusRate_;
-        emit NewVenusRate(oldRate, venusRate_);
+    function _setBrainiacRate(uint brainiacRate_) public onlyAdmin {
+        uint oldRate = brainiacRate;
+        brainiacRate = brainiacRate_;
+        emit NewBrainiacRate(oldRate, brainiacRate_);
 
-        refreshVenusSpeedsInternal();
+        refreshBrainiacSpeedsInternal();
     }
 
     /**
-     * @notice Set the amount of XVS distributed per block to VAI Mint
-     * @param venusVAIRate_ The amount of XVS wei per block to distribute to VAI Mint
+     * @notice Set the amount of BRN distributed per block to BAI Mint
+     * @param brainiacBAIRate_ The amount of BRN wei per block to distribute to BAI Mint
      */
-    function _setVenusVAIRate(uint venusVAIRate_) public {
+    function _setBrainiacBAIRate(uint brainiacBAIRate_) public {
         require(msg.sender == admin, "only admin can");
 
-        uint oldVAIRate = venusVAIRate;
-        venusVAIRate = venusVAIRate_;
-        emit NewVenusVAIRate(oldVAIRate, venusVAIRate_);
+        uint oldBAIRate = brainiacBAIRate;
+        brainiacBAIRate = brainiacBAIRate_;
+        emit NewBrainiacBAIRate(oldBAIRate, brainiacBAIRate_);
     }
 
     /**
-     * @notice Add markets to venusMarkets, allowing them to earn XVS in the flywheel
-     * @param vTokens The addresses of the markets to add
+     * @notice Add markets to brainiacMarkets, allowing them to earn BRN in the flywheel
+     * @param brTokens The addresses of the markets to add
      */
-    function _addVenusMarkets(address[] calldata vTokens) external onlyAdmin {
-        for (uint i = 0; i < vTokens.length; i++) {
-            _addVenusMarketInternal(vTokens[i]);
+    function _addBrainiacMarkets(address[] calldata brTokens) external onlyAdmin {
+        for (uint i = 0; i < brTokens.length; i++) {
+            _addBrainiacMarketInternal(brTokens[i]);
         }
 
-        refreshVenusSpeedsInternal();
+        refreshBrainiacSpeedsInternal();
     }
 
-    function _addVenusMarketInternal(address vToken) internal {
-        Market storage market = markets[vToken];
-        require(market.isListed, "venus market is not listed");
-        require(!market.isVenus, "venus market already added");
+    function _addBrainiacMarketInternal(address brToken) internal {
+        Market storage market = markets[brToken];
+        require(market.isListed, "brainiac market is not listed");
+        require(!market.isBrainiac, "brainiac market already added");
 
-        market.isVenus = true;
-        emit MarketVenus(VToken(vToken), true);
+        market.isBrainiac = true;
+        emit MarketBrainiac(BRToken(brToken), true);
 
-        if (venusSupplyState[vToken].index == 0 && venusSupplyState[vToken].block == 0) {
-            venusSupplyState[vToken] = VenusMarketState({
-                index: venusInitialIndex,
+        if (brainiacSupplyState[brToken].index == 0 && brainiacSupplyState[brToken].block == 0) {
+            brainiacSupplyState[brToken] = BrainiacMarketState({
+                index: brainiacInitialIndex,
                 block: safe32(getBlockNumber(), "block number overflows")
             });
         }
 
-        if (venusBorrowState[vToken].index == 0 && venusBorrowState[vToken].block == 0) {
-            venusBorrowState[vToken] = VenusMarketState({
-                index: venusInitialIndex,
+        if (brainiacBorrowState[brToken].index == 0 && brainiacBorrowState[brToken].block == 0) {
+            brainiacBorrowState[brToken] = BrainiacMarketState({
+                index: brainiacInitialIndex,
                 block: safe32(getBlockNumber(), "block number overflows")
             });
         }
     }
 
-    function _initializeVenusVAIState(uint blockNumber) public {
+    function _initializeBrainiacBAIState(uint blockNumber) public {
         require(msg.sender == admin, "only admin can");
-        if (address(vaiController) != address(0)) {
-            vaiController._initializeVenusVAIState(blockNumber);
+        if (address(baiController) != address(0)) {
+            baiController._initializeBrainiacBAIState(blockNumber);
         }
     }
 
     /**
-     * @notice Remove a market from venusMarkets, preventing it from earning XVS in the flywheel
-     * @param vToken The address of the market to drop
+     * @notice Remove a market from brainiacMarkets, preventing it from earning BRN in the flywheel
+     * @param brToken The address of the market to drop
      */
-    function _dropVenusMarket(address vToken) public onlyAdmin {
-        Market storage market = markets[vToken];
-        require(market.isVenus == true, "not venus market");
+    function _dropBrainiacMarket(address brToken) public onlyAdmin {
+        Market storage market = markets[brToken];
+        require(market.isBrainiac == true, "not brainiac market");
 
-        market.isVenus = false;
-        emit MarketVenus(VToken(vToken), false);
+        market.isBrainiac = false;
+        emit MarketBrainiac(BRToken(brToken), false);
 
-        refreshVenusSpeedsInternal();
+        refreshBrainiacSpeedsInternal();
     }
 
     /**
@@ -1453,7 +1453,7 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
      * @dev The automatic getter may be used to access an individual market.
      * @return The list of market addresses
      */
-    function getAllMarkets() public view returns (VToken[] memory) {
+    function getAllMarkets() public view returns (BRToken[] memory) {
         return allMarkets;
     }
 
@@ -1462,72 +1462,72 @@ contract ComptrollerG2 is ComptrollerV1Storage, ComptrollerInterfaceG1, Comptrol
     }
 
     /**
-     * @notice Return the address of the XVS token
-     * @return The address of XVS
+     * @notice Return the address of the BRN token
+     * @return The address of BRN
      */
-    function getXVSAddress() public view returns (address) {
+    function getBRNAddress() public view returns (address) {
         return 0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63;
     }
 
-    /*** VAI functions ***/
+    /*** BAI functions ***/
 
     /**
-     * @notice Set the minted VAI amount of the `owner`
+     * @notice Set the minted BAI amount of the `owner`
      * @param owner The address of the account to set
-     * @param amount The amount of VAI to set to the account
-     * @return The number of minted VAI by `owner`
+     * @param amount The amount of BAI to set to the account
+     * @return The number of minted BAI by `owner`
      */
-    function setMintedVAIOf(address owner, uint amount) external onlyProtocolAllowed returns (uint) {
+    function setMintedBAIOf(address owner, uint amount) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!mintVAIGuardianPaused && !repayVAIGuardianPaused, "VAI is paused");
-        // Check caller is vaiController
-        if (msg.sender != address(vaiController)) {
-            return fail(Error.REJECTION, FailureInfo.SET_MINTED_VAI_REJECTION);
+        require(!mintBAIGuardianPaused && !repayBAIGuardianPaused, "BAI is paused");
+        // Check caller is baiController
+        if (msg.sender != address(baiController)) {
+            return fail(Error.REJECTION, FailureInfo.SET_MINTED_BAI_REJECTION);
         }
-        mintedVAIs[owner] = amount;
+        mintedBAIs[owner] = amount;
 
         return uint(Error.NO_ERROR);
     }
 
     /**
-     * @notice Mint VAI
+     * @notice Mint BAI
      */
-    function mintVAI(uint mintVAIAmount) external onlyProtocolAllowed returns (uint) {
+    function mintBAI(uint mintBAIAmount) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!mintVAIGuardianPaused, "mintVAI is paused");
+        require(!mintBAIGuardianPaused, "mintBAI is paused");
 
         // Keep the flywheel moving
-        updateVenusVAIMintIndex();
-        distributeVAIMinterVenus(msg.sender, false);
-        return vaiController.mintVAI(msg.sender, mintVAIAmount);
+        updateBrainiacBAIMintIndex();
+        distributeBAIMinterBrainiac(msg.sender, false);
+        return baiController.mintBAI(msg.sender, mintBAIAmount);
     }
 
     /**
-     * @notice Repay VAI
+     * @notice Repay BAI
      */
-    function repayVAI(uint repayVAIAmount) external onlyProtocolAllowed returns (uint) {
+    function repayBAI(uint repayBAIAmount) external onlyProtocolAllowed returns (uint) {
         // Pausing is a very serious situation - we revert to sound the alarms
-        require(!repayVAIGuardianPaused, "repayVAI is paused");
+        require(!repayBAIGuardianPaused, "repayBAI is paused");
 
         // Keep the flywheel moving
-        updateVenusVAIMintIndex();
-        distributeVAIMinterVenus(msg.sender, false);
-        return vaiController.repayVAI(msg.sender, repayVAIAmount);
+        updateBrainiacBAIMintIndex();
+        distributeBAIMinterBrainiac(msg.sender, false);
+        return baiController.repayBAI(msg.sender, repayBAIAmount);
     }
 
     /**
-     * @notice Get the minted VAI amount of the `owner`
+     * @notice Get the minted BAI amount of the `owner`
      * @param owner The address of the account to query
-     * @return The number of minted VAI by `owner`
+     * @return The number of minted BAI by `owner`
      */
-    function mintedVAIOf(address owner) external view returns (uint) {
-        return mintedVAIs[owner];
+    function mintedBAIOf(address owner) external view returns (uint) {
+        return mintedBAIs[owner];
     }
 
     /**
-     * @notice Get Mintable VAI amount
+     * @notice Get Mintable BAI amount
      */
-    function getMintableVAI(address minter) external view returns (uint, uint) {
-        return vaiController.getMintableVAI(minter);
+    function getMintableBAI(address minter) external view returns (uint, uint) {
+        return baiController.getMintableBAI(minter);
     }
 }

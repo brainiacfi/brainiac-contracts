@@ -6,67 +6,67 @@ import { StringV } from "../Value";
 import { Arg, Fetcher, getFetcherValue } from "../Command";
 import { storeAndSaveContract } from "../Networks";
 import { getContract } from "../Contract";
-import { XVSVaultImpl } from "../Contract/XVSVault";
+import { BRNVaultImpl } from "../Contract/BRNVault";
 
-const XVSVaultImplementation = getContract("XVSVault");
+const BRNVaultImplementation = getContract("BRNVault");
 
-export interface XVSVaultImplData {
-  invokation: Invokation<XVSVaultImpl>;
+export interface BRNVaultImplData {
+  invokation: Invokation<BRNVaultImpl>;
   name: string;
   contract: string;
   address?: string;
 }
 
-export async function buildXVSVaultImpl(
+export async function buildBRNVaultImpl(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; xvsVaultImpl: XVSVaultImpl; xvsVaultData: XVSVaultImplData }> {
+): Promise<{ world: World; brnVaultImpl: BRNVaultImpl; brnVaultData: BRNVaultImplData }> {
   const fetchers = [
-    new Fetcher<{ name: StringV }, XVSVaultImplData>(
+    new Fetcher<{ name: StringV }, BRNVaultImplData>(
       `
-      #### XVSVaultImpl
-      * "XVSVaultImpl Deploy name:<String>" - Deploys XVS Vault implementation contract
-      * E.g. "XVSVaultImpl Deploy MyVaultImpl"
+      #### BRNVaultImpl
+      * "BRNVaultImpl Deploy name:<String>" - Deploys BRN Vault implementation contract
+      * E.g. "BRNVaultImpl Deploy MyVaultImpl"
       `,
-      "XVSVaultImpl",
+      "BRNVaultImpl",
       [new Arg('name', getStringV)],
       async (world, { name }) => {
         return {
-          invokation: await XVSVaultImplementation.deploy<XVSVaultImpl>(world, from, []),
+          invokation: await BRNVaultImplementation.deploy<BRNVaultImpl>(world, from, []),
           name: name.val,
-          contract: "XVSVault"
+          contract: "BRNVault"
         };
       },
       { catchall: true }
     )
   ];
 
-  let xvsVaultData = await getFetcherValue<any, XVSVaultImplData>(
-    "DeployXVSVaultImpl",
+  let brnVaultData = await getFetcherValue<any, BRNVaultImplData>(
+    "DeployBRNVaultImpl",
     fetchers,
     world,
     params
   );
-  let invokation = xvsVaultData.invokation!;
-  delete xvsVaultData.invokation;
+  let invokation = brnVaultData.invokation!;
+  delete brnVaultData.invokation;
 
   if (invokation.error) {
     throw invokation.error;
   }
 
-  const xvsVaultImpl = invokation.value!;
-  xvsVaultData.address = xvsVaultImpl._address;
+  const brnVaultImpl = invokation.value!;
+  brnVaultData.address = brnVaultImpl._address;
 
   world = await storeAndSaveContract(
     world,
-    xvsVaultImpl,
-    xvsVaultData.name,
+    brnVaultImpl,
+    brnVaultData.name,
     invokation,
     [
-      { index: ["XVSVault", xvsVaultData.name], data: xvsVaultData },
+      { index: ["BRNVault", brnVaultData.name], data: brnVaultData },
     ]
   );
 
-  return { world, xvsVaultImpl, xvsVaultData };
+  return { world, brnVaultImpl, brnVaultData };
 }

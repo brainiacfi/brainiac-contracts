@@ -2,7 +2,7 @@ import {Contract} from '../Contract';
 import {Callable, Sendable} from '../Invokation';
 import {encodedNumber} from '../Encoding';
 
-interface Bep20Methods {
+interface Erc20Methods {
   name(): Callable<string>
   symbol(): Callable<string>
   decimals(): Callable<string>
@@ -19,7 +19,7 @@ interface Bep20Methods {
   setParams(newBasisPoints: encodedNumber, maxFee: encodedNumber): Sendable<void>
 }
 
-export interface Bep20 extends Contract {
-  methods: Bep20Methods
+export interface Erc20 extends Contract {
+  methods: Erc20Methods
   name: string
 }

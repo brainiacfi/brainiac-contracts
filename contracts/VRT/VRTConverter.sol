@@ -1,43 +1,43 @@
 pragma solidity ^0.5.16;
 
-import "../Utils/IBEP20.sol";
-import "../Utils/SafeBEP20.sol";
-import "./IXVSVesting.sol";
+import "../Utils/IERC20.sol";
+import "../Utils/SafeERC20.sol";
+import "./IBRNVesting.sol";
 import "./VRTConverterStorage.sol";
 import "./VRTConverterProxy.sol";
 
 /**
- * @title Venus's VRTConversion Contract
- * @author Venus
+ * @title Brainiac's VRTConversion Contract
+ * @author Brainiac
  */
 contract VRTConverter is VRTConverterStorage {
     using SafeMath for uint256;
-    using SafeBEP20 for IBEP20;
+    using SafeERC20 for IERC20;
 
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
 
     /// @notice decimal precision for VRT
     uint256 public constant vrtDecimalsMultiplier = 1e18;
 
-    /// @notice decimal precision for XVS
-    uint256 public constant xvsDecimalsMultiplier = 1e18;
+    /// @notice decimal precision for BRN
+    uint256 public constant brnDecimalsMultiplier = 1e18;
 
     /// @notice Emitted when an admin set conversion info
     event ConversionInfoSet(uint256 conversionRatio, uint256 conversionStartTime, uint256 conversionPeriod, uint256 conversionEndTime);
 
     /// @notice Emitted when token conversion is done
-    event TokenConverted(address reedeemer, address vrtAddress, uint256 vrtAmount, address xvsAddress, uint256 xvsAmount);
+    event TokenConverted(address reedeemer, address vrtAddress, uint256 vrtAmount, address brnAddress, uint256 brnAmount);
 
     /// @notice Emitted when an admin withdraw converted token
     event TokenWithdraw(address token, address to, uint256 amount);
 
-    /// @notice Emitted when XVSVestingAddress is set
-    event XVSVestingSet(address xvsVestingAddress);
+    /// @notice Emitted when BRNVestingAddress is set
+    event BRNVestingSet(address brnVestingAddress);
 
     constructor() public {}
 
     function initialize(address _vrtAddress,
-                address _xvsAddress,
+                address _brnAddress,
                 uint256 _conversionRatio,
                 uint256 _conversionStartTime,
                 uint256 _conversionPeriod) public {
@@ -45,10 +45,10 @@ contract VRTConverter is VRTConverterStorage {
         require(initialized == false, "VRTConverter is already initialized");
 
         require(_vrtAddress != address(0), "vrtAddress cannot be Zero");
-        vrt = IBEP20(_vrtAddress);
+        vrt = IERC20(_vrtAddress);
         
-        require(_xvsAddress != address(0), "xvsAddress cannot be Zero");
-        xvs = IBEP20(_xvsAddress);
+        require(_brnAddress != address(0), "brnAddress cannot be Zero");
+        brn = IERC20(_brnAddress);
         
         require(_conversionRatio > 0, "conversionRatio cannot be Zero");
         conversionRatio = _conversionRatio;
@@ -77,15 +77,15 @@ contract VRTConverter is VRTConverterStorage {
     }
 
     /**
-     * @notice sets XVSVestingProxy Address
-     * @dev Note: If XVSVestingProxy is not set, then Conversion is not allowed
-     * @param _xvsVestingAddress The XVSVestingProxy Address
+     * @notice sets BRNVestingProxy Address
+     * @dev Note: If BRNVestingProxy is not set, then Conversion is not allowed
+     * @param _brnVestingAddress The BRNVestingProxy Address
      */
-    function setXVSVesting(address _xvsVestingAddress) public {
+    function setBRNVesting(address _brnVestingAddress) public {
         require(msg.sender == admin, "only admin may initialize the Vault");
-        require(_xvsVestingAddress != address(0), "xvsVestingAddress cannot be Zero");
-        xvsVesting = IXVSVesting(_xvsVestingAddress);
-        emit XVSVestingSet(_xvsVestingAddress);
+        require(_brnVestingAddress != address(0), "brnVestingAddress cannot be Zero");
+        brnVesting = IBRNVesting(_brnVestingAddress);
+        emit BRNVestingSet(_brnVestingAddress);
     }
 
     modifier isInitialized() {
@@ -119,25 +119,25 @@ contract VRTConverter is VRTConverterStorage {
     }
 
     /**
-     * @notice Transfer VRT and redeem XVS
-     * @dev Note: If there is not enough XVS, we do not perform the conversion.
+     * @notice Transfer VRT and redeem BRN
+     * @dev Note: If there is not enough BRN, we do not perform the conversion.
      * @param vrtAmount The amount of VRT
      */
     function convert(uint256 vrtAmount) external isInitialized checkForActiveConversionPeriod nonReentrant
     {
-        require(address(xvsVesting) != address(0) && address(xvsVesting) != DEAD_ADDRESS, "XVS-Vesting Address is not set");
+        require(address(brnVesting) != address(0) && address(brnVesting) != DEAD_ADDRESS, "BRN-Vesting Address is not set");
         require(vrtAmount > 0, "VRT amount must be non-zero");
         totalVrtConverted = totalVrtConverted.add(vrtAmount);
 
         uint256 redeemAmount = vrtAmount
             .mul(conversionRatio)
-            .mul(xvsDecimalsMultiplier)
+            .mul(brnDecimalsMultiplier)
             .div(1e18)
             .div(vrtDecimalsMultiplier);
 
-        emit TokenConverted(msg.sender, address(vrt), vrtAmount, address(xvs), redeemAmount);
+        emit TokenConverted(msg.sender, address(vrt), vrtAmount, address(brn), redeemAmount);
         vrt.safeTransferFrom(msg.sender, DEAD_ADDRESS, vrtAmount);
-        xvsVesting.deposit(msg.sender, redeemAmount);
+        brnVesting.deposit(msg.sender, redeemAmount);
     }
 
     /*** Admin Functions ***/

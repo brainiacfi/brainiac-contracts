@@ -1,9 +1,9 @@
 import {Event} from '../Event';
 import {addAction, describeUser, World} from '../World';
 import {decodeCall, getPastEvents} from '../Contract';
-import {VAIController} from '../Contract/VAIController';
-import {VAIControllerImpl} from '../Contract/VAIControllerImpl';
-import {VToken} from '../Contract/VToken';
+import {BAIController} from '../Contract/BAIController';
+import {BAIControllerImpl} from '../Contract/BAIControllerImpl';
+import {BRToken} from '../Contract/BRToken';
 import {invoke} from '../Invokation';
 import {
   getAddressV,
@@ -23,63 +23,63 @@ import {
   StringV
 } from '../Value';
 import {Arg, Command, View, processCommandEvent} from '../Command';
-import {buildVAIControllerImpl} from '../Builder/VAIControllerImplBuilder';
-import {VAIControllerErrorReporter} from '../ErrorReporter';
-import {getVAIController, getVAIControllerImpl} from '../ContractLookup';
-// import {getLiquidity} from '../Value/VAIControllerValue';
-import {getVTokenV} from '../Value/VTokenValue';
+import {buildBAIControllerImpl} from '../Builder/BAIControllerImplBuilder';
+import {BAIControllerErrorReporter} from '../ErrorReporter';
+import {getBAIController, getBAIControllerImpl} from '../ContractLookup';
+// import {getLiquidity} from '../Value/BAIControllerValue';
+import {getBRTokenV} from '../Value/BRTokenValue';
 import {encodedNumber} from '../Encoding';
 import {encodeABI, rawValues} from "../Utils";
 
-async function genVAIController(world: World, from: string, params: Event): Promise<World> {
-  let {world: nextWorld, vaicontrollerImpl: vaicontroller, vaicontrollerImplData: vaicontrollerData} = await buildVAIControllerImpl(world, from, params);
+async function genBAIController(world: World, from: string, params: Event): Promise<World> {
+  let {world: nextWorld, baicontrollerImpl: baicontroller, baicontrollerImplData: baicontrollerData} = await buildBAIControllerImpl(world, from, params);
   world = nextWorld;
 
   world = addAction(
     world,
-    `Added VAIController (${vaicontrollerData.description}) at address ${vaicontroller._address}`,
-    vaicontrollerData.invokation
+    `Added BAIController (${baicontrollerData.description}) at address ${baicontroller._address}`,
+    baicontrollerData.invokation
   );
 
   return world;
 };
 
-async function setPendingAdmin(world: World, from: string, vaicontroller: VAIController, newPendingAdmin: string): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods._setPendingAdmin(newPendingAdmin), from, VAIControllerErrorReporter);
+async function setPendingAdmin(world: World, from: string, baicontroller: BAIController, newPendingAdmin: string): Promise<World> {
+  let invokation = await invoke(world, baicontroller.methods._setPendingAdmin(newPendingAdmin), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `VAIController: ${describeUser(world, from)} sets pending admin to ${newPendingAdmin}`,
+    `BAIController: ${describeUser(world, from)} sets pending admin to ${newPendingAdmin}`,
     invokation
   );
 
   return world;
 }
 
-async function acceptAdmin(world: World, from: string, vaicontroller: VAIController): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods._acceptAdmin(), from, VAIControllerErrorReporter);
+async function acceptAdmin(world: World, from: string, baicontroller: BAIController): Promise<World> {
+  let invokation = await invoke(world, baicontroller.methods._acceptAdmin(), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `VAIController: ${describeUser(world, from)} accepts admin`,
+    `BAIController: ${describeUser(world, from)} accepts admin`,
     invokation
   );
 
   return world;
 }
 
-async function sendAny(world: World, from:string, vaicontroller: VAIController, signature: string, callArgs: string[]): Promise<World> {
+async function sendAny(world: World, from:string, baicontroller: BAIController, signature: string, callArgs: string[]): Promise<World> {
   const fnData = encodeABI(world, signature, callArgs);
   await world.web3.eth.sendTransaction({
-      to: vaicontroller._address,
+      to: baicontroller._address,
       data: fnData,
       from: from
     })
   return world;
 }
 
-async function setComptroller(world: World, from: string, vaicontroller: VAIController, comptroller: string): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods._setComptroller(comptroller), from, VAIControllerErrorReporter);
+async function setComptroller(world: World, from: string, baicontroller: BAIController, comptroller: string): Promise<World> {
+  let invokation = await invoke(world, baicontroller.methods._setComptroller(comptroller), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
@@ -90,28 +90,28 @@ async function setComptroller(world: World, from: string, vaicontroller: VAICont
   return world;
 }
 
-async function mint(world: World, from: string, vaicontroller: VAIController, amount: NumberV): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods.mintVAI(amount.encode()), from, VAIControllerErrorReporter);
+async function mint(world: World, from: string, baicontroller: BAIController, amount: NumberV): Promise<World> {
+  let invokation = await invoke(world, baicontroller.methods.mintBAI(amount.encode()), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `VAIController: ${describeUser(world, from)} borrows ${amount.show()}`,
+    `BAIController: ${describeUser(world, from)} borrows ${amount.show()}`,
     invokation
   );
 
   return world;
 }
 
-async function repay(world: World, from: string, vaicontroller: VAIController, amount: NumberV): Promise<World> {
+async function repay(world: World, from: string, baicontroller: BAIController, amount: NumberV): Promise<World> {
   let invokation;
   let showAmount;
 
   showAmount = amount.show();
-  invokation = await invoke(world, vaicontroller.methods.repayVAI(amount.encode()), from, VAIControllerErrorReporter);
+  invokation = await invoke(world, baicontroller.methods.repayBAI(amount.encode()), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `VAIController: ${describeUser(world, from)} repays ${showAmount} of borrow`,
+    `BAIController: ${describeUser(world, from)} repays ${showAmount} of borrow`,
     invokation
   );
 
@@ -119,16 +119,16 @@ async function repay(world: World, from: string, vaicontroller: VAIController, a
 }
 
 
-async function liquidateVAI(world: World, from: string, vaicontroller: VAIController, borrower: string, collateral: VToken, repayAmount: NumberV): Promise<World> {
+async function liquidateBAI(world: World, from: string, baicontroller: BAIController, borrower: string, collateral: BRToken, repayAmount: NumberV): Promise<World> {
   let invokation;
   let showAmount;
 
   showAmount = repayAmount.show();
-  invokation = await invoke(world, vaicontroller.methods.liquidateVAI(borrower, repayAmount.encode(), collateral._address), from, VAIControllerErrorReporter);
+  invokation = await invoke(world, baicontroller.methods.liquidateBAI(borrower, repayAmount.encode(), collateral._address), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `VAIController: ${describeUser(world, from)} liquidates ${showAmount} from of ${describeUser(world, borrower)}, seizing ${collateral.name}.`,
+    `BAIController: ${describeUser(world, from)} liquidates ${showAmount} from of ${describeUser(world, borrower)}, seizing ${collateral.name}.`,
     invokation
   );
 
@@ -138,12 +138,12 @@ async function liquidateVAI(world: World, from: string, vaicontroller: VAIContro
 async function setTreasuryData(
   world: World,
   from: string,
-  vaicontroller: VAIController,
+  baicontroller: BAIController,
   guardian: string,
   address: string,
   percent: NumberV,
 ): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods._setTreasuryData(guardian, address, percent.encode()), from, VAIControllerErrorReporter);
+  let invokation = await invoke(world, baicontroller.methods._setTreasuryData(guardian, address, percent.encode()), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
@@ -157,134 +157,134 @@ async function setTreasuryData(
 async function initialize(
   world: World,
   from: string,
-  vaicontroller: VAIController
+  baicontroller: BAIController
 ): Promise<World> {
-  let invokation = await invoke(world, vaicontroller.methods.initialize(), from, VAIControllerErrorReporter);
+  let invokation = await invoke(world, baicontroller.methods.initialize(), from, BAIControllerErrorReporter);
 
   world = addAction(
     world,
-    `Initizlied the VAIController`,
+    `Initizlied the BAIController`,
     invokation
   );
 
   return world;
 }
 
-export function vaicontrollerCommands() {
+export function baicontrollerCommands() {
   return [
-    new Command<{vaicontrollerParams: EventV}>(`
+    new Command<{baicontrollerParams: EventV}>(`
         #### Deploy
 
-        * "VAIController Deploy ...vaicontrollerParams" - Generates a new VAIController (not as Impl)
-          * E.g. "VAIController Deploy YesNo"
+        * "BAIController Deploy ...baicontrollerParams" - Generates a new BAIController (not as Impl)
+          * E.g. "BAIController Deploy YesNo"
       `,
       "Deploy",
-      [new Arg("vaicontrollerParams", getEventV, {variadic: true})],
-      (world, from, {vaicontrollerParams}) => genVAIController(world, from, vaicontrollerParams.val)
+      [new Arg("baicontrollerParams", getEventV, {variadic: true})],
+      (world, from, {baicontrollerParams}) => genBAIController(world, from, baicontrollerParams.val)
     ),
 
-    new Command<{vaicontroller: VAIController, signature: StringV, callArgs: StringV[]}>(`
+    new Command<{baicontroller: BAIController, signature: StringV, callArgs: StringV[]}>(`
       #### Send
-      * VAIController Send functionSignature:<String> callArgs[] - Sends any transaction to vaicontroller
-      * E.g: VAIController Send "setVAIAddress(address)" (Address VAI)
+      * BAIController Send functionSignature:<String> callArgs[] - Sends any transaction to baicontroller
+      * E.g: BAIController Send "setBAIAddress(address)" (Address BAI)
       `,
       "Send",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("signature", getStringV),
         new Arg("callArgs", getCoreValue, {variadic: true, mapped: true})
       ],
-      (world, from, {vaicontroller, signature, callArgs}) => sendAny(world, from, vaicontroller, signature.val, rawValues(callArgs))
+      (world, from, {baicontroller, signature, callArgs}) => sendAny(world, from, baicontroller, signature.val, rawValues(callArgs))
     ),
 
-    new Command<{ vaicontroller: VAIController, comptroller: AddressV}>(`
+    new Command<{ baicontroller: BAIController, comptroller: AddressV}>(`
         #### SetComptroller
 
-        * "VAIController SetComptroller comptroller:<Address>" - Sets the comptroller address
-          * E.g. "VAIController SetComptroller 0x..."
+        * "BAIController SetComptroller comptroller:<Address>" - Sets the comptroller address
+          * E.g. "BAIController SetComptroller 0x..."
       `,
       "SetComptroller",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("comptroller", getAddressV)
       ],
-      (world, from, {vaicontroller, comptroller}) => setComptroller(world, from, vaicontroller, comptroller.val)
+      (world, from, {baicontroller, comptroller}) => setComptroller(world, from, baicontroller, comptroller.val)
     ),
 
-    new Command<{ vaicontroller: VAIController, amount: NumberV }>(`
+    new Command<{ baicontroller: BAIController, amount: NumberV }>(`
         #### Mint
 
-        * "VAIController Mint amount:<Number>" - Mint the given amount of VAI as specified user
-          * E.g. "VAIController Mint 1.0e18"
+        * "BAIController Mint amount:<Number>" - Mint the given amount of BAI as specified user
+          * E.g. "BAIController Mint 1.0e18"
       `,
       "Mint",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("amount", getNumberV)
       ],
       // Note: we override from
-      (world, from, { vaicontroller, amount }) => mint(world, from, vaicontroller, amount),
+      (world, from, { baicontroller, amount }) => mint(world, from, baicontroller, amount),
     ),
 
-    new Command<{ vaicontroller: VAIController, amount: NumberV }>(`
+    new Command<{ baicontroller: BAIController, amount: NumberV }>(`
         #### Repay
 
-        * "VAIController Repay amount:<Number>" - Repays VAI in the given amount as specified user
-          * E.g. "VAIController Repay 1.0e18"
+        * "BAIController Repay amount:<Number>" - Repays BAI in the given amount as specified user
+          * E.g. "BAIController Repay 1.0e18"
       `,
       "Repay",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("amount", getNumberV, { nullable: true })
       ],
-      (world, from, { vaicontroller, amount }) => repay(world, from, vaicontroller, amount),
+      (world, from, { baicontroller, amount }) => repay(world, from, baicontroller, amount),
     ),
 
-    new Command<{ vaicontroller: VAIController, borrower: AddressV, vToken: VToken, collateral: VToken, repayAmount: NumberV }>(`
-        #### LiquidateVAI
+    new Command<{ baicontroller: BAIController, borrower: AddressV, brToken: BRToken, collateral: BRToken, repayAmount: NumberV }>(`
+        #### LiquidateBAI
 
-        * "VAIController LiquidateVAI borrower:<User> vTokenCollateral:<Address> repayAmount:<Number>" - Liquidates repayAmount of VAI seizing collateral token
-          * E.g. "VAIController LiquidateVAI Geoff vBAT 1.0e18"
+        * "BAIController LiquidateBAI borrower:<User> brTokenCollateral:<Address> repayAmount:<Number>" - Liquidates repayAmount of BAI seizing collateral token
+          * E.g. "BAIController LiquidateBAI Geoff vBAT 1.0e18"
       `,
-      "LiquidateVAI",
+      "LiquidateBAI",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("borrower", getAddressV),
-        new Arg("collateral", getVTokenV),
+        new Arg("collateral", getBRTokenV),
         new Arg("repayAmount", getNumberV, { nullable: true })
       ],
-      (world, from, { vaicontroller, borrower, collateral, repayAmount }) => liquidateVAI(world, from, vaicontroller, borrower.val, collateral, repayAmount),
+      (world, from, { baicontroller, borrower, collateral, repayAmount }) => liquidateBAI(world, from, baicontroller, borrower.val, collateral, repayAmount),
     ),
 
-    new Command<{vaicontroller: VAIController, guardian: AddressV, address: AddressV, percent: NumberV}>(`
+    new Command<{baicontroller: BAIController, guardian: AddressV, address: AddressV, percent: NumberV}>(`
       #### SetTreasuryData
-      * "VAIController SetTreasuryData <guardian> <address> <rate>" - Sets Treasury Data
-      * E.g. "VAIController SetTreasuryData 0x.. 0x.. 1e18
+      * "BAIController SetTreasuryData <guardian> <address> <rate>" - Sets Treasury Data
+      * E.g. "BAIController SetTreasuryData 0x.. 0x.. 1e18
       `,
       "SetTreasuryData",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true}),
+        new Arg("baicontroller", getBAIController, {implicit: true}),
         new Arg("guardian", getAddressV),
         new Arg("address", getAddressV),
         new Arg("percent", getNumberV)
       ],
-      (world, from, {vaicontroller, guardian, address, percent}) => setTreasuryData(world, from, vaicontroller, guardian.val, address.val, percent)
+      (world, from, {baicontroller, guardian, address, percent}) => setTreasuryData(world, from, baicontroller, guardian.val, address.val, percent)
     ),
 
-    new Command<{vaicontroller: VAIController}>(`
+    new Command<{baicontroller: BAIController}>(`
       #### Initialize
-      * "VAIController Initialize" - Call Initialize
-      * E.g. "VAIController Initialize
+      * "BAIController Initialize" - Call Initialize
+      * E.g. "BAIController Initialize
       `,
       "Initialize",
       [
-        new Arg("vaicontroller", getVAIController, {implicit: true})
+        new Arg("baicontroller", getBAIController, {implicit: true})
       ],
-      (world, from, {vaicontroller}) => initialize(world, from, vaicontroller)
+      (world, from, {baicontroller}) => initialize(world, from, baicontroller)
     )
   ];
 }
 
-export async function processVAIControllerEvent(world: World, event: Event, from: string | null): Promise<World> {
-  return await processCommandEvent<any>("VAIController", vaicontrollerCommands(), world, event, from);
+export async function processBAIControllerEvent(world: World, event: Event, from: string | null): Promise<World> {
+  return await processCommandEvent<any>("BAIController", baicontrollerCommands(), world, event, from);
 }

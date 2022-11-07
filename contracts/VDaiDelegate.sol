@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./VBep20Delegate.sol";
+import "./BRErc20Delegate.sol";
 
 /**
- * @title Venus's VDai Contract
- * @notice VToken which wraps Multi-Collateral DAI
- * @author Venus
+ * @title Brainiac's VDai Contract
+ * @notice BRToken which wraps Multi-Collateral DAI
+ * @author Brainiac
  */
-contract VDaiDelegate is VBep20Delegate {
+contract VDaiDelegate is BRErc20Delegate {
     /**
      * @notice DAI adapter address
      */
@@ -91,7 +91,7 @@ contract VDaiDelegate is VBep20Delegate {
         daiJoin.exit(address(this), bal / RAY);
     }
 
-    /*** VToken Overrides ***/
+    /*** BRToken Overrides ***/
 
     /**
       * @notice Accrues DSR then applies accrued interest to total borrows and reserves
@@ -102,7 +102,7 @@ contract VDaiDelegate is VBep20Delegate {
         // Accumulate DSR interest
         PotLike(potAddress).drip();
 
-        // Accumulate VToken interest
+        // Accumulate BRToken interest
         return super.accrueInterest();
     }
 

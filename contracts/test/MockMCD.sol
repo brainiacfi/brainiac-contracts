@@ -33,6 +33,6 @@ contract MockJug {
     }
 
     function setETHDuty(uint duty_) public {
-        ilks["BNB-A"].duty = duty_;
+        ilks["CKB-A"].duty = duty_;
     }
 }

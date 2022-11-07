@@ -13,27 +13,27 @@ const MaximillionContract = getContract("Maximillion");
 export interface MaximillionData {
   invokation: Invokation<Maximillion>,
   description: string,
-  vBnbAddress: string,
+  brCkbAddress: string,
   address?: string
 }
 
 export async function buildMaximillion(world: World, from: string, event: Event): Promise<{world: World, maximillion: Maximillion, maximillionData: MaximillionData}> {
   const fetchers = [
-    new Fetcher<{vBnb: AddressV}, MaximillionData>(`
+    new Fetcher<{brCkb: AddressV}, MaximillionData>(`
         #### Maximillion
 
-        * "" - Maximum Bnb Repays Contract
+        * "" - Maximum Ckb Repays Contract
           * E.g. "Maximillion Deploy"
       `,
       "Maximillion",
       [
-        new Arg("vBnb", getAddressV)
+        new Arg("brCkb", getAddressV)
       ],
-      async (world, {vBnb}) => {
+      async (world, {brCkb}) => {
         return {
-          invokation: await MaximillionContract.deploy<Maximillion>(world, from, [vBnb.val]),
+          invokation: await MaximillionContract.deploy<Maximillion>(world, from, [brCkb.val]),
           description: "Maximillion",
-          vBnbAddress: vBnb.val
+          brCkbAddress: brCkb.val
         };
       },
       {catchall: true}

@@ -6,10 +6,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deploy} = deployments;
   const {deployer} = await getNamedAccounts();
 
-  await deploy('VenusLens', {
+  await deploy('BrainiacLens', {
     from: deployer,
     log: true,
   });
 };
 export default func;
-func.tags = ['VenusLens'];
+func.tags = ['BrainiacLens','Core'];
